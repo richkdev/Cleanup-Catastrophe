@@ -1,4 +1,4 @@
-# Cleanup Catastrophe [v.ALPHA.1.0.0]
+# Cleanup Catastrophe! [v.ALPHA.1.0.0]
 ![cleanup catastrophe logo](https://img.itch.zone/aW1nLzExNjQ2ODU3LnBuZw==/original/ji2Lnz.png)
 
 ![forks](https://img.shields.io/github/forks/richkdev/cleanup-catastrophe)
