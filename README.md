@@ -4,7 +4,7 @@
 ![forks](https://img.shields.io/github/forks/richkdev/cleanup-catastrophe)
 ![stars](https://img.shields.io/github/stars/richkdev/cleanup-catastrophe)
 ![license](https://img.shields.io/github/license/richkdev/cleanup-catastrophe)
-![version](https://img.shields.io/badge/v.ALPHA.1.0-green)
+![version](https://img.shields.io/github/release/richkdev/cleanup-catastrophe)
 
 **_Cleanup Catastrophe!_**  is an educational free-to-play indie game developed by [Richmond Kleinson](https://richkdev.itch.io) that aims to raise awareness about the issue of plastic pollution in the ocean among young minds.
 
