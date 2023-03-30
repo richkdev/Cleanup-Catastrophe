@@ -29,15 +29,15 @@ See the game's [itch.io page](https://richkdev.itch.io/cleanup-catastrophe) for 
 (insert screenshots here + gif of gameplay)
 
 ## INSTALLATION
-1.  **Install the latest version of Python** from [python.org](https://www.python.org/downloads/)
+1.  **Install the latest version of Python** from [python.org](https://www.python.org/downloads)
 2.  **Install pygame** by executing ``pip install pygame`` in the Command Prompt. If the command does not work for you, try to execute the [alternatives provided](https://www.pygame.org/wiki/GettingStarted). If all else fails, try to [upgrade pip](https://pip.pypa.io/en/stable/installation/#upgrading-pip).
 3.  **Clone the repository**. See this [GitHub article](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for more information. You're now good to go!
 
 ## LICENSE
 _Cleanup Catastrophe!_ is distributed under the MIT License, meaning the game is available for:
 - commercial use,
-- making fanmade mods of the game
-- distributing the game to a larger audience
+- making fanmade mods of the game,
+- distributing the game to a larger audience, and
 - private use (e.g. used in classrooms)
 
 See [``LICENSE.txt``](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/LICENSE) for more information.
