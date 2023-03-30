@@ -20,7 +20,10 @@ Inspired by the vibrant colors of the SEGA Genesis home console, the game introd
 
 ## GAMEPLAY
 Play as **Paul Fischer** (_Budi Sugiyono Cahyadi_), your ordinary local fisherman, whose life had changed when tasked by the goddess of water, Nyi Roro Kidul, to clean up the waters that her kingdom had inhibited long ago.
+
 ![paul gets trash](https://img.itch.zone/aW1nLzExNjU3OTczLnBuZw==/original/jNcFPb.png)
+
+See the game's [itch.io page](https://richkdev.itch.io/cleanup-catastrophe) for more information.
 
 ## SCREENSHOTS
 (insert screenshots here + gif of gameplay)
@@ -28,13 +31,10 @@ Play as **Paul Fischer** (_Budi Sugiyono Cahyadi_), your ordinary local fisherma
 ## INSTALLATION
 1.  **Install the latest version of Python** from [python.org](https://www.python.org/downloads/)
 2.  **Install pygame** by executing ``pip install pygame`` in the Command Prompt. If the command does not work for you, try to execute the [alternatives provided](https://www.pygame.org/wiki/GettingStarted). If all else fails, try to [upgrade pip](https://pip.pypa.io/en/stable/installation/#upgrading-pip).
-3.  **Clone the repository**
-4.  **Open ``main.py`` in your IDE**. You're now good to go!
+3.  **Clone the repository**. See this [GitHub article](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for more information. You're now good to go!
 
 ## LICENSE
-_Cleanup Catastrophe!_ is distributed under the MIT License.
-
-The game is available for:
+_Cleanup Catastrophe!_ is distributed under the MIT License, meaning the game is available for:
 - commercial use,
 - making fanmade mods of the game
 - distributing the game to a larger audience
@@ -50,7 +50,7 @@ Contributions for the _Cleanup Catastrophe!_ game are greatly appreciated. It he
 See [``CODE_OF_CONDUCT.md``](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/CODE_OF_CONDUCT.md) for more information.
 
 ## CREDITS
-Here is a complete list which credits the original authors of the assets used in the game.
+Here is a complete list that credits the original authors of the assets used in the game.
 
 ### MUSIC
 - ["Starlight Zone" from _Sonic the Hedgehog_ (1991)](https://www.youtube.com/watch?v=0rwH_2Desp0) by Masato Nakamura
