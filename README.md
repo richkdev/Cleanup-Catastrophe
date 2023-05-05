@@ -48,14 +48,3 @@ Contributions for the _Cleanup Catastrophe!_ game are greatly appreciated. It he
 - open an issue with the tag "improvement"
 
 See [``CODE_OF_CONDUCT.md``](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/CODE_OF_CONDUCT.md) for more information.
-
-## CREDITS
-Here is a complete list that credits the original authors of the assets used in the game.
-
-### MUSIC
-- ["Starlight Zone" from _Sonic the Hedgehog_ (1991)](https://www.youtube.com/watch?v=0rwH_2Desp0) by Masato Nakamura
-- ["Mitula" from _Shining Force II_ (1993)](https://www.youtube.com/watch?v=xDfPFoYlFMY) by Mototaki Takenouchi
-
-### FONTS
-- "Andes" from [Dafont](https://www.dafont.com/andes.font)
-- "P22 DeStijl Tall Regular" from [Fontsgeek](https://fontsgeek.com/fonts/P22-DeStijl-Tall-Regular)
