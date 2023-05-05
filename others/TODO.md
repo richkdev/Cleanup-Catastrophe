@@ -1,5 +1,6 @@
 # todo list for future updates
- - [ ] use requests module to check game version on my site & update it using itch io game download ([w3schools.com/python/module_requests.asp](https://www.w3schools.com/python/module_requests.asp))
+- [ ] fix error when clicking down button **(important af, will fix in later versions)**
+- [ ] use requests module to check game version on my site & update it using itch io game download ([w3schools.com/python/module_requests.asp](https://www.w3schools.com/python/module_requests.asp))
 - [ ] add bombs which you cant pick up and just decreases your helth
 - [ ] make animated cutscenes in pixel art
 - [ ] add saving to the game
