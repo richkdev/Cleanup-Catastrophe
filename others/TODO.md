@@ -6,5 +6,5 @@
 - [ ] add saving to the game
 - [ ] recolor all stuffs using genesis palette
 - [ ] port game to html using [pygame script](https://pygame-web.github.io/wiki/pygame-script/) or just do the _https://pygame-web.github.io/showroom/python.html?-d# ... edit this part here ... .py_
-- [x] dont be a silly cat
+- [x] dont be a silly cat<br>
 ![silly cat idk](https://i.kym-cdn.com/photos/images/list/002/432/404/e14.jpg)
