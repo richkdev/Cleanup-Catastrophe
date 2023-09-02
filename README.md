@@ -70,16 +70,6 @@ See [``CODE_OF_CONDUCT.md``](https://github.com/richkdev/cleanup-catastrophe/blo
 
 Here is a complete list that credits the original authors of the assets used in the game.
 
-### MUSIC
-
-- ["Starlight Zone" from _Sonic the Hedgehog_ (1991)](https://www.youtube.com/watch?v=0rwH_2Desp0) by Masato Nakamura
-- ["Mitula" from _Shining Force II_ (1993)](https://www.youtube.com/watch?v=xDfPFoYlFMY) by Mototaki Takenouchi
-
-### FONTS
-
-- "Andes" from <https://www.dafont.com/andes.font>
-- "P22 DeStijl Tall Regular" from <https://fontsgeek.com/fonts/P22-DeStijl-Tall-Regular>
-
 ### CODE
 
 - base for ModernGL context creation by [DaFluffyPotato](https://www.youtube.com/watch?v=LFbePt8i0DI)
