@@ -13,7 +13,6 @@ Inspired by the vibrant colors of the SEGA Genesis home console, the game introd
 [![python-version](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org/downloads/release/python-3112)
 ![stars](https://img.shields.io/github/stars/richkdev/cleanup-catastrophe)
 ![forks](https://img.shields.io/github/forks/richkdev/cleanup-catastrophe)
-![stars](https://img.shields.io/github/stars/richkdev/cleanup-catastrophe)
 ![license](https://img.shields.io/github/license/richkdev/cleanup-catastrophe)
 ![version](https://img.shields.io/github/release/richkdev/cleanup-catastrophe)
 ![downloads](https://img.shields.io/github/downloads/richkdev/cleanup-catastrophe/latest/total)
