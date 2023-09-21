@@ -26,7 +26,7 @@ Play as **Paul Fischer** (_Budi Sugiyono Cahyadi_), your ordinary local fisherma
 
 ![paul gets trash](https://img.itch.zone/aW1nLzExNjU3OTczLnBuZw==/original/jNcFPb.png)
 
-See the game's [itch.io page](https://fluff-studios.itch.io/cleanup-catastrophe) for more information.
+See the game's [itch.io page](https://richkdev.itch.io/cleanup-catastrophe) for more information.
 
 ## SCREENSHOTS
 
@@ -73,3 +73,6 @@ Here is a complete list that credits the original authors of the assets used in 
 
 - base for ModernGL context creation by [DaFluffyPotato](https://www.youtube.com/watch?v=LFbePt8i0DI)
 - base for GLSL CRT shader by [JingShing](https://github.com/JingShing-Python/ModernGL-Shader-with-pygame)
+
+### MUSIC
+- ["Credits"](https://soundcloud.com/richkdev/credits?in=richkdev/sets/cleanup-catastrophe-demo-ost) by [rice.in.disguise](https://www.instagram.com/rice.in.disguise/)
