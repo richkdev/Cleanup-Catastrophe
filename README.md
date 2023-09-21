@@ -75,4 +75,4 @@ Here is a complete list that credits the original authors of the assets used in 
 - base for GLSL CRT shader by [JingShing](https://github.com/JingShing-Python/ModernGL-Shader-with-pygame)
 
 ### MUSIC
-- ["Credits"](https://soundcloud.com/richkdev/credits?in=richkdev/sets/cleanup-catastrophe-demo-ost) by [rice.in.disguise](https://www.instagram.com/rice.in.disguise/)
+- ["Credits"](https://soundcloud.com/richkdev/credits?in=richkdev/sets/cleanup-catastrophe-demo-ost) by [RichKDEV](https://soundcloud.com/richkdev) (me) and [rice.in.disguise](https://www.instagram.com/rice.in.disguise/)
