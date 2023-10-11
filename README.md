@@ -2,7 +2,7 @@
 
 work in progress!
 
-<iframe src="not yet" id="MyFrame" style="width: 100%; height: fit-content;"></iframe>
+<iframe src="not yet" id="MyFrame" style="aspect-ratio: 1/1; height: auto; width: 100%;"></iframe>
 <select id="MySelectMenu">
   <option value="not yet">v.DEMO.1</option>
   <option value="not yet">v.ALPHA.1.0.0</option>
