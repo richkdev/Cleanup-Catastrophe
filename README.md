@@ -13,5 +13,5 @@ Everything else was made using Python with the pygame library, and exported usin
 
 <script>
   document.getElementsByClassName('container-lg px-3 my-5 markdown-body')[0].removeChild(document.getElementsByTagName('h1')[0]);
-  document.head.innerHTML += ('<link rel="shortcut icon" type="image/x-icon" href="/Cleanup-Catastrophe/icon.ico">')
+  document.head.innerHTML += '<link rel="shortcut icon" type="image/x-icon" href="/Cleanup-Catastrophe/icon.ico">';
 </script>
