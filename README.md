@@ -4,7 +4,7 @@
   <option value="?">v.ALPHA.1.0.0</option>
   <option value="?">v.ALPHA.0.5.0</option>
 </select>
-<button onClick="changeGame();">Change Iframe Src</button>
+<button onClick="changeGame();">Change versions</button>
 <iframe src="not yet" id="game" style="aspect-ratio: 1/1; height: auto; width: 25em;"></iframe>
 
 ## DESCRIPTION
