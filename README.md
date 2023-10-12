@@ -5,7 +5,7 @@
   <option value="?">v.ALPHA.0.5.0</option>
 </select>
 <button onClick="changeGame();">Change Iframe Src</button>
-<iframe src="not yet" id="game" style="aspect-ratio: 1/1; height: auto; width: 40%;"></iframe>
+<iframe src="not yet" id="game" style="aspect-ratio: 1/1; height: auto; width: 25em;"></iframe>
 
 ## DESCRIPTION
 Contains (almost) all versions of _Cleanup Catastrophe!_, as single-page HTML files.
