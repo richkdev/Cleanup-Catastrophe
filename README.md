@@ -52,16 +52,16 @@ _Cleanup Catastrophe!_ is distributed under the MIT License, meaning the game is
 - distributing the game to a larger audience, and
 - private use (e.g. used in classrooms)
 
-See [``LICENSE``](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/LICENSE) for more information.
+See [`LICENSE`](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/LICENSE) for more information.
 
 ## CONTRIBUTE
 
-Contributions for the _Cleanup Catastrophe!_ game are greatly appreciated. It helps us to see improve and develop the game to appeal to the masses. If you have a suggestion that you think would make the game better, you can either:
+Contributions to the _Cleanup Catastrophe!_ repository are greatly appreciated. It helps us to improve and develop the game to appeal to the masses. If you have a suggestion that you think would make the game better, you can either:
 
 - fork the repository and create a pull request, or
 - open an issue with the tag "improvement"
 
-See [``CODE_OF_CONDUCT.md``](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/CODE_OF_CONDUCT.md) for more information.
+See [`CODE_OF_CONDUCT.md`](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/CODE_OF_CONDUCT.md) for more information.
 
 [![contributors](https://contrib.rocks/image?repo=richkdev/Cleanup-Catastrophe)](https://github.com/richkdev/Cleanup-Catastrophe/graphs/contributors)
 
@@ -75,4 +75,4 @@ Here is a complete list that credits the original authors of the assets used in 
 - base for GLSL CRT shader by [JingShing](https://github.com/JingShing-Python/ModernGL-Shader-with-pygame)
 
 ### MUSIC
-- ["Credits"](https://soundcloud.com/richkdev/credits?in=richkdev/sets/cleanup-catastrophe-demo-ost) by [RichKDEV](https://soundcloud.com/richkdev) (me) and [rice.in.disguise](https://www.instagram.com/rice.in.disguise/)
+View the full OST here: _<https://soundcloud.com/richkdev/sets/cleanup-catastrophe-demo-ost>_
