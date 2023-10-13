@@ -33,5 +33,5 @@ Please do not issue a pull request to this branch.
   }
   window.addEventListener('load', addDarkmodeWidget);
 
-  ddocument.getElementsByClassName('darkmode-toggle')[0].textContent = '🌓';
+  document.getElementsByClassName('darkmode-toggle')[0].textContent = '🌓';
 </script>
