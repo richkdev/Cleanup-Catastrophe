@@ -32,4 +32,6 @@ Please do not issue a pull request to this branch.
     new Darkmode().showWidget();
   }
   window.addEventListener('load', addDarkmodeWidget);
+
+  document.getElementsByClassName('darkmode-toggle')[0].innerText = '🌓';
 </script>
