@@ -1,8 +1,8 @@
 # Frontend for _Cleanup Catastrophe!_ (work in progress)
 <select id="selectVer">
-  <option value="?">v.DEMO.1.0.0</option>
+  <option value="#">v.DEMO.1.0.0</option>
   <option value="?">v.ALPHA.1.0.0</option>
-  <option value="?">v.ALPHA.0.5.0</option>
+  <option value="https://raw.githack.com/richkdev/Cleanup-Catastrophe/34573e94c2472da324d80eda95a47cd9f58d6914/build/web/index.html">v.ALPHA.0.5.0</option>
 </select>
 <button onClick="changeGame();">Change versions</button>
 <iframe src="not yet" id="game" style="aspect-ratio: 1/1; height: auto; width: 25em;"></iframe>
