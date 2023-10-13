@@ -18,6 +18,7 @@ Everything else was made using Python with the pygame library, and exported usin
 ## NOTE
 Please do not issue a pull request to this branch.
 
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
 <script>
   document.getElementsByClassName('container-lg px-3 my-5 markdown-body')[0].removeChild(document.getElementsByTagName('h1')[0]);
   document.head.innerHTML += '<link rel="shortcut icon" type="image/x-icon" href="/Cleanup-Catastrophe/icon.ico">';
@@ -26,4 +27,9 @@ Please do not issue a pull request to this branch.
     var e = document.getElementById("selectVer");
     document.getElementById("game").src = e.options[e.selectedIndex].value;
   }
+  
+  function addDarkmodeWidget() {
+    new Darkmode().showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
 </script>
