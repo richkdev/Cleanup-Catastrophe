@@ -1,5 +1,4 @@
-#!/usr/bin/env pythonw
-
+import asyncio
 import pygame
 from pygame.locals import *
 from sys import exit
@@ -26,7 +25,7 @@ dt = clock.tick(30)
 
 run = False
 
-def main():
+async def main():
     run = True
 
     while run:
@@ -83,6 +82,7 @@ def main():
 #        allSprites = pygame.sprite.Group(Player, FishRod, Islands, trashGroup)
 
         pygame.display.flip()
+        await asyncio.sleep(0)
 
 def setup():
     system("cls||clear")
@@ -91,6 +91,6 @@ def setup():
     Variables.trashCollected.total = 0
     Variables.coins = 0
 
-    main()
+    asyncio.run(main())
 
 if __name__ == "__main__": setup()
