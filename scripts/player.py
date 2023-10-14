@@ -1,5 +1,4 @@
 import pygame
-from os import getcwd
 
 from .vars import Variables
 
@@ -9,8 +8,7 @@ class Player(pygame.sprite.DirtySprite):
     position.x = 600/4
     position.y = 600/6
     velocity = .1
-    rightSprite = pygame.image.load(
-        getcwd() + "\\assets\\img\\user\\player.png").convert_alpha()
+    rightSprite = pygame.image.load("assets/img/user/player.png").convert_alpha()
     rightSprite = pygame.transform.scale(
         rightSprite, (rightSprite.get_width(), rightSprite.get_height()))
     leftSprite = pygame.transform.flip(rightSprite, True, False)
@@ -27,8 +25,7 @@ class FishRod(pygame.sprite.DirtySprite):
     isFishing = False
     fishProcessComplete = False
     velocity = 10
-    currentSprite = pygame.image.load(
-        getcwd() + "\\assets\\img\\user\\fishrod.png").convert_alpha()
+    currentSprite = pygame.image.load("assets/img/user/fishrod.png").convert_alpha()
     currentSprite = pygame.transform.scale(
         currentSprite, (currentSprite.get_width(), currentSprite.get_height()))
     dirty = 1
