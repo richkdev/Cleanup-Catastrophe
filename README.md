@@ -13,7 +13,6 @@ Inspired by the vibrant colors of the SEGA Genesis home console, the game introd
 [![python-version](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org/downloads/release/python-3112)
 ![stars](https://img.shields.io/github/stars/richkdev/cleanup-catastrophe)
 ![forks](https://img.shields.io/github/forks/richkdev/cleanup-catastrophe)
-![stars](https://img.shields.io/github/stars/richkdev/cleanup-catastrophe)
 ![license](https://img.shields.io/github/license/richkdev/cleanup-catastrophe)
 ![version](https://img.shields.io/github/release/richkdev/cleanup-catastrophe)
 ![downloads](https://img.shields.io/github/downloads/richkdev/cleanup-catastrophe/latest/total)
@@ -27,7 +26,7 @@ Play as **Paul Fischer** (_Budi Sugiyono Cahyadi_), your ordinary local fisherma
 
 ![paul gets trash](https://img.itch.zone/aW1nLzExNjU3OTczLnBuZw==/original/jNcFPb.png)
 
-See the game's [itch.io page](https://fluff-studios.itch.io/cleanup-catastrophe) for more information.
+See the game's [itch.io page](https://richkdev.itch.io/cleanup-catastrophe) for more information.
 
 ## SCREENSHOTS
 
@@ -53,16 +52,16 @@ _Cleanup Catastrophe!_ is distributed under the MIT License, meaning the game is
 - distributing the game to a larger audience, and
 - private use (e.g. used in classrooms)
 
-See [``LICENSE``](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/LICENSE) for more information.
+See [`LICENSE`](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/LICENSE) for more information.
 
 ## CONTRIBUTE
 
-Contributions for the _Cleanup Catastrophe!_ game are greatly appreciated. It helps us to see improve and develop the game to appeal to the masses. If you have a suggestion that you think would make the game better, you can either:
+Contributions to the _Cleanup Catastrophe!_ repository are greatly appreciated. It helps us to improve and develop the game to appeal to the masses. If you have a suggestion that you think would make the game better, you can either:
 
 - fork the repository and create a pull request, or
 - open an issue with the tag "improvement"
 
-See [``CODE_OF_CONDUCT.md``](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/CODE_OF_CONDUCT.md) for more information.
+See [`CODE_OF_CONDUCT.md`](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/CODE_OF_CONDUCT.md) for more information.
 
 [![contributors](https://contrib.rocks/image?repo=richkdev/Cleanup-Catastrophe)](https://github.com/richkdev/Cleanup-Catastrophe/graphs/contributors)
 
@@ -84,3 +83,6 @@ Here is a complete list that credits the original authors of the assets used in 
 
 - base for ModernGL context creation by [DaFluffyPotato](https://www.youtube.com/watch?v=LFbePt8i0DI)
 - base for GLSL CRT shader by [JingShing](https://github.com/JingShing-Python/ModernGL-Shader-with-pygame)
+
+### MUSIC
+View the full OST here: _<https://soundcloud.com/richkdev/sets/cleanup-catastrophe-demo-ost>_
