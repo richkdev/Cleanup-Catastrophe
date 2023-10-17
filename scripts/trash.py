@@ -1,11 +1,9 @@
 import pygame
 from random import randint
-from os import getcwd
-
 
 class generate:
     def Sprite():
-        return getcwd() + "\\assets\\img\\trash\\trash" + str(randint(1, 3)) + ".png"
+        return "assets/img/trash/trash" + str(randint(1, 3)) + ".png"
 
     def Pos():
         return 600/randint(2, 5)
