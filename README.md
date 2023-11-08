@@ -1,4 +1,4 @@
-# Cleanup Catastrophe! [v.ALPHA.1.0.0]
+# Cleanup Catastrophe! [v.0.1.1-alpha]
 
 ![cleanup catastrophe logo](https://img.itch.zone/aW1nLzExNjgzNDU3LnBuZw==/original/Xa2%2Fhz.png)
 
