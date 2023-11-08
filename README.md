@@ -8,7 +8,6 @@
 <button onClick="changeGame();">Change versions</button>
 <iframe src="not yet" id="game" style="height: 25em; width: 100%;">Your browser does not support iframes.</iframe>
 
-<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
 <script>
   document.getElementsByClassName('container-lg px-3 my-5 markdown-body')[0].removeChild(document.getElementsByTagName('h1')[0]);
   document.head.innerHTML += '<link rel="shortcut icon" type="image/x-icon" href="/Cleanup-Catastrophe/icon.ico">';
