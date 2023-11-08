@@ -1,22 +1,12 @@
-# Frontend for _Cleanup Catastrophe!_ (work in progress)
+# Frontend for _Cleanup Catastrophe!_
+
 <select id="selectVer">
-  <option value="#">v.DEMO.1.0.0</option>
-  <option value="https://raw.githack.com/richkdev/Cleanup-Catastrophe/v.ALPHA.1.0.0/build/web/index.html">v.ALPHA.1.0.0</option>
-  <option value="https://raw.githack.com/richkdev/Cleanup-Catastrophe/v.ALPHA.0.5.0/build/web/index.html">v.ALPHA.0.5.0</option>
+  <option value="#">demo #1</option>
+  <option value="https://rawcdn.githack.com/richkdev/Cleanup-Catastrophe/4abe9cb7fbad4f0503230a72d68792ff03024907/build/web/index.html">v.0.1.1-alpha</option>
+  <option value="https://rawcdn.githack.com/richkdev/Cleanup-Catastrophe/34573e94c2472da324d80eda95a47cd9f58d6914/build/web/index.html">v.0.1.0-alpha</option>
 </select>
 <button onClick="changeGame();">Change versions</button>
-<iframe src="not yet" id="game" style="aspect-ratio: 1/1; height: auto; width: 25em;"></iframe>
-
-## DESCRIPTION
-Contains (almost) all versions of _Cleanup Catastrophe!_, as single-page HTML files.
-
-## VERSIONS
-Version `v.DEMO.1.0.0` was made using Scratch 3.0, and exported using Turbowarp.
-
-Everything else was made using Python with the pygame library, and exported using pygbag.
-
-## NOTE
-Please do not issue a pull request to this branch.
+<iframe src="not yet" id="game" style="height: 25em; width: 100%;">Your browser does not support iframes.</iframe>
 
 <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
 <script>
@@ -27,11 +17,4 @@ Please do not issue a pull request to this branch.
     var e = document.getElementById("selectVer");
     document.getElementById("game").src = e.options[e.selectedIndex].value;
   }
-  
-  function addDarkmodeWidget() {
-    new Darkmode().showWidget();
-  }
-  window.addEventListener('load', addDarkmodeWidget);
-
-  document.getElementsByClassName('darkmode-toggle')[0].textContent = '🌓';
 </script>
