@@ -45,14 +45,13 @@ See the game's [itch.io page](https://richkdev.itch.io/cleanup-catastrophe) for 
 
 ## LICENSE
 
-_Cleanup Catastrophe!_ is distributed under the MIT License, meaning the game is available for:
+_Cleanup Catastrophe!_ is licensed under the _Creative Commons Attribution-NonCommercial 4.0 International_, meaning the game is available for:
 
-- commercial use,
 - making fanmade mods/ports of the game,
-- distributing the game to a larger audience, and
-- private use (e.g. used in classrooms)
+- distributing the game to a larger audience non-commercially, and
+- private use (e.g. in classrooms)
 
-See [`LICENSE`](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/LICENSE) for more information.
+See [`LICENSE`](https://github.com/richkdev/Cleanup-Catastrophe/blob/64a222401fc490bee3d4767c457bae497a1d3274/LICENSE) for more information.
 
 ## CONTRIBUTE
 
@@ -71,18 +70,9 @@ Here is a complete list that credits the original authors of the assets used in 
 
 ### MUSIC
 
-- ["Starlight Zone" from _Sonic the Hedgehog_ (1991)](https://www.youtube.com/watch?v=0rwH_2Desp0) by Masato Nakamura
-- ["Mitula" from _Shining Force II_ (1993)](https://www.youtube.com/watch?v=xDfPFoYlFMY) by Mototaki Takenouchi
-
-### FONTS
-
-- "Andes" from <https://www.dafont.com/andes.font>
-- "P22 DeStijl Tall Regular" from <https://fontsgeek.com/fonts/P22-DeStijl-Tall-Regular>
+View the full OST here: _<https://soundcloud.com/richkdev/sets/cleanup-catastrophe-demo-ost>_
 
 ### CODE
 
 - base for ModernGL context creation by [DaFluffyPotato](https://www.youtube.com/watch?v=LFbePt8i0DI)
 - base for GLSL CRT shader by [JingShing](https://github.com/JingShing-Python/ModernGL-Shader-with-pygame)
-
-### MUSIC
-View the full OST here: _<https://soundcloud.com/richkdev/sets/cleanup-catastrophe-demo-ost>_
