@@ -4,12 +4,17 @@ import asyncio
 from pygame.locals import * # type: ignore
 import pygame
 
+from os import chdir, path, getcwd
+chdir(path.dirname(path.abspath(__file__)))
+print(__file__, getcwd())
+
+
 game_ver = "v.ALPHA.1.0.0"
 pygame.display.set_caption("CLEANUP CATASTROPHE! [" + game_ver + "]")
 
 
 width = height = 300
-flags = SHOWN | RESIZABLE | SCALED | HWSURFACE | DOUBLEBUF #| OPENGL | FULLSCREEN
+flags = SHOWN | RESIZABLE | SCALED | HWSURFACE | DOUBLEBUF | OPENGL #| FULLSCREEN
 
 screen = pygame.display.set_mode((width, height), flags, vsync=1)
 screen.fill((0, 0, 0))
@@ -20,20 +25,22 @@ from scripts.player import Player, FishRod, fish
 from scripts.background import Background, Islands
 from scripts.trash import Trash
 
-icon = pygame.image.load("icon.ico")
+icon = pygame.image.load(getcwd() + "\\icon.ico")
 pygame.display.set_icon(icon)
 
 dt = pygame.time.Clock().tick(30)
 
 run = False
+# global t # for weird.glsl
 
-# from scripts.discordRPC import checkRPC
-# from scripts.GLcontext import *
+from scripts.discordRPC import checkRPC
+from scripts.GLcontext import *
 
 async def main():
     print(pygame.display.Info())
 
     run = True
+    # t = 0 # for weird.glsl
 
     while run:
         key = pygame.key.get_pressed()
@@ -82,6 +89,14 @@ async def main():
                 run = False
                 raise SystemExit
 
+        # t += 1 # for weird.glsl
+
+        frame_tex = surf_to_texture(screen)
+        frame_tex.use(0)
+        program['tex'] = 0
+        # program['time'] = t # for weird.glsl
+        render_object.render(mode=moderngl.TRIANGLE_STRIP) # type: ignore
+
         # allSprites = pygame.sprite.Group()
         # allSprites.add(Player, FishRod, Islands, Trash)
         # screen.blit(allSprites)
@@ -97,8 +112,11 @@ async def main():
         screen.blit(FishRod.currentSprite,
                     (FishRod.position.x, FishRod.position.y))
 
+        frame_tex.release()
         pygame.display.flip()
         await asyncio.sleep(0)
+
+        ctx.clear(0) # clear framebuffer
 
 
 def setup():
@@ -107,8 +125,8 @@ def setup():
     Variables.trashCollected.total = 0
     Variables.coins = 0
 
+    checkRPC()
     asyncio.run(main())
 
 
-if __name__ == "__main__":
-    setup()
+setup()
