@@ -45,8 +45,6 @@ _Cleanup Catastrophe!_ is licensed under the _Creative Commons Attribution-NonCo
 
 See [`LICENSE`](/LICENSE) for more information.
 
-_Cleanup Catastrophe!_ by RichKDEV is licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""></a></p>
-
 ## CONTRIBUTE
 
 Contributions to the _Cleanup Catastrophe!_ repository are greatly appreciated. It helps us to improve and develop the game to appeal to the masses. If you have a suggestion that you think would make the game better, you can either:
