@@ -1,12 +1,10 @@
-from os import getcwd
-
+from scripts.settings import vertexShader, fragmentShader, newPath
 from array import array
 
 import moderngl
-
 ctx = moderngl.create_context()
 
-print("ModernGL: ACTIVATED")
+print("ModernGL context found")
 
 quad_buffer = ctx.buffer(data=array('f', [
     -1.0, 1.0, 0.0, 0.0,  # topleft
@@ -15,9 +13,8 @@ quad_buffer = ctx.buffer(data=array('f', [
     1.0, -1.0, 1.0, 1.0,  # bottomright
 ]))
 
-
-program = ctx.program(vertex_shader=open(getcwd() + "\\assets\\shaders\\vertex_shaders\\normal.glsl").read(),
-                      fragment_shader=open(getcwd() + "\\assets\\shaders\\fragment_shaders\\normal.glsl").read())
+program = ctx.program(vertex_shader=open(newPath(vertexShader)).read(),
+                      fragment_shader=open(newPath(fragmentShader)).read())
 render_object = ctx.vertex_array(
     program, [(quad_buffer, '2f 2f', 'vert', 'texcoord')])
 
@@ -25,6 +22,6 @@ render_object = ctx.vertex_array(
 def surf_to_texture(surf):
     tex = ctx.texture(surf.get_size(), 4)
     tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
-    tex.swizzle = 'BGRA'  # fix for crt shaders!!
+    tex.swizzle = "BGRA"
     tex.write(surf.get_view('1'))
     return tex

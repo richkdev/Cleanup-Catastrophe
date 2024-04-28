@@ -1,24 +1,21 @@
 import pygame
 from random import randint
 
-class generate:
-    def Sprite():
-        return "assets/img/trash/trash" + str(randint(1, 3)) + ".png"
-
-    def Pos():
-        return 600/randint(2, 5)
+from scripts.settings import *
 
 
 class Trash(pygame.sprite.DirtySprite):
-    position = pygame.Vector2()
-    position.x = generate.Pos()
-    position.y = 600*.8
-    rightSprite = pygame.image.load(generate.Sprite()).convert_alpha()
-    rightSprite = pygame.transform.scale(
-        rightSprite, (rightSprite.get_width(), rightSprite.get_height()))
-    leftSprite = pygame.transform.flip(rightSprite, True, False)
-    currentSprite = rightSprite
-    dirty = 1
-    visible = 1
-    rect = pygame.rect.Rect(
-        position.x, position.y, currentSprite.get_width(), currentSprite.get_height())
+    def __init__(self):
+        pygame.sprite.DirtySprite.__init__(self)
+
+        self.image = pygame.image.load(
+            newPath("assets/img/trash/trash" + str(randint(1, 3)) + ".png")).convert_alpha()
+        self.image = pygame.transform.scale(
+            self.image, (self.image.get_width(), self.image.get_height()))
+
+        self.rect = self.image.get_rect()
+        self.rect.x = randint(xBorder*2, WIDTH-xBorder*2)
+        self.rect.y = randint(HEIGHT/2, HEIGHT-yBorder*2)
+
+        self.dirty = 1
+        self.visible = 1
