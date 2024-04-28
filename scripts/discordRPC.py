@@ -1,30 +1,39 @@
-# turn into a seperate thread, which tries to connect every few seconds
-
-from pypresence import Presence
-from time import time
+from time import time, sleep
+from sys import platform
 
 
-def checkRPC():
-    t = int(time())
+def discordRPC():
+    connected = False
+    t = time()
+    delay = 2
 
-    try:
-        RPC = Presence("1125682987552481311")
+    if platform != 'emscripten':
+        from pypresence import Presence
 
-        RPC.connect()
+        while connected != True:
+            try:
+                RPC = Presence("1125682987552481311")
+                RPC.connect()
+                RPC.update(
+                    state="Clean the ocean by fishing out all that nasty trash!",
+                    details=open("VERSION").read(),
+                    large_image="game",
+                    buttons=[{
+                        "label": "Play the demo!",
+                        "url": "https://richkdev.itch.io/cleanup-catastrophe-demo"
+                    }],
+                    start=t
+                )
+            except Exception as e:
+                print(type(e).__name__)
+                if RuntimeError:
+                    break
+            else:
+                print("Discord RPC found")
+                connected = True
+                break
 
-        RPC.update(
-            state="Clean the ocean by fishing out all that nasty trash!",
-            details="v.ALPHA.1.0.0",
-            large_image="game",
-            buttons=[{
-                "label": "Download",
-                "url": "https://richkdev.itch.io/cleanup-catastrophe"
-            }],
-            start=t
-        )
-
-        print("Discord RPC: ACTIVATED")
-
-    except Exception as e:
-        print("Discord RPC:", e)
-        pass
+            delay += 5
+            sleep(delay)
+    else:
+        print("Discord RPC not found")
