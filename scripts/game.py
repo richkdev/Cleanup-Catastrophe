@@ -13,7 +13,7 @@ flags = SHOWN | RESIZABLE | SCALED | HWSURFACE | DOUBLEBUF #| FULLSCREEN
 if not emscripten:
     flags += OPENGLBLIT
     screen = pygame.display.set_mode((WIDTH, HEIGHT), flags, depth=1, display=0, vsync=1)
-    from scripts.GLcontext import program, surf_to_texture, render_object, ctx
+    from scripts.GLcontext import surf_to_texture, render_object, ctx
 else:
     screen = pygame.display.set_mode((WIDTH, HEIGHT), flags, depth=1, display=0, vsync=1)
 
@@ -61,7 +61,6 @@ class Game():
             if not emscripten:
                 frame_tex = surf_to_texture(screen)
                 frame_tex.use(0)
-                program["tex"] = 0
                 render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
                 frame_tex.release()
@@ -82,21 +81,24 @@ class Game():
                         player.rect.x += player.velocity*dt
                         islands.rect.x -= islands.velocity*dt
                     elif key[K_DOWN]:
-                        visibleSprites.add(rodGroup)
                         rod.rect.x = player.rect.right-8
                         rod.rect.y = player.rect.top
                         print("fishing!")
                         rod.isFishing = True
+                        visibleSprites.add(rod)
                 case True:
                     if pygame.sprite.groupcollide(rodGroup, trashSprites, False, True):
                         self.score += 1
                         rod.isFishing = False
+                        visibleSprites.remove(rod)
                     elif rod.rect.y >= (HEIGHT - rod.rect.height - yBorder):
                         rod.rect.y = (HEIGHT - rod.rect.height - yBorder)
                         rod.isFishing = False
+                        visibleSprites.remove(rod)
                     else:
                         rod.rect.y += rod.velocity*dt
-                        pygame.draw.line(screen, (123, 63, 0), (rod.rect.x + rod.rect.width/2, player.rect.y), (rod.rect.x + rod.rect.width/2, rod.rect.y), 1)
+                        pygame.draw.line(screen, (123, 63, 0), (rod.rect.x + rod.rect.width/2,
+                                         player.rect.y), (rod.rect.x + rod.rect.width/2, rod.rect.y), 1)
 
             for event in pygame.event.get():
                 if event.type == QUIT:

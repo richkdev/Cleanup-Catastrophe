@@ -63,4 +63,4 @@ Here is a complete list that credits the original authors of the assets used in 
 ### CODE
 
 - base for ModernGL context detection by [DaFluffyPotato](https://www.youtube.com/watch?v=LFbePt8i0DI)
-- GLSL CRT shader by [JingShing](https://github.com/JingShing-Python/ModernGL-Shader-with-pygame)
+- GLSL CRT shader by [Blubberquark](https://blubberquark.tumblr.com/post/185013752945/using-moderngl-for-post-processing-shaders-with)
