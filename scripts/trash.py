@@ -9,7 +9,7 @@ class Trash(pygame.sprite.DirtySprite):
         pygame.sprite.DirtySprite.__init__(self)
 
         self.image = pygame.image.load(
-            newPath("assets/img/trash/trash" + str(randint(1, 3)) + ".png")).convert_alpha()
+            newPath(f"assets/img/trash/trash{randint(1, 3)}.png")).convert_alpha()
         self.image = pygame.transform.scale(
             self.image, (self.image.get_width(), self.image.get_height()))
 

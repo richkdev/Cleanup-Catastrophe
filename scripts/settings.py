@@ -2,7 +2,7 @@ import json, sys
 from os import path
 from pygame.time import Clock
 
-version = open('VERSION').read()
+version = open("VERSION").read()
 
 settings = json.loads(open("settings.json").read())
 
@@ -24,10 +24,8 @@ clock = Clock()
 from sys import platform
 emscripten = platform == "emscripten" # detect if wasm/emscripten
 
-def newPath(relPath: str): # detect if pyinstaller exe
-    # source: https://pyinstaller.org/en/stable/runtime-information.html
-    if getattr(sys, 'frozen', False):
-        basePath = sys._MEIPASS # pyinstaller temp folder
+def newPath(relPath: str): # https://pyinstaller.org/en/stable/runtime-information.html
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        return path.join(sys._MEIPASS, relPath) # pyinstaller temp folder
     else:
-        basePath = path.abspath(".")
-    return path.join(basePath, relPath)
+        return path.join(path.abspath("."), relPath)

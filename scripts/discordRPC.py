@@ -22,7 +22,7 @@ def discordRPC():
                         "label": "Play the demo!",
                         "url": "https://richkdev.itch.io/cleanup-catastrophe-demo"
                     }],
-                    start=t
+                    start=int(t)
                 )
             except Exception as e:
                 print(type(e).__name__)
