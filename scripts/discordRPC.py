@@ -8,7 +8,10 @@ def discordRPC():
     delay = 2
 
     if platform != 'emscripten':
-        from pypresence import Presence
+        try:
+            from pypresence import Presence
+        except ImportError:
+            return
 
         while connected != True:
             try:
