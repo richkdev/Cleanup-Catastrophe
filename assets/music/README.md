@@ -1,10 +1,8 @@
 # MUSIC
 
-made with beepbox and love!
-
 ## VOLUME 0 (20 seconds edition)
 
-_The start of something new._
+made with beepbox and love!
 
 ### cleanup-time
 
@@ -28,12 +26,12 @@ _<https://www.beepbox.co/player/#song=9n31s6k0l00e05t2ma7g0fj07r1i0o412T0v0u00f0
 
 ## VOLUME 1 (demo ost)
 
-volume zero (remastered?) + new tracks
+back with old and the new!
 
 ### bliss
 
-_<https://www.beepbox.co/#9n31s6k0l00e03t1ga7g0gj07r1i0o432T0v0u00f0qM000d01w3h0E0T0v0u00f0q00d06w4h0E0T0v1u00f10s4q00d00w2h0E0T2v3u15f10w4qw02d03w0E0b4zhg000000018i400000000i4x000000004h4g00000000p22WFILwCzMkR-3AkXmjkhM5D0mjJpdmPCm4t5fdpdh7rpwmtB4vbmkRklmOarz_O-CzUlkQRQQSSTkQFIL_01sT1YFkcKhhhcL1noOXKUORPhZlhPbNdkjmlleq_GGcL0HLoCG9HaGJGGcIaq_Fhhh0Qkkpdhhhphhg1jak5G5F5F5Fd6wmAmAmAmAQg0>_
+_<https://www.beepbox.co/player/#song=9n31s6k0l00e06t1ga7g0gj07r1i0o432T0v0u00f0qM000d01w3h0E0T0v0u00f0q00d06w4h0E0T0v1u00f10s4q00d00w2h0E0T2v3u15f10w4qw02d03w0E0b4zhms00000018icO0000000i4x8g0000004h4h00000000p23bFILwCzMkR-3AkXmjkhM5D0mjJpdmPCm4t5fdpdh7rpwmtB4vbmkRklmOarz_O-CzUlkQRQQSSTkQFIL_0arw-NBXeRB4uRAVS9Y15WVK3ViEpsyyypu2KNBTtNBTd7Rl7cL4Rhdpllll6L1nuhdkjmllllhHwFH-B5543hhhAR555B5505cFgmEmAmAmAQq1qhqhqhqjh00>_
 
-### timer (WIP)
+### tutor
 
-times up!
+yuhhh

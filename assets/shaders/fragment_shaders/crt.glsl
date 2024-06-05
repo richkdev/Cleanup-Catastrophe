@@ -7,8 +7,8 @@ out vec4 color;
 in vec2 v_text;
 
 void main() {
-  float flatness = 2.7; // 2.7 = crt, 10.0 = flat
-  float distance = 1.0; // 1.0 -> 1.5 make distance from screen
+  float flatness = 3.0; // 2.7 = crt, 10.0 = flatscreen
+  float distance = 1.05; // 1.0 -> 1.5, distance from screen
 
   vec2 center = vec2(0.5, 0.5);
   vec2 off_center = v_text - center;

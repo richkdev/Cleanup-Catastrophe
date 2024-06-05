@@ -1,4 +1,4 @@
-# Cleanup Catastrophe! [v.0.2.0-alpha]
+# Cleanup Catastrophe! [v.0.2.1-beta]
 
 ![cleanup catastrophe logo](/assets/img/menu/logo.png)
 
@@ -24,11 +24,18 @@ Play as **Paul Fischer**, your average local Indonesian fisherman, whose life ha
 
 ## DEPENDENCIES
 
-- Python 3.8+
+### REQUIRED
+
+- Python 3.11+
 - pygame 2.5+
+- moderngl 5.10+ (only for native)
 - pypresence 4.3+ (only for native)
-- pyinstaller 6.6+ (required for building to native)
-- pygbag 0.8+ (required for building to web)
+- nest-asyncio 1.6+ (for nesting event loop)
+
+### FOR BUILDING
+
+- pyinstaller 5.13+ (required for building to native, does not support cross-compiling)
+- pygbag 0.9+ (required for building to web)
 
 ## INSTALLATION
 
@@ -60,7 +67,6 @@ See [`CODE_OF_CONDUCT.md`](https://github.com/richkdev/cleanup-catastrophe/blob/
 
 Here is a complete list that credits the original authors of the assets used in the game.
 
-### CODE
-
 - base for ModernGL context detection by [DaFluffyPotato](https://www.youtube.com/watch?v=LFbePt8i0DI)
 - GLSL CRT shader by [Blubberquark](https://blubberquark.tumblr.com/post/185013752945/using-moderngl-for-post-processing-shaders-with)
+- Sonic 1 Genesis/Megadrive font licensed under Creative Commons Attribution Share Alike

@@ -1,31 +1,50 @@
-import json, sys
+import pygame
+from pygame.locals import *  # type: ignore
+
+import sys
+from json import loads
 from os import path
-from pygame.time import Clock
 
-version = open("VERSION").read()
+pygame.init()
 
-settings = json.loads(open("settings.json").read())
 
-WIDTH = settings["width"]
-HEIGHT = settings["height"]
-
-xBorder = WIDTH*0.02
-yBorder = HEIGHT*0.02
-
-FPS = settings["fps"]
-
-fragmentShader = settings["fragmentShader"]
-vertexShader = settings["vertexShader"]
-
-saveFileDirectory = settings["saveFileDirectory"]
-
-clock = Clock()
-
-from sys import platform
-emscripten = platform == "emscripten" # detect if wasm/emscripten
-
-def newPath(relPath: str): # https://pyinstaller.org/en/stable/runtime-information.html
-    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        return path.join(sys._MEIPASS, relPath) # pyinstaller temp folder
+def newPath(relPath: str):
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        return path.join(sys._MEIPASS, relPath) # type: ignore -> pyinstaller temp folder
     else:
-        return path.join(path.abspath("."), relPath)
+        return path.join(path.abspath('.'), relPath)
+
+
+version = open(newPath("VERSION"), "r").read()
+settings = loads(open(newPath("settings.json")).read())
+
+emscripten = sys.platform == 'emscripten'  # detect if wasm/emscripten context
+
+WIDTH = 320
+HEIGHT = 224
+
+xBorder = int(WIDTH*0.02)
+yBorder = int(HEIGHT*0.02)
+
+FPS = settings['maxFPS']
+volume = settings['volume']/100
+
+fragmentShader = newPath(settings['fragmentShader'])
+vertexShader = newPath(settings['vertexShader'])
+
+mapDirectory = newPath(settings['mapDirectory'])
+saveFileDirectory = newPath(settings['saveFileDirectory'])
+logDirectory = newPath(settings['logDirectory'])
+
+clock = pygame.time.Clock()
+
+RED = (255, 0, 0, 255)
+YELLOW = (255, 255, 0, 255)
+GREEN = (0, 255, 0, 255)
+BLUE = (0, 0, 255, 255)
+WHITE = (255, 255, 255, 255)
+BLACK = (0, 0, 0, 255)
+TRANSPARENT = (0, 0, 0, 0)
+
+bigFont = pygame.font.Font(newPath("assets/fonts/genesis.ttf"), 20)
+smallFont = pygame.font.SysFont("helvetica", 15)
