@@ -2,7 +2,10 @@ from scripts.settings import version, emscripten
 from time import time
 
 if not emscripten:
-    from pypresence import Presence
+    try:
+        from pypresence import Presence
+    except ImportError:
+        print("Couldn't import pypresence for Discord RPC.")
 
 
 class Discord(object):
