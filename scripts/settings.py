@@ -4,6 +4,7 @@ from pygame.locals import *  # type: ignore
 import sys
 from json import loads
 from os import path
+from datetime import datetime
 
 pygame.init()
 
@@ -18,7 +19,7 @@ def newPath(relPath: str):
 version = open(newPath("VERSION"), "r").read()
 settings = loads(open(newPath("settings.json")).read())
 
-emscripten = sys.platform == 'emscripten'  # detect if wasm/emscripten context
+emscripten = (sys.platform == 'emscripten') and OPENGL  # detect if wasm/emscripten context
 
 WIDTH = 320
 HEIGHT = 224
@@ -38,6 +39,7 @@ logDirectory = newPath(settings['logDirectory'])
 
 clock = pygame.time.Clock()
 
+DARKRED = (100, 0, 0, 255)
 RED = (255, 0, 0, 255)
 YELLOW = (255, 255, 0, 255)
 GREEN = (0, 255, 0, 255)

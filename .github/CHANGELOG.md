@@ -2,15 +2,20 @@
 
 ## v.0.2.1 - a heck of catastrophe
 
-- fixed `RuntimeError` with discord rpc thread, had to use nest-asyncio _<https://pypi.org/project/nest-asyncio>_ and turn it into asyncio process that sleeps for 10 seconds then updates
-- added state management with statemachine (originally attempted to make my own state machine, regretted it after)
-- fixed a problem, since moderngl stuffs needs to refer to a context, i turn it into a main thread
+### details
 
-**NOTE 1:** WE HAVE ANOTHER PROGRAMMER!!! SAY HELLO TO @TheRealRyanHajj and @tea-enjoyer11
+- fixed `RuntimeError` with discord rpc ~~thread~~ process, had to use nest-asyncio _<https://pypi.org/project/nest-asyncio>_ and turn it into asyncio process that sleeps for 10 seconds then updates
+- added state management with my own finite state-machine
+- fixed a problem, since moderngl stuffs needs to refer to a context, i turn it into a ~~main thread~~ async process
 
-**NOTE 2:** might pump out demo build for sage 2024? only if i manage to make finish most of stuff in the new todo
+### notes
+
+1. SAY HELLO TO @TheRealRyanHajj AND @tea-enjoyer11 !!! this thing is gonna be real and not just a side project of mine!!
+2. might pump out demo build for sage 2024? only if i manage to make finish most of stuff in the new todo
 
 ## v.0.2.0 - the extra awesome update
+
+### details
 
 - added multithreading so processes can work in parallel
 - restructured files (again)
@@ -20,11 +25,15 @@
 - added emscripten detection for web building
 - added `_MEIPASS` detection for native building
 
-**NOTE 1:** made a proof-of-concept for the 20 seconds jam 2023: _<https://richkdev.itch.io/cleanup-catastrophe-proto>_
+### notes
+
+made a proof-of-concept for the 20 seconds jam 2023: _<https://richkdev.itch.io/cleanup-catastrophe-proto>_
 
 **NOTE 2:** porting pygame to wasm is tiring, might scrap it next update
 
 ## v.0.1.1 - the awesome update_
+
+### details
 
 - restructured files + added new files
 - came up with a sick new logo
@@ -37,7 +46,9 @@
 - tried to export using pyinstaller, it kind of works (will fix spec file later)
 - removed herobrine
 
-**NOTE:** i should name the next update as "the extra awesome update"
+### notes
+
+i should name the next update as "the extra awesome update"
 
 ## v.0.1.0 - yes
 

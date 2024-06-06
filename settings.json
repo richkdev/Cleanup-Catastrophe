@@ -1,5 +1,5 @@
 {
-    "maxFPS": 40,
+    "maxFPS": 30,
     "volume": 50,
     "vertexShader": "assets/shaders/vertex_shaders/crt.glsl",
     "fragmentShader": "assets/shaders/fragment_shaders/crt.glsl",

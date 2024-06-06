@@ -1,8 +1,7 @@
 from scripts.settings import *
 import pygame
 
-# Maybe make this class completly static, so you can call SoundManager.play(...) from everywhere.
-# by hulah
+# "Maybe make this class completly static, so you can call SoundManager.play(...) from everywhere." -hulah, 2024
 
 class SoundManager:
     def __init__(self) -> None:

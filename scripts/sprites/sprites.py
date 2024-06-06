@@ -26,12 +26,12 @@ class Rod(Sprite):
 
 
 class Trash(Sprite):
-    def __init__(self, type: int = 0, coords: tuple[int, int] = (0, 0)):
+    def __init__(self, type: int = 0, coords: tuple[int, int] = (0, 0), offset: int = 10):
         self.trashType = ['trash1', 'trash2', 'trash3', 'bomb'][type]
 
         super().__init__(f"assets/img/trash/{self.trashType}.png")
 
-        self.rect.x, self.rect.y = coords[0] + randint(xBorder, xBorder*3), coords[1] + randint(yBorder, yBorder*3)
+        self.rect.x, self.rect.y = coords[0] + randint(offset/2, offset), coords[1] + randint(offset/2, offset)
 
         self.explosive = 'bomb' in self.trashType
 
@@ -46,7 +46,7 @@ class MenuLogo(Sprite):
         self.image = self.old_image
 
         self.rect = self.image.get_rect()
-        
+
         self.old_x = (WIDTH-self.rect.width)/2
         self.old_y = (HEIGHT-self.rect.height)/2
 
@@ -54,30 +54,15 @@ class MenuLogo(Sprite):
         self.rect.y = self.old_y
 
 
-class Background(pygame.sprite.DirtySprite):
+class Background(Sprite):
     def __init__(self):
-        super().__init__()
-
-        self.image = pygame.image.load(
-            "assets/img/bg/ocean.png").convert_alpha()
-        self.image = pygame.transform.scale(
-            self.image, (WIDTH, HEIGHT))
-
-        self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 0
+        super().__init__("assets/img/bg/ocean.png")
 
 
-class Islands(pygame.sprite.DirtySprite):
+class Islands(Sprite):
     def __init__(self):
-        super().__init__()
+        super().__init__("assets/img/bg/islands.png")
 
-        self.image = pygame.image.load(
-            "assets/img/bg/islands.png").convert_alpha()
-        self.image = pygame.transform.scale(
-            self.image, (self.image.get_width(), self.image.get_height()))
-
-        self.rect = self.image.get_rect()
         self.rect.x = (WIDTH-self.rect.width)/2
         self.rect.y = 60
 

@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 
 from scripts.settings import *
 
@@ -19,6 +20,7 @@ class Sprite(pygame.sprite.DirtySprite):
 
         self.visible = 1
         self.dirty = 1
+        self._layer = 1
 
         print(f"Loaded {type(self).__name__} sprite")
 
@@ -40,13 +42,17 @@ class Text(pygame.sprite.DirtySprite):
         self.image = self.font.render(self.text, False, self.color, None)
 
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = coords[0], coords[1]
+        self.old_x, self.old_y = coords[0], coords[1]
+        self.rect.x, self.rect.y = self.old_x, self.old_y
 
     def update(self, key, dt):
         self.image = self.font.render(self.text, False, self.color, None)
 
     def displace(self, coords: tuple[int, int] = (0, 0)):
         self.rect.x, self.rect.y = coords[0], coords[1]
+
+    def shake(self, seed: int = 2):
+        self.rect.x, self.rect.y = self.old_x + randint(1, seed), self.old_y + randint(1, seed)
 
 
 def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: pygame.surface.Surface, lineSpacing: int = -2): # modified version of https://www.pygame.org/wiki/TextWrap

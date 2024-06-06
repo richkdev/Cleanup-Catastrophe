@@ -50,10 +50,7 @@ class Catastrophe(State):
         for row in range(len(spawn_map)):
             for col in range(len(spawn_map[0])):
                 if spawn_map[row][col] != 4:
-                    self.trashSprites.add(Trash(spawn_map[row][col], (
-                        int(row*30 + xBorder*5),
-                        int(col*30 + HEIGHT/2 + yBorder*4)
-                    )))
+                    self.trashSprites.add(Trash(spawn_map[row][col], ((row*30 + xBorder*5), (col*30 + HEIGHT/2)), xBorder*3))
 
         self.sprites.add(
             self.background,
@@ -77,9 +74,10 @@ class Catastrophe(State):
         super().update()
 
         if self.score <= 0:
-            self.textDisplay.color = YELLOW
+            self.textDisplay.color = DARKRED
+            self.textDisplay.shake()
         else:
-            self.textDisplay.color = WHITE
+            self.textDisplay.color = YELLOW
 
         self.textDisplay.text = f"SCORE: {self.score}"
 
