@@ -1,6 +1,6 @@
 # Cleanup Catastrophe! [v.0.2.1-beta]
 
-![cleanup catastrophe logo](/assets/img/menu/logo.png)
+![cleanup catastrophe logo](/assets/img/ui/logo.png)
 
 ## ABOUT
 
@@ -44,11 +44,7 @@ Play as **Paul Fischer**, your average local Indonesian fisherman, whose life ha
 
 ## LICENSE
 
-_Cleanup Catastrophe!_ is licensed under the _Creative Commons Attribution-NonCommercial 4.0 International_, meaning the game is available for people to share and adapt, under the following terms:
-
-- Attribution: You must give appropriate credit , provide a link to the license, and indicate if changes were made . You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-- NonCommercial: You may not use the material for commercial purposes .
-- No additional restrictions: You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+_Cleanup Catastrophe!_ is licensed under the _GNU General Public License v3.0_.
 
 See [`LICENSE`](/LICENSE) for more information.
 
