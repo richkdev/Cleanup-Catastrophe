@@ -7,6 +7,8 @@ from scripts.filehandling import *
 from scripts.states.basestate import State
 from scripts.sprites.sprites import *
 
+from scripts.sound import SoundManager
+
 
 class Splash(State):
     def __init__(self, game):
@@ -21,15 +23,13 @@ class Splash(State):
             drawText(text=self.text, color=WHITE, font=smallFont, screen=self.screen)
         )
 
-        pygame.mixer.music.load(newPath("assets/music/cleanup-time.wav"))
-        pygame.mixer.music.set_volume(volume)
-        pygame.mixer.music.play(-1)
+        self.game.sound_manager.play("cleanup-time")
 
     def update(self):
         super().update()
 
         if self.key[K_RETURN]:
-            self.game.state = Catastrophe(self)
+            self.game.state = Catastrophe(self.game)
 
 
 class Catastrophe(State):
@@ -62,15 +62,6 @@ class Catastrophe(State):
             self.rod
         )
 
-        self.getTrash = pygame.mixer.Sound(newPath("assets/sfx/getTrash.wav"))
-        self.getTrash.set_volume(volume)
-
-        self.noTrash = pygame.mixer.Sound(newPath("assets/sfx/noTrash.wav"))
-        self.noTrash.set_volume(volume)
-
-        self.explode = pygame.mixer.Sound(newPath("assets/sfx/explode.wav"))
-        self.explode.set_volume(volume)
-
     def update(self):
         super().update()
 
@@ -83,7 +74,7 @@ class Catastrophe(State):
         self.textDisplay.text = f"SCORE: {self.score}"
 
         if (not any(isinstance(sprite, Trash) and not sprite.explosive for sprite in self.trashSprites) or self.score < 0):
-            self.game.state = Splash(self)
+            self.game.state = Splash(self.game)
 
         match self.rod.isFishing:
             case False:
@@ -109,10 +100,12 @@ class Catastrophe(State):
                         match collided.explosive:
                             case True:
                                 self.score -= 1
-                                self.explode.play()
+                                # self.explode.play()
+                                self.game.sound_manager.play("explode")
                             case False:
                                 self.score += 1
-                                self.getTrash.play()
+                                # self.getTrash.play()
+                                self.game.sound_manager.play("getTrash")
 
                         print(self.score)
                         collided.kill()
@@ -120,7 +113,8 @@ class Catastrophe(State):
 
                 if self.rod.rect.y >= (HEIGHT - self.rod.rect.height - yBorder):
                     self.rod.isFishing = False
-                    self.noTrash.play()
+                    # self.noTrash.play()
+                    self.game.sound_manager.play("noTrash")
                 else:
                     self.rod.rect.y += self.rod.velocity * self.dt
                     pygame.draw.line(self.screen, (123, 63, 0),
