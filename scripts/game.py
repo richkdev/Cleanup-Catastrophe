@@ -1,6 +1,7 @@
 import pygame
 import asyncio
 from scripts.settings import *
+from scripts.logging import log, init_log
 
 if not emscripten:
     from scripts.discord import discord
@@ -10,7 +11,7 @@ from scripts.states.states import *
 pygame.mixer.pre_init(frequency=44100, size=16, channels=1, buffer=512)
 
 if emscripten:
-    pygame.mixer.SoundPatch() # type: ignore
+    pygame.mixer.SoundPatch()  # type: ignore
 
 
 class Game(object):
@@ -22,9 +23,12 @@ class Game(object):
             self.ctx = ctx
             self.surf_to_texture = surf_to_texture
             self.render_object = render_object
+
+            init_log()
         else:
             self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
+        log(datetime.now(), "test_log", [1, 2, 3, 4, "test", "another one", {1: "a", 2: "b", 3: ...}])  # this is just a test log for demonstration purposes
         print(pygame.display.Info(), pygame.display.get_window_size())
 
         pygame.display.set_caption(f"Cleanup Catastrophe! {version}")
@@ -57,7 +61,7 @@ class Game(object):
         if not emscripten:
             frame_tex = self.surf_to_texture(self.screen)
             frame_tex.use(0)
-            self.render_object.render(mode=0x0005) # aka moderngl.TRIANGLE_STRIP
+            self.render_object.render(mode=0x0005)  # aka moderngl.TRIANGLE_STRIP
             frame_tex.release()
             pygame.display.flip()
             self.ctx.clear(0)

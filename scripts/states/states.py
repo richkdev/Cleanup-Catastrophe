@@ -7,6 +7,7 @@ from scripts.filehandling import *
 from scripts.states.basestate import State
 from scripts.sprites.sprites import *
 
+
 class Splash(State):
     def __init__(self, game):
         super().__init__(game)
@@ -50,7 +51,7 @@ class Catastrophe(State):
         for row in range(len(spawn_map)):
             for col in range(len(spawn_map[0])):
                 if spawn_map[row][col] != 4:
-                    self.trashSprites.add(Trash(spawn_map[row][col], ((row*30 + xBorder*5), (col*30 + HEIGHT/2)), xBorder*3))
+                    self.trashSprites.add(Trash(spawn_map[row][col], ((row * 30 + xBorder * 5), (col * 30 + HEIGHT / 2)), xBorder * 3))
 
         self.sprites.add(
             self.background,
@@ -95,8 +96,8 @@ class Catastrophe(State):
                     self.islands.rect.x -= self.islands.velocity * self.dt
 
                 if self.key[K_DOWN]:
-                    self.rod.rect.x = self.player.rect.right-8
-                    self.rod.rect.y = self.player.rect.top+5
+                    self.rod.rect.x = self.player.rect.right - 8
+                    self.rod.rect.y = self.player.rect.top + 5
                     print("fishing!")
                     self.rod.isFishing = True
                     self.sprites.add(self.rod)
@@ -121,11 +122,11 @@ class Catastrophe(State):
                     self.rod.isFishing = False
                     self.noTrash.play()
                 else:
-                    self.rod.rect.y += self.rod.velocity*self.dt
+                    self.rod.rect.y += self.rod.velocity * self.dt
                     pygame.draw.line(self.screen, (123, 63, 0),
                                      (self.rod.rect.x + self.rod.rect.width /
                                       2, self.player.rect.y),
-                                     (self.rod.rect.x + self.rod.rect.width/2, self.rod.rect.y), 1)
+                                     (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
 
 class Scoreboard(State):
