@@ -59,7 +59,8 @@ class Game(object):
             asyncio.run(self.game())
 
     async def game(self):
-        self.state = Splash(self)
+        # self.state = Splash(self)
+        self.state = Lobby(self)
 
         while self.running:
             self.state.update()

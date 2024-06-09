@@ -128,6 +128,47 @@ class Catastrophe(State):
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
 
+class Lobby(State):
+    def __init__(self, game):
+        super().__init__(game)
+
+        self.background = Background()
+        self.player = Player()
+        self.map = {
+            -400: "Shop",
+            -30: "Leaderborad",
+            200: "Play"
+        }
+        self.texts = {}
+        for x_pos, title in self.map.items():
+            self.texts[x_pos] = Text(text=title, font=bigFont, color=WHITE, coords=(x_pos, 50))
+
+        self.sprites.add(
+            *[x for x in self.texts.values()]
+        )
+        self.offset = 0
+
+    def update(self) -> None:
+        super().update()
+
+        xBorder = -500
+        self.player.velocity = 0
+        if self.key[K_LEFT] and self.player.rect.x >= xBorder:
+            self.player.velocity = -100
+        elif self.key[K_RIGHT] and self.player.rect.x <= (WIDTH - self.player.rect.width - xBorder):
+            self.player.velocity = 100
+        elif self.key[K_e]:
+            ...  # interactable here
+
+        self.player.rect.x += self.player.velocity * self.dt
+        self.offset = self.player.velocity * self.dt
+
+        for t in self.texts.values():
+            t.rect.x -= self.offset
+
+        # 2024-06-09 hulahhh: at some point all the sprites movement gets cut off. I gotta go now, will fix tmr
+
+
 class Scoreboard(State):
     def __init__(self, game):
         super().__init__(game)
