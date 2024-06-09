@@ -3,18 +3,24 @@ from random import randint
 
 from scripts.settings import *
 
+from scripts.sprites.sheet import Sheet, cutSheet
+
 class Sprite(pygame.sprite.DirtySprite):
-    def __init__(self, imagepath):
+    def __init__(self, sheetEnabled: bool, imagepath: str, size: pygame.math.Vector2):
         pygame.sprite.DirtySprite.__init__(self)
 
-        self.image = pygame.image.load(newPath(imagepath)).convert_alpha()
-        self.image = pygame.transform.scale(
-            self.image, (self.image.get_width(), self.image.get_height()))
+        self.sheetEnabled = sheetEnabled
+        if self.sheetEnabled:
+            self.sheet = Sheet()
+            self.sheet.add_animation("idle", cutSheet(imagepath, size))
+            self.action = "idle"
+            self.sheet.set_action(self.action)
+            self.image = self.sheet.states["idle"][0]
+        else:
+            self.image = pygame.image.load(newPath(imagepath)).convert_alpha()
+            self.image = pygame.transform.scale(self.image, (self.image.get_width(), self.image.get_height()))
 
         self.rect = self.image.get_rect()
-
-        self.mask = pygame.mask.from_surface(self.image)
-        self.mask_image = self.mask.to_surface(setcolor=TRANSPARENT)
 
         self.velocity = 0
 
@@ -26,10 +32,13 @@ class Sprite(pygame.sprite.DirtySprite):
 
     def update(self, key, dt):
         pygame.sprite.DirtySprite.update(self)
-        
+
         self.key = key
         self.dt = dt
 
+        if self.sheetEnabled:
+            self.image = self.sheet.draw()
+            self.sheet.update()
 
 class Text(pygame.sprite.DirtySprite):
     def __init__(self, text: str = "lorem ipsum", font: pygame.font.Font = bigFont, color: tuple[int, int, int, int] = WHITE, coords: tuple[int, int] = (0, 0)):

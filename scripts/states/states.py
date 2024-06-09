@@ -7,9 +7,6 @@ from scripts.filehandling import *
 from scripts.states.basestate import State
 from scripts.sprites.sprites import *
 
-from scripts.sound import SoundManager
-
-
 class Splash(State):
     def __init__(self, game):
         super().__init__(game)

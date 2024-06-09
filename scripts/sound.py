@@ -3,13 +3,17 @@ import pygame
 
 # "Maybe make this class completly static, so you can call SoundManager.play(...) from everywhere." -hulah, 2024
 # 2024-06-06 hulahhh: Maybe there is no point in doing so since every object has a link towards the main game class, where the soundmanager instance could be
+# 2024-06-06 richy: thank you hulah :heart:
 
+if not pygame.mixer.get_init():
+    pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=512)
+    pygame.mixer.init()
+
+if emscripten:
+    pygame.mixer.SoundPatch()  # type: ignore
 
 class SoundManager:
     def __init__(self) -> None:
-        if not pygame.mixer.get_init():
-            pygame.mixer.init()
-
         pygame.mixer.set_num_channels(64)
 
         self._sound_cache: dict[str, pygame.mixer.Sound] = {}
@@ -29,15 +33,19 @@ class SoundManager:
 
     def stop_all(self) -> None:
         pygame.mixer.stop()
+        print("Stopped all sounds")
 
     def pause_all(self) -> None:
         pygame.mixer.pause()
+        print("Paused all sounds")
 
     def resume_all(self) -> None:
         pygame.mixer.unpause()
+        print("Unpaused all sounds")
 
-    def add_sound(self, path: str, sound_name: str) -> None:
+    def add_sound(self, sound_name: str, path: str) -> None:
         self._sound_cache[sound_name] = pygame.mixer.Sound(path)
+        print(f"Loaded sound {sound_name} at {path}")
 
     def play(self, sound_name: str, loop: int = 0, fade_in_time: int = 0, max_time: int = 0, volume: float | None = None) -> int:
         if sound_name not in self._sound_cache:
@@ -48,13 +56,13 @@ class SoundManager:
 
         c = pygame.mixer.Channel(self._next_channel_id)
         s.set_volume(self.__global_volume if not volume else volume)
-        s.play(loops=loop, maxtime=max_time, fade_ms=fade_in_time)
+        s.play(loop, max_time, fade_in_time)
         id = hash(s)
         self._currently_playing[id] = (c, s)
 
         self._next_channel_id += 1
 
-        print(1111, s, c, c.get_busy())
+        print(f"Playing {s}, {c}, busy? {c.get_busy()}")
         return id
 
     def fade_sound(self, sound_id: int, fade_out_seconds: int) -> None:
@@ -71,7 +79,7 @@ class SoundManager:
 
         for sound_id, (channel, sound) in self._currently_playing.items():
             if not channel.get_busy():
-                __next_channel_id -= 1
+                self._next_channel_id -= 1
                 to_delete.append(sound_id)
 
         for id in to_delete:

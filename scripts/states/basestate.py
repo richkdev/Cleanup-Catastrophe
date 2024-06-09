@@ -19,7 +19,3 @@ class State(object):
 
         self.sprites.update(self.key, self.dt)
         self.sprites.draw(self.screen)
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                exit()

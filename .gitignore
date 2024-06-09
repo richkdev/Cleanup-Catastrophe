@@ -1,9 +1,9 @@
 __pycache__/
 *.pyc
-logs/
 
 .git
 build
 dist
 
-.VSCodeCounter
+logs/
+*.log
