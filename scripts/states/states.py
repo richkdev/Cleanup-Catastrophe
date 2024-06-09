@@ -7,6 +7,7 @@ from scripts.filehandling import *
 from scripts.states.basestate import State
 from scripts.sprites.sprites import *
 
+
 class Splash(State):
     def __init__(self, game):
         super().__init__(game)
@@ -20,7 +21,11 @@ class Splash(State):
             drawText(text=self.text, color=WHITE, font=smallFont, screen=self.screen)
         )
 
-        self.game.sound_manager.play("cleanup-time")
+        if self.game.music_sound_id:
+            self.game.sound_manager.stop_sound(self.game.music_sound_id)
+            self.game.music_sound_id = self.game.sound_manager.play("cleanup-time")
+        else:
+            self.game.music_sound_id = self.game.sound_manager.play("cleanup-time")
 
     def update(self):
         super().update()
@@ -75,13 +80,16 @@ class Catastrophe(State):
 
         match self.rod.isFishing:
             case False:
+                self.player.velocity = 0
                 if self.key[K_LEFT] and self.player.rect.x >= xBorder:
-                    self.player.rect.x -= self.player.velocity * self.dt
+                    self.player.velocity = -100
                     self.islands.rect.x += self.islands.velocity * self.dt
 
                 if self.key[K_RIGHT] and self.player.rect.x <= (WIDTH - self.player.rect.width - xBorder):
-                    self.player.rect.x += self.player.velocity * self.dt
+                    self.player.velocity = 100
                     self.islands.rect.x -= self.islands.velocity * self.dt
+
+                self.player.rect.x += self.player.velocity * self.dt
 
                 if self.key[K_DOWN]:
                     self.rod.rect.x = self.player.rect.right - 8

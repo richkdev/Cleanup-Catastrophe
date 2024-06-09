@@ -31,7 +31,8 @@ class Sheet(object):
     def update(self, val: float = 0.1) -> None:
         self.current_idx += val
 
-    def draw(self) -> pygame.surface.Surface:
+    def draw(self, flip_x: bool = False) -> pygame.surface.Surface:
         idx = int(self.current_idx % len(self.states[self.current_state]))
         surf = self.states[self.current_state][idx]
+        surf = pygame.transform.flip(surf, flip_x, False)
         return surf

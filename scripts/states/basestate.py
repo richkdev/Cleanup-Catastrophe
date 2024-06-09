@@ -15,7 +15,7 @@ class State(object):
 
     def update(self):
         self.key = pygame.key.get_pressed()
-        self.dt = clock.tick_busy_loop(FPS)/1000
+        self.dt = clock.tick_busy_loop(FPS) / 1000
 
         self.sprites.update(self.key, self.dt)
         self.sprites.draw(self.screen)

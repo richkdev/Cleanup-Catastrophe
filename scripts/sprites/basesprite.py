@@ -5,6 +5,7 @@ from scripts.settings import *
 
 from scripts.sprites.sheet import Sheet, cutSheet
 
+
 class Sprite(pygame.sprite.DirtySprite):
     def __init__(self, sheetEnabled: bool, imagepath: str, size: pygame.math.Vector2):
         pygame.sprite.DirtySprite.__init__(self)
@@ -21,6 +22,7 @@ class Sprite(pygame.sprite.DirtySprite):
             self.image = pygame.transform.scale(self.image, (self.image.get_width(), self.image.get_height()))
 
         self.rect = self.image.get_rect()
+        self.rect = pygame.FRect(self.rect.x, self.rect.y, self.rect.w, self.rect.h)
 
         self.velocity = 0
 
@@ -37,8 +39,10 @@ class Sprite(pygame.sprite.DirtySprite):
         self.dt = dt
 
         if self.sheetEnabled:
-            self.image = self.sheet.draw()
+            flip = self.velocity < 0
+            self.image = self.sheet.draw(flip_x=flip)
             self.sheet.update()
+
 
 class Text(pygame.sprite.DirtySprite):
     def __init__(self, text: str = "lorem ipsum", font: pygame.font.Font = bigFont, color: tuple[int, int, int, int] = WHITE, coords: tuple[int, int] = (0, 0)):
@@ -64,7 +68,7 @@ class Text(pygame.sprite.DirtySprite):
         self.rect.x, self.rect.y = self.old_x + randint(1, seed), self.old_y + randint(1, seed)
 
 
-def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: pygame.surface.Surface, lineSpacing: int = -2): # modified version of https://www.pygame.org/wiki/TextWrap
+def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: pygame.surface.Surface, lineSpacing: int = -2):  # modified version of https://www.pygame.org/wiki/TextWrap
     rect = screen.get_rect()
     textGroup = pygame.sprite.Group()
 

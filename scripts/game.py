@@ -40,6 +40,7 @@ class Game(object):
         self.sound_manager.add_sound(
             "explode", newPath("assets/sfx/explode.wav"))
 
+        self.music_sound_id = None
         self.running = True
 
         if not emscripten:
