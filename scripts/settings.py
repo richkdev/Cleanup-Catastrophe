@@ -1,9 +1,10 @@
 import pygame
-
+from pygame import Vector2, FRect, Surface, Rect
 import sys
 from json import loads
 from os import path, makedirs
 from datetime import datetime
+
 
 def newPath(relPath: str):
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):

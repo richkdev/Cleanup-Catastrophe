@@ -42,8 +42,9 @@ class Game(object):
         self.sound_manager.add_sound(
             "explode", newPath("assets/sfx/explode.wav"))
 
-        self.music_sound_id = None
+        self.music_sound_id = 0
         self.running = True
+        self.state: State
 
         if not emscripten:
             self.loop = asyncio.get_event_loop()

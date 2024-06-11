@@ -7,10 +7,11 @@ from scripts.sprites.sheet import Sheet, cutSheet
 
 
 class Sprite(pygame.sprite.DirtySprite):
-    def __init__(self, sheetEnabled: bool, imagepath: str, size: pygame.math.Vector2 = pygame.math.Vector2(0, 0)):
+    def __init__(self, sheetEnabled: bool, imagepath: str, size: Vector2 = Vector2(0, 0)):
         pygame.sprite.DirtySprite.__init__(self)
 
         self.sheetEnabled = sheetEnabled
+        self.image: Surface
         if self.sheetEnabled:
             self.sheet = Sheet()
             self.sheet.add_animation("idle", cutSheet(imagepath, size))
@@ -21,8 +22,7 @@ class Sprite(pygame.sprite.DirtySprite):
             self.image = pygame.image.load(newPath(imagepath)).convert_alpha()
             self.image = pygame.transform.scale(self.image, (self.image.get_width(), self.image.get_height()))
 
-        self.rect = self.image.get_rect()
-        self.rect = pygame.FRect(self.rect.x, self.rect.y, self.rect.w, self.rect.h)
+        self.rect: FRect = self.image.get_frect()
 
         self.velocity = 1
         self.acceleration = 0
@@ -54,7 +54,7 @@ class Text(pygame.sprite.DirtySprite):
 
         self.image = self.font.render(self.text, False, self.color, None)
 
-        self.rect = self.image.get_rect()
+        self.rect: Rect = self.image.get_rect()
         self.old_x, self.old_y = coords[0], coords[1]
         self.rect.x, self.rect.y = self.old_x, self.old_y
 
@@ -68,8 +68,9 @@ class Text(pygame.sprite.DirtySprite):
         self.rect.x, self.rect.y = self.old_x + randint(0, seedX), self.old_y + randint(0, seedY)
 
 
-def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: pygame.surface.Surface, lineSpacing: int = -2):  # modified version of https://www.pygame.org/wiki/TextWrap
-    rect = screen.get_rect()
+def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):  # modified version of https://www.pygame.org/wiki/TextWrap
+    pos = (pos[0] + screen.get_width() / 2, pos[1] + screen.get_height() / 2)
+    rect = screen.get_rect(center=pos)
     textGroup = pygame.sprite.Group()
 
     y = rect.top
