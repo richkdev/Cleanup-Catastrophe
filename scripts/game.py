@@ -12,13 +12,15 @@ class Game(object):
     def __init__(self) -> None:
         if not emscripten:
             flags = HWSURFACE | DOUBLEBUF | SCALED | OPENGLBLIT | RESIZABLE
-            self.screen = pygame.display.set_mode((WIDTH, HEIGHT), flags, depth=1, display=0, vsync=1)
+            self.screen = pygame.display.set_mode(
+                (WIDTH, HEIGHT), flags, depth=1, display=0, vsync=1)
             from scripts.opengl import ctx, surf_to_texture, render_object
             self.ctx = ctx
             self.surf_to_texture = surf_to_texture
             self.render_object = render_object
         else:
-            self.screen = pygame.display.set_mode((WIDTH, HEIGHT), depth=1, display=0, vsync=0)
+            self.screen = pygame.display.set_mode(
+                (WIDTH, HEIGHT), depth=1, display=0, vsync=0)
 
         pygame.mixer.set_num_channels(64)
 
@@ -46,30 +48,23 @@ class Game(object):
         if not emscripten:
             self.loop = asyncio.get_event_loop()
             try:
-                self.loop.run_until_complete(self.main())
+                self.loop.run_until_complete(
+                    asyncio.gather(self.game(), self.discord_stuff())
+                )
             finally:
                 self.loop.close()
-        else:
-            asyncio.run(self.main())
-
-    async def main(self):
-        if not emscripten:
-            await asyncio.gather(self.game(), self.discord_stuff())
         else:
             asyncio.run(self.game())
 
     async def game(self):
-        # self.state = Splash(self)
-        self.state = Lobby(self)
+        self.state = Splash(self)
 
         while self.running:
             self.state.update()
             self.render()
-            self.sound_manager.update()  # 24-06-06 hulahhh: putting this here since its always tied to the game and not to individual states. Every state has a link to this class so it should work fine.
+            self.sound_manager.update()
 
-            self.event = pygame.event.get()
-
-            for event in self.event:
+            for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     self.running = False
@@ -85,13 +80,13 @@ class Game(object):
                     discord.update(type(self.state).__name__)
                 case True:
                     discord.update(type(self.state).__name__)
-            await asyncio.sleep(0)
+            await asyncio.sleep(1)
 
     def render(self):
         if not emscripten:
             frame_tex = self.surf_to_texture(self.screen)
             frame_tex.use(0)
-            self.render_object.render(mode=0x0005)  # aka moderngl.TRIANGLE_STRIP
+            self.render_object.render(mode=0x0005)
             frame_tex.release()
             pygame.display.flip()
             self.ctx.clear(0)

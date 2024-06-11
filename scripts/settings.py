@@ -1,5 +1,4 @@
 import pygame
-from pygame.locals import *  # type: ignore
 
 import sys
 from json import loads

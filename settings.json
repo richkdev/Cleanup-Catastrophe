@@ -1,6 +1,6 @@
 {
     "maxFPS": 60,
-    "volume": 50,
+    "volume": 20,
     "vertexShader": "assets/shaders/vertex_shaders/crt.glsl",
     "fragmentShader": "assets/shaders/fragment_shaders/crt.glsl",
     "mapDirectory": "savefiles/map.json",

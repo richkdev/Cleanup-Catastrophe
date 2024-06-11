@@ -7,7 +7,7 @@ from scripts.sprites.sheet import Sheet, cutSheet
 
 
 class Sprite(pygame.sprite.DirtySprite):
-    def __init__(self, sheetEnabled: bool, imagepath: str, size: pygame.math.Vector2):
+    def __init__(self, sheetEnabled: bool, imagepath: str, size: pygame.math.Vector2 = pygame.math.Vector2(0, 0)):
         pygame.sprite.DirtySprite.__init__(self)
 
         self.sheetEnabled = sheetEnabled
@@ -24,13 +24,14 @@ class Sprite(pygame.sprite.DirtySprite):
         self.rect = self.image.get_rect()
         self.rect = pygame.FRect(self.rect.x, self.rect.y, self.rect.w, self.rect.h)
 
-        self.velocity = 0
+        self.velocity = 1
+        self.acceleration = 0
 
         self.visible = 1
         self.dirty = 1
         self._layer = 1
 
-        print(f"Loaded {type(self).__name__} sprite")
+        print(f"Loaded {type(self).__name__} sprite, at ({self.rect.x}, {self.rect.y})")
 
     def update(self, key, dt):
         pygame.sprite.DirtySprite.update(self)
@@ -39,14 +40,13 @@ class Sprite(pygame.sprite.DirtySprite):
         self.dt = dt
 
         if self.sheetEnabled:
-            flip = self.velocity < 0
-            self.image = self.sheet.draw(flip_x=flip)
+            self.image = self.sheet.draw(flip_x=(self.velocity < 0), flip_y=False)
             self.sheet.update()
 
 
 class Text(pygame.sprite.DirtySprite):
     def __init__(self, text: str = "lorem ipsum", font: pygame.font.Font = bigFont, color: tuple[int, int, int, int] = WHITE, coords: tuple[int, int] = (0, 0)):
-        super().__init__()
+        pygame.sprite.DirtySprite.__init__(self)
 
         self.text = text
         self.font = font
@@ -64,8 +64,8 @@ class Text(pygame.sprite.DirtySprite):
     def displace(self, coords: tuple[int, int] = (0, 0)):
         self.rect.x, self.rect.y = coords[0], coords[1]
 
-    def shake(self, seed: int = 2):
-        self.rect.x, self.rect.y = self.old_x + randint(1, seed), self.old_y + randint(1, seed)
+    def shake(self, seedX: int = 2, seedY: int = 2):
+        self.rect.x, self.rect.y = self.old_x + randint(0, seedX), self.old_y + randint(0, seedY)
 
 
 def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: pygame.surface.Surface, lineSpacing: int = -2):  # modified version of https://www.pygame.org/wiki/TextWrap

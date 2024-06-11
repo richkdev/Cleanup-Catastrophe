@@ -27,7 +27,7 @@ Play as **Paul Fischer**, your average local Indonesian fisherman, whose life ha
 ### REQUIRED
 
 - Python 3.11+
-- pygame 2.5+
+- pygame-ce 2.4+
 - moderngl 5.10+ (only for native)
 - pypresence 4.3+ (only for native)
 - nest-asyncio 1.6+ (for nesting event loop)

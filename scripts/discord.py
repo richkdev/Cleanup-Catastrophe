@@ -28,24 +28,23 @@ class Discord(object):
             self.connected = True
 
     def update(self, state: str):
-        if self.i <= (FPS*10):
-            self.i +=1
-        else:
-            self.i = 10
+        if self.i % 10 == 0:
             self.RPC.update(
                 state=f"Currently in {state}",  # depending on gamestate
                 details=f"Playing on {version}",
                 start=self.startTime,
                 large_image="icon",
-                join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",  # use player id in CC
-                party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",  # use game id in CC
-                party_size=[1, 5]
-                # buttons=[{
-                #     "label": "Play the prototype!",
-                #     "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
-                # }]
+                # join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",  # use player id in CC
+                # party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",  # use game id in CC
+                # party_size=[1, 5]
+                buttons=[{
+                    "label": "Play the prototype!",
+                    "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
+                }]
             )
-            self.i = 0
+            print("Discord RPC updated!")
+
+        self.i +=1
 
 
 discord = Discord()

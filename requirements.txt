@@ -1,0 +1,6 @@
+pygame-ce==2.4.1
+moderngl==5.10.0
+pypresence==4.3.0
+nest-asyncio==1.6.0
+pyinstaller==5.13.0
+pygbag==0.9.1

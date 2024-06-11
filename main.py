@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import asyncio
 from os import chdir, path
 chdir(path.dirname(path.abspath(__file__)))
 
