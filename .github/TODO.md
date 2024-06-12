@@ -2,9 +2,9 @@
 
 ## code stuff
 
-- [ ] make state management possible using `State` class **(WIP)** states list: splash, game, menu, shop, loading, etc
+- [x] make state management possible using `State` class **(WIP)** states list: splash, game, menu, shop, loading, etc
 - [ ] use requests module to check latest game version on gh repo via githack _<https://raw.githack.com/richkdev/Cleanup-Catastrophe/main/VERSION>_
-- [ ] add ability to add line breaks into drawText func
+- [x] add ability to add line breaks into drawText func
 - [ ] custom sizes for the spritesheet, but same rect (rect functions as hitbox btw)
 - [ ] log stdout in case game crashes
 
