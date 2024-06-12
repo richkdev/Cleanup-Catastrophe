@@ -211,7 +211,7 @@ class Shop(State):
     def __init__(self, game):
         super().__init__(game)
 
-        text = "This is the shop, in future iterations of this project even this page will be completed! Hang tight as we develop this project."
+        text = "This is the shop, in future iterations of this project even this page will be completed!\nHang tight as we develop this project."
         self.sprites.add(drawText(text=text, color=WHITE,
                          font=smallFont, screen=self.screen,
                          pos=(0, 0)))

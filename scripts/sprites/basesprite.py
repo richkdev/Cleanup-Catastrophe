@@ -77,22 +77,28 @@ def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font
 
     fontHeight = font.size("Tg")[1]
 
-    while text:
-        i = 1
+    paragraphs = text.split('\n')  # Split text by newline characters first
+    for paragraph in paragraphs:
+        while paragraph:
+            i = 1
 
-        if y + fontHeight > rect.bottom:
-            break
+            if y + fontHeight > rect.bottom:
+                break
 
-        while font.size(text[:i])[0] < rect.width and i < len(text):
-            i += 1
+            while font.size(paragraph[:i])[0] < rect.width and i < len(paragraph):
+                i += 1
 
-        if i < len(text):
-            i = text.rfind(" ", 0, i) + 1
+            # If we've reached the end of the text, break out of the loop
+            if not i == len(paragraph):
+                # Find the last space in the current substring
+                i = paragraph.rfind(" ", 0, i) + 1
 
-        newText = Text(text=text[:i], font=font, color=color, coords=(rect.left, y))
+            newText = Text(text=paragraph[:i], font=font, color=color, coords=(rect.left, y))
+            y += fontHeight + lineSpacing
+
+            paragraph = paragraph[i:]
+            textGroup.add(newText)
+
         y += fontHeight + lineSpacing
-
-        text = text[i:]
-        textGroup.add(newText)
 
     return textGroup
