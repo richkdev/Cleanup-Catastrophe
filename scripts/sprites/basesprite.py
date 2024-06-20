@@ -40,7 +40,7 @@ class Sprite(pygame.sprite.DirtySprite):
         self.dt = dt
 
         if self.sheetEnabled:
-            self.image = self.sheet.draw(flip_x=(self.velocity < 0), flip_y=False)
+            self.image = self.sheet.draw(flip_x=False, flip_y=False)
             self.sheet.update()
 
 

@@ -1,4 +1,4 @@
-pygame-ce==2.4.1
+pygame-ce==2.5.0
 moderngl==5.10.0
 pypresence==4.3.0
 nest-asyncio==1.6.0

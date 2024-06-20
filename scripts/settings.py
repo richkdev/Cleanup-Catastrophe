@@ -24,15 +24,17 @@ HEIGHT = 224
 xBorder = int(WIDTH * 0.02)
 yBorder = int(HEIGHT * 0.02)
 
-FPS = settings['maxFPS']
-volume = settings['volume'] / 100
+FPS: int = settings['maxFPS']
+volume: float = settings['volume'] / 100
 
-fragmentShader = newPath(settings['fragmentShader'])
-vertexShader = newPath(settings['vertexShader'])
+fragmentShader: str = newPath(settings['fragmentShader'])
+vertexShader: str = newPath(settings['vertexShader'])
 
-mapDirectory = newPath(settings['mapDirectory'])
-saveFileDirectory = newPath(settings['saveFileDirectory'])
-logDirectory = newPath(settings['logDirectory'])
+mapDirectory: str = newPath(settings['mapDirectory'])
+saveFileDirectory: str = newPath(settings['saveFileDirectory'])
+
+current_time: str = str(datetime.now().replace(microsecond=0)).replace(":", "-")
+logDirectory: str = newPath(settings['logDirectory'])
 
 clock = pygame.time.Clock()
 
@@ -50,7 +52,8 @@ pygame.font.init()
 bigFont = pygame.font.Font(newPath("assets/fonts/genesis.ttf"), 20)
 smallFont = pygame.font.SysFont("helvetica", 15)
 
-current_time = datetime.now()
-
 if not path.exists(newPath(logDirectory)):
     makedirs(newPath(logDirectory))
+
+# richy: very basic logging system, will remove later
+sys.stdout = open(newPath(f"{logDirectory}{current_time}.log"), "w+")

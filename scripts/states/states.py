@@ -45,7 +45,6 @@ class Catastrophe(State):
         self.score = 0
 
         self.background = Background()
-        self.islands = Islands()
         self.player = Player()
         self.rod = Rod()
         self.textDisplay = Text(font=bigFont, color=WHITE, coords=(10, 10))
@@ -57,11 +56,10 @@ class Catastrophe(State):
         for row in range(len(spawn_map)):
             for col in range(len(spawn_map[0])):
                 if spawn_map[row][col] != 4:
-                    self.trashSprites.add(Trash(spawn_map[row][col], (int(row * 30 + xBorder * 6), int(col * 30 + HEIGHT / 2)), xBorder * 2))
+                    self.trashSprites.add(Trash(spawn_map[row][col], (int(row * 25 + xBorder * 6), int(col * 25 + HEIGHT / 2)), xBorder * 2))
 
         self.sprites.add(
             self.background,
-            self.islands,
             self.trashSprites,
             self.player,
             self.textDisplay,
@@ -88,11 +86,9 @@ class Catastrophe(State):
 
                 if self.key[K_LEFT] and self.player.rect.x >= xBorder:
                     self.player.velocity = -100
-                    self.islands.rect.x += self.islands.velocity * self.dt
 
                 if self.key[K_RIGHT] and self.player.rect.x <= (WIDTH - self.player.rect.width - xBorder):
                     self.player.velocity = 100
-                    self.islands.rect.x -= self.islands.velocity * self.dt
 
                 self.player.rect.x += self.player.velocity * self.dt
 

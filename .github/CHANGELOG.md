@@ -11,7 +11,7 @@
 
 ### notes
 
-1. SAY HELLO TO @TheRealRyanHajj AND @tea-enjoyer11 (aka hulahhh) !!! this thing is gonna be real and not just a side project of mine!!
+1. SAY HELLO TO @tea-enjoyer11 (aka hulahhh) !!! this thing is gonna be real and not just a side project of mine!!
 2. might pump out demo build for sage 2024? only if i manage to make finish most of stuff in the new todo
 3. added `requirements.txt` because why not lol
 

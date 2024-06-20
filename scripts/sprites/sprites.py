@@ -22,9 +22,14 @@ class Player(Sprite):
         self.top_speed = 100
 
     def update(self, key, dt):
-        super().update(key, dt)
+        self.key = key
+        self.dt = dt
 
-        if self.key[K_LEFT] or self.key[K_RIGHT]:
+        if self.sheetEnabled:
+            self.image = self.sheet.draw(flip_x=(self.velocity < 0), flip_y=False)
+            self.sheet.update()
+
+        if self.key[K_LEFT] or self.key[K_RIGHT] or self.key[K_a] or self.key[K_d]:
             self.sheet.set_action("run")
         else:
             self.sheet.set_action("idle")
@@ -44,16 +49,19 @@ class Rod(Sprite):
 
 
 class Trash(Sprite):
-    def __init__(self, type: int = 0, coords: tuple[int, int] = (0, 0), offset: int = 8):
-        self.trashType = ['trash1', 'trash2', 'trash3', 'bomb'][type]
+    def __init__(self, trashType: int = 0, coords: tuple[int, int] = (0, 0), offset: int = 8):
+        super().__init__(True, newPath(f"assets/img/sprites/trash.png"),
+                         Vector2(12, 13))
 
-        super().__init__(True, newPath(
-            f"assets/img/trash/{self.trashType}.png"), Vector2(12, 13))
+        self.image = self.sheet.states["idle"][trashType]
 
         self.rect.x, self.rect.y = int(
             coords[0] + randint(1, offset)), int(coords[1] + randint(1, offset))
 
-        self.explosive = 'bomb' in self.trashType
+        self.explosive = trashType == 3
+
+    def update(self, key, dt):
+        pass
 
 
 class MenuLogo(Sprite):
@@ -79,15 +87,6 @@ class Background(Sprite):
     def __init__(self):
         super().__init__(False, newPath("assets/img/bg/ocean.png"),
                          Vector2(300, 300))
-
-
-class Islands(Sprite):
-    def __init__(self):
-        super().__init__(False, newPath("assets/img/bg/islands.png"),
-                         Vector2(324, 87))
-
-        self.rect.x = (WIDTH - self.rect.width) / 2
-        self.rect.y = 60
 
 
 class WorldObject(Sprite):

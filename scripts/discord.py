@@ -23,6 +23,7 @@ class Discord(object):
             self.RPC.connect()
         except Exception as e:
             print(type(e).__name__, e)
+            pass
         finally:
             print("Discord RPC server found")
             self.connected = True
@@ -34,16 +35,15 @@ class Discord(object):
                 details=f"Playing on {version}",
                 start=self.startTime,
                 large_image="icon",
-                # join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",  # use player id in CC
-                # party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",  # use game id in CC
-                # party_size=[1, 5]
-                buttons=[{
-                    "label": "Play the prototype!",
-                    "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
-                }]
+                join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",  # use player id in CC
+                party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",  # use game id in CC
+                party_size=[1, 5]
+                # buttons=[{
+                #     "label": "Play the prototype!",
+                #     "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
+                # }]
             )
             print("Discord RPC updated!")
-
         self.i +=1
 
 

@@ -75,12 +75,15 @@ class Game(object):
 
     async def discord_stuff(self):
         while self.running:
-            match discord.connected:
-                case False:
-                    discord.prepare()
-                    discord.update(type(self.state).__name__)
-                case True:
-                    discord.update(type(self.state).__name__)
+            try:
+                match discord.connected:
+                    case False:
+                        discord.prepare()
+                        discord.update(type(self.state).__name__)
+                    case True:
+                        discord.update(type(self.state).__name__)
+            except Exception as e:
+                print(type(e).__name__, e)
             await asyncio.sleep(1)
 
     def render(self):
