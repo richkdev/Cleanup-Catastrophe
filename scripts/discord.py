@@ -14,8 +14,8 @@ class Discord(object):
     def __init__(self):
         self.client_id: str = "1125682987552481311"
         self.connected: bool = False
-        self.startTime: int = int(time())
-        self.i = 0
+        self.startTime = int(time())
+        self.increment = 0
 
     def prepare(self):
         try:
@@ -24,12 +24,12 @@ class Discord(object):
         except Exception as e:
             print(type(e).__name__, e)
             pass
-        finally:
+        else:
             print("Discord RPC server found")
             self.connected = True
 
     def update(self, state: str):
-        if self.i % 10 == 0:
+        if self.increment % 10 == 0:
             self.RPC.update(
                 state=f"Currently in {state}",  # depending on gamestate
                 details=f"Playing on {version}",
@@ -44,7 +44,7 @@ class Discord(object):
                 # }]
             )
             print("Discord RPC updated!")
-        self.i +=1
+        self.increment +=1
 
 
 discord = Discord()
