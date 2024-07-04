@@ -5,21 +5,26 @@ from scripts.settings import *
 from scripts.sound import SoundManager
 
 
-# this will always be false at runtime. with this "hack" you can have typehints on the game parameter now.
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..game import Game
 
 
 class State(object):
-    def __init__(self, game: "Game"):
+    def __init__(self, game: "Game", gamemode: bool, desc: str):
+        match gamemode:
+            case True:
+                self.desc = f"In a heck of a {desc.upper()}"
+            case False:
+                self.desc = desc
+
         self.game = game
         self.screen: pygame.surface.Surface = game.screen
         self.sprites: pygame.sprite.Group = game.sprites
         self.sound_manager: SoundManager = game.sound_manager
         self.sprites.empty()
 
-        print(f"Loaded {type(self).__name__} state")
+        print(f"Loaded {type(self).__name__} state, with description: {desc}")
 
     def update(self):
         self.key = pygame.key.get_pressed()

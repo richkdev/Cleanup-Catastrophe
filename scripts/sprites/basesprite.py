@@ -24,12 +24,12 @@ class Sprite(pygame.sprite.DirtySprite):
 
         self.rect: FRect = self.image.get_frect()
 
-        self.velocity = 1
+        self.velocity = 0
         self.acceleration = 0
 
         self.visible = 1
         self.dirty = 1
-        self._layer = 1
+        self.layer = 1
 
         print(f"Loaded {type(self).__name__} sprite, at ({self.rect.x}, {self.rect.y})")
 

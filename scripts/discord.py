@@ -1,4 +1,4 @@
-from scripts.settings import version, emscripten, FPS
+from scripts.settings import version, emscripten
 from time import time
 
 if not emscripten:
@@ -31,17 +31,23 @@ class Discord(object):
     def update(self, state: str):
         if self.increment % 10 == 0:
             self.RPC.update(
-                state=f"Currently in {state}",  # depending on gamestate
-                details=f"Playing on {version}",
+                state=state,
+                details=version,
                 start=self.startTime,
                 large_image="icon",
-                join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",  # use player id in CC
-                party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",  # use game id in CC
-                party_size=[1, 5]
-                # buttons=[{
-                #     "label": "Play the prototype!",
-                #     "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
-                # }]
+                # join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",
+                # party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",
+                # party_size=[1, 5]
+                buttons=[
+                    {
+                        "label": "Play the prototype!",
+                        "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
+                    },
+                    {
+                        "label": "Check out the source!",
+                        "url": "https://github.com/richkdev/Cleanup-Catastrophe"
+                    }
+                ]
             )
             print("Discord RPC updated!")
         self.increment +=1

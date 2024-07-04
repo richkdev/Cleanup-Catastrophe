@@ -7,15 +7,10 @@ from scripts.filehandling import *
 from scripts.states.basestate import State
 from scripts.sprites.sprites import *
 
-# this will always be false at runtime. with this "hack" you can have typehints on the game parameter now.
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from ..game import Game
-
 
 class Splash(State):
-    def __init__(self, game: "Game"):
-        super().__init__(game)
+    def __init__(self, game):
+        super().__init__(game, False, "At the splash screen")
 
         self.text = "The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, start."
 
@@ -40,7 +35,7 @@ class Splash(State):
 
 class Catastrophe(State):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__(game, True, "CATASTROPHE")
 
         self.score = 0
 
@@ -132,7 +127,7 @@ class Lobby(State):
     player_offset = 0  # used to keep track of player so that when going back to lobby the player spawns at the same position. If not wanted its not hard to remove it.
 
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__(game, False, "At the lobby...")
 
         self.background = Background()
         self.player = Player(pos=(HEIGHT / 2 + Lobby.player_offset, HEIGHT / 3))
@@ -144,7 +139,7 @@ class Lobby(State):
         self.textStuff = pygame.sprite.Group()
         for name, stuff in self.map.items():
             self.textStuff.add(WorldObject(
-                newPath(f"assets/img/ui/{name}.png"), (stuff[0], 70), name))  # ! 2024-06-11 hulahhh: Watchout i made placeholder art for the logos. The key in self.map is exactly the name of the image!
+                newPath(f"assets/img/ui/{name}.png"), (stuff[0], 70), name))
 
         self.sprites.add(
             self.background,
@@ -153,7 +148,7 @@ class Lobby(State):
         )
         self.offset = 0
 
-    def update(self) -> None:
+    def update(self):
         super().update()
 
         self.player.velocity = 0
@@ -173,7 +168,7 @@ class Lobby(State):
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.textStuff, None)
 
         if isinstance(collided_sprite, WorldObject) and self.key_just_pressed[K_RETURN]:
-            print("interacted with text")
+            print("interacted with an interactable worldobject")
 
             # in each of these checks we could do something special like play a sound effect.
             if collided_sprite.desc == "Play":
@@ -188,7 +183,7 @@ class Lobby(State):
 
 class Scoreboard(State):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__(game, False, "Lookin\' at the scoreboard")
 
         self.text = str(getLocal())
 
@@ -205,7 +200,7 @@ class Scoreboard(State):
 
 class Shop(State):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__(game, False, "Lookin\' for things to buy.. or not.")
 
         text = "This is the shop, in future iterations of this project even this page will be completed!\nHang tight as we develop this project."
         self.sprites.add(drawText(text=text, color=WHITE,

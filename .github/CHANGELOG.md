@@ -1,6 +1,6 @@
 # change log lol
 
-## v.0.2.2 - community
+## v.0.2.1 - crazy stuff
 
 ### details
 
@@ -8,10 +8,11 @@
 - fixed `RuntimeError` with discord rpc ~~thread~~ process, had to use nest-asyncio _<https://pypi.org/project/nest-asyncio>_ and turn it into asyncio process that sleeps for 10 seconds then updates
 - added state management with my own finite state-machine
 - fixed a problem, since moderngl stuffs needs to refer to a context, i turn it into a ~~main thread~~ async process
+- custom descriptions for discord RPC
 
 ### notes
 
-1. SAY HELLO TO @tea-enjoyer11 (aka hulahhh) !!! this thing is gonna be real and not just a side project of mine!!
+1. everybody left :skull: im alone now
 2. might pump out demo build for sage 2024? only if i manage to make finish most of stuff in the new todo
 3. added `requirements.txt` because why not lol
 
@@ -22,7 +23,7 @@
 - added multithreading so processes can work in parallel
 - restructured files (again)
 - actually made the game core
-- added local highscore as proof-of-concept for a cloud server (will prob using apache db using my raspi zero as a web server)
+- added local highscore as proof-of-concept for a cloud server
 - made classes for each sprite so they can be easily called
 - added emscripten detection for web building
 - added `_MEIPASS` detection for native building

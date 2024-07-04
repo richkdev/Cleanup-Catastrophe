@@ -79,9 +79,8 @@ class Game(object):
                 match discord.connected:
                     case False:
                         discord.prepare()
-                        discord.update(type(self.state).__name__)
                     case True:
-                        discord.update(type(self.state).__name__)
+                        discord.update(self.state.desc)
             except Exception as e:
                 print(type(e).__name__, e)
             await asyncio.sleep(1)
