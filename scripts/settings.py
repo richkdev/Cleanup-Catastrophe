@@ -5,7 +5,6 @@ from json import loads
 from os import path, makedirs
 from datetime import datetime
 
-
 def newPath(relPath: str):
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         return path.join(sys._MEIPASS, relPath)  # type: ignore -> pyinstaller temp folder
@@ -16,7 +15,7 @@ def newPath(relPath: str):
 version = open(newPath("VERSION"), "r").read()
 settings = loads(open(newPath("settings.json")).read())
 
-emscripten = sys.platform == 'emscripten'  # detect if wasm/emscripten context
+emscripten = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
 
 WIDTH = 320
 HEIGHT = 224
