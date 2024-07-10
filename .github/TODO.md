@@ -2,23 +2,21 @@
 
 ## code stuff
 
-- [x] make state management possible using `State` class **(WIP)** states list: splash, game, menu, shop, loading, etc
+- [x] make state management possible using `State` class
 - [ ] use requests module to check latest game version on gh repo via githack _<https://raw.githack.com/richkdev/Cleanup-Catastrophe/main/VERSION>_
 - [x] add ability to add line breaks into drawText func
 - [x] custom sizes for the spritesheet, but same rect (rect functions as hitbox btw)
 - [x] log stdout in case game crashes
+- [x] make a hub world for menu select **(WIP)**
+- [ ] make levels to teach new players how to play
 
-## art n music
+## art
 
-- [x] remake music (got friends to help)
-- [x] remake all sprites (current ones are bad)
 - [ ] recolor all sprites using sega genesis palette
-- [ ] make intro cutscene (comic strip as video, or make a cutscene engine with panels)
+- [ ] make intro cutscene as comic
 
 ## ideas
 
 - [ ] include multiple minigames from multiple fandoms!
-    * [ ] cleanup catastrophe, basicall y the one in prototype, inspired by minesweeper (sorta)
     * [ ] melodical mess, collab with rhythm game?
-    * [ ] fnaf reference? part of a collab with a certain fnaf fangame lol
-- [ ] add bombs which you cant pick up, decreases your fishing rod durability
+- [x] add bombs which you cant pick up, decreases your fishing rod durability **(WIP)**

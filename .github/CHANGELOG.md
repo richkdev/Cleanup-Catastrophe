@@ -1,14 +1,15 @@
 # change log lol
 
-## v.0.2.1 - crazy stuff
+## v.0.2.1 - 
 
 ### details
 
 - switched to pygame community edition!
 - fixed `RuntimeError` with discord rpc ~~thread~~ process, had to use nest-asyncio _<https://pypi.org/project/nest-asyncio>_ and turn it into asyncio process that sleeps for 10 seconds then updates
-- added state management with my own finite state-machine
+- added state management with my own finite state machine
 - fixed a problem, since moderngl stuffs needs to refer to a context, i turn it into a ~~main thread~~ async process
-- custom descriptions for discord RPC
+- WIP hub world for menu select
+- custom descriptions for discord rich presence based on gamestate
 
 ### notes
 
