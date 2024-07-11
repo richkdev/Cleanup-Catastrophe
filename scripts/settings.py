@@ -17,8 +17,8 @@ settings = loads(open(newPath("settings.json")).read())
 
 emscripten = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
 
-WIDTH = 320
-HEIGHT = 224
+WIDTH: int = 320
+HEIGHT: int = 224
 
 xBorder = int(WIDTH * 0.02)
 yBorder = int(HEIGHT * 0.02)

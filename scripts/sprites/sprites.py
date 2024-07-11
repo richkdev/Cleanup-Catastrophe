@@ -2,14 +2,14 @@ import pygame
 from pygame.locals import *  # type: ignore
 
 from scripts.settings import *
-from scripts.sprites.basesprite import Sprite, Text, drawText
+from scripts.sprites.basesprite import Sprite, WorldObject, TileSprite, Text, drawText
 from scripts.sprites.sheet import cutSheet
 
 from random import randint
 
 
 class Player(Sprite):
-    def __init__(self, pos=(WIDTH / 5, HEIGHT / 3)):
+    def __init__(self, pos=(WIDTH/5, HEIGHT/3)):
         super().__init__(True, newPath("assets/img/sprites/paul_idle.png"),
                          Vector2(24, 43))
         self.sheet.add_animation("run", cutSheet(newPath("assets/img/sprites/paul_run.png"),
@@ -60,9 +60,6 @@ class Trash(Sprite):
 
         self.explosive = trashType == 3
 
-    def update(self, key, dt):
-        pass
-
 
 class MenuLogo(Sprite):
     def __init__(self):
@@ -83,17 +80,11 @@ class MenuLogo(Sprite):
         self.rect.y = self.old_y
 
 
-class Background(Sprite):
+class Background(TileSprite):
     def __init__(self):
-        super().__init__(False, newPath("assets/img/bg/ocean.png"),
-                         Vector2(300, 300))
-
-
-class WorldObject(Sprite):
-    def __init__(self, imagepath: str, coords: tuple[int, int], desc: str):
-        super().__init__(False, imagepath, Vector2(34, 13))
-
-        self.rect.x, self.rect.y = coords
-
-        self.old_x = coords[0]
-        self.desc = desc
+        super().__init__(
+            imagepath=newPath("assets/img/bg/ocean.png"),
+            tile_size=Vector2(50, 300),
+            target_size=Vector2(WIDTH, HEIGHT),
+            coords=(0, 0)
+        )

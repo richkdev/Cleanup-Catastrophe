@@ -1,4 +1,6 @@
 import pygame
+import numpy
+
 from random import randint
 
 from scripts.settings import *
@@ -7,6 +9,10 @@ from scripts.sprites.sheet import Sheet, cutSheet
 
 
 class Sprite(pygame.sprite.DirtySprite):
+    """
+    Sprite class with a `pygame.sprite.DirtySprite` base
+    """
+
     def __init__(self, sheetEnabled: bool, imagepath: str, size: Vector2 = Vector2(0, 0)):
         pygame.sprite.DirtySprite.__init__(self)
 
@@ -44,7 +50,51 @@ class Sprite(pygame.sprite.DirtySprite):
             self.sheet.update()
 
 
+class WorldObject(Sprite):
+    """
+    Sprite class for 
+    """
+    def __init__(self, imagepath: str, coords: tuple[int, int], desc: str):
+        super().__init__(False, imagepath, Vector2(34, 13))
+
+        self.rect.x, self.rect.y = coords
+        self.old_x = coords[0]
+
+        self.desc = desc
+
+
+class TileSprite(Sprite):
+    """
+    Sprite class for mutliplying an image based on a given `target_size` and `tile_size`.    
+    """
+
+    def __init__(self, imagepath: str, coords: tuple[int, int], tile_size: Vector2, target_size: Vector2):
+        super().__init__(False, imagepath, target_size)
+
+        self.rect.x, self.rect.y = coords
+
+        self.tile_size = tile_size
+        self.target_size = target_size
+
+    def update(self, key, dt):
+        pattern = numpy.zeros((int(self.target_size.y), int(self.target_size.x), 3), dtype=numpy.uint8)
+
+        for y in range(int(self.tile_size.y)):
+            for x in range(int(self.tile_size.x)):
+                pattern[x, y] = self.image.get_at((x % int(self.target_size.x), y % int(self.target_size.y)))[:3]
+
+        self.image = pygame.surfarray.make_surface(pattern)
+
+        for y in range(0, int(self.target_size.x), int(self.tile_size.y)):
+            for x in range(0, int(self.target_size.y), int(self.tile_size.x)):
+                self.image.blit(self.image, (x, y))
+
+
 class Text(pygame.sprite.DirtySprite):
+    """
+    Sprite class for displaying text on screen.
+    """
+
     def __init__(self, text: str = "lorem ipsum", font: pygame.font.Font = bigFont, color: tuple[int, int, int, int] = WHITE, coords: tuple[int, int] = (0, 0)):
         pygame.sprite.DirtySprite.__init__(self)
 
@@ -68,7 +118,11 @@ class Text(pygame.sprite.DirtySprite):
         self.rect.x, self.rect.y = self.old_x + randint(0, seedX), self.old_y + randint(0, seedY)
 
 
-def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):  # modified version of https://www.pygame.org/wiki/TextWrap
+def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):
+    """
+    modified version of https://www.pygame.org/wiki/TextWrap
+    """
+
     pos = (pos[0] + screen.get_width() / 2, pos[1] + screen.get_height() / 2)
     rect = screen.get_rect(center=pos)
     textGroup = pygame.sprite.Group()

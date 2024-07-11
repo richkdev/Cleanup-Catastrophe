@@ -124,26 +124,41 @@ class Catastrophe(State):
 
 
 class Lobby(State):
-    player_offset = 0  # used to keep track of player so that when going back to lobby the player spawns at the same position. If not wanted its not hard to remove it.
+    player_offset = 0
 
     def __init__(self, game):
         super().__init__(game, False, "At the lobby...")
 
         self.background = Background()
-        self.player = Player(pos=(HEIGHT / 2 + Lobby.player_offset, HEIGHT / 3))
-        self.map = {
+        self.player = Player(pos=(HEIGHT/2 + self.player_offset, HEIGHT/3))
+
+        self.mapInteractables = {
             "Shop": [20, Shop],
             "Play": [120, Catastrophe],
             "Score": [220, Scoreboard]
         }
-        self.textStuff = pygame.sprite.Group()
-        for name, stuff in self.map.items():
-            self.textStuff.add(WorldObject(
-                newPath(f"assets/img/ui/{name}.png"), (stuff[0], 70), name))
+        self.interactables = pygame.sprite.Group()
+        for name, stuff in self.mapInteractables.items():
+            self.interactables.add(
+                WorldObject(
+                    newPath(f"assets/img/ui/{name}.png"),
+                    (stuff[0], 70),
+                    name
+                )
+            )
+
+        # self.mapOthers = [randint(-50, 50) for _ in range(5)]
+        # self.otherStuff = pygame.sprite.Group()
+        # for name, stuff in self.mapInteractables.items():
+        #     self.interactables.add(
+        #         WorldObject(newPath(f"assets/img/ui/{name}.png"), (stuff[0], 70), name)
+        #     )
+
 
         self.sprites.add(
             self.background,
-            self.textStuff,
+            self.interactables,
+            # self.otherStuff,
             self.player
         )
         self.offset = 0
@@ -158,14 +173,17 @@ class Lobby(State):
         elif self.key[K_RIGHT] and self.player.rect.x <= (WIDTH - xBorder - self.player.rect.width):
             self.player.velocity += 80
 
-        self.player.rect.x += self.player.velocity * self.dt
+        # self.player.rect.x += self.player.velocity * self.dt
         self.offset = self.player.velocity * self.dt
-        Lobby.player_offset = self.player.rect.x - HEIGHT / 2  # doesnt work correctly
+        self.player_offset = self.player.rect.x - HEIGHT/2  # doesnt work correctly
 
-        for t in self.textStuff:
+        for t in self.interactables:
             t.rect.x -= self.offset
 
-        collided_sprite = pygame.sprite.spritecollideany(self.player, self.textStuff, None)
+        for t in self.interactables:
+            t.rect.x -= self.offset
+
+        collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
 
         if isinstance(collided_sprite, WorldObject) and self.key_just_pressed[K_RETURN]:
             print("interacted with an interactable worldobject")
@@ -178,7 +196,7 @@ class Lobby(State):
             elif collided_sprite.desc == "Shop":
                 pass
 
-            self.game.state = self.map[collided_sprite.desc][1](self.game)
+            self.game.state = self.mapInteractables[collided_sprite.desc][1](self.game)
 
 
 class Scoreboard(State):
