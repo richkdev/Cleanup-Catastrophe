@@ -1,8 +1,8 @@
 from struct import pack
 from array import array
-from scripts.settings import *
+from scripts.settings import retroMode, vertexShader, fragmentShader
 
-
+import pygame
 import moderngl
 
 from array import array
@@ -17,26 +17,25 @@ try:
 except Exception as e:
     print(e)
 
-if ("normal.glsl" in vertexShader) and ("normal.glsl" in fragmentShader):
-    render_object = ctx.vertex_array(
-        program, [(ctx.buffer(data=array('f', [
-            -1.0,  1.0, 0.0, 0.0,  # topleft
-            1.0,  1.0, 1.0, 0.0,   # topright
-            -1.0, -1.0, 0.0, 1.0,  # bottomleft
-            1.0, -1.0, 1.0, 1.0,   # bottomright
-        ])), '2f 2f', 'vert', 'texcoord')]
-    )
+render_object: moderngl.VertexArray
 
-elif ("crt.glsl" in vertexShader) and ("crt.glsl" in fragmentShader):
-    render_object = ctx.vertex_array(
-        program, [(ctx.buffer(pack('8f', *[-1, -1,  1, -1, -1,  1,  1,  1])), '2f', 'vert'),
-                  (ctx.buffer(pack('8f', *[0, 1,  1, 1, 0, 0,  1, 0])), '2f', 'in_text')],
-        ctx.buffer(pack('6I', *[0, 1, 2, 1, 2, 3]))
-    )
+match retroMode:
+    case True:
+        render_object = ctx.vertex_array(
+            program, [(ctx.buffer(pack('8f', *[-1, -1,  1, -1, -1,  1,  1,  1])), '2f', 'vert'),
+                    (ctx.buffer(pack('8f', *[0, 1,  1, 1, 0, 0,  1, 0])), '2f', 'in_text')],
+            ctx.buffer(pack('6I', *[0, 1, 2, 1, 2, 3]))
+        )
 
-else:
-    raise NotImplementedError
-
+    case False:
+        render_object = ctx.vertex_array(
+            program, [(ctx.buffer(data=array('f', [
+                -1.0,  1.0, 0.0, 0.0,  # topleft
+                1.0,  1.0, 1.0, 0.0,   # topright
+                -1.0, -1.0, 0.0, 1.0,  # bottomleft
+                1.0, -1.0, 1.0, 1.0,   # bottomright
+            ])), '2f 2f', 'vert', 'texcoord')]
+        )
 
 def surf_to_texture(surf: pygame.surface.Surface):
     tex = ctx.texture(surf.get_size(), 4)

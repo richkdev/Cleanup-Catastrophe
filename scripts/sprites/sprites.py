@@ -83,8 +83,8 @@ class MenuLogo(Sprite):
 class Background(TileSprite):
     def __init__(self):
         super().__init__(
-            imagepath=newPath("assets/img/bg/ocean.png"),
-            tile_size=Vector2(50, 300),
+            imagepath=newPath("assets/img/bg/sky.png"),
+            tile_size=Vector2(2, 300),
             target_size=Vector2(WIDTH, HEIGHT),
             coords=(0, 0)
         )

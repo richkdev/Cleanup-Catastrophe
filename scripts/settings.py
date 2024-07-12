@@ -26,8 +26,17 @@ yBorder = int(HEIGHT * 0.02)
 FPS: int = settings['maxFPS']
 volume: float = settings['volume'] / 100
 
-fragmentShader: str = newPath(settings['fragmentShader'])
-vertexShader: str = newPath(settings['vertexShader'])
+retroMode: bool = settings['retroMode']
+fragmentShader: str
+vertexShader: str
+
+match retroMode:
+    case True:
+        fragmentShader = newPath("assets/shaders/fragment_shaders/crt.glsl")
+        vertexShader = newPath("assets/shaders/vertex_shaders/crt.glsl")
+    case False:
+        fragmentShader = newPath("assets/shaders/fragment_shaders/normal.glsl")
+        vertexShader = newPath("assets/shaders/vertex_shaders/normal.glsl")
 
 mapDirectory: str = newPath(settings['mapDirectory'])
 saveFileDirectory: str = newPath(settings['saveFileDirectory'])
