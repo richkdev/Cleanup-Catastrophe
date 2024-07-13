@@ -52,7 +52,7 @@ class Sprite(pygame.sprite.DirtySprite):
 
 class WorldObject(Sprite):
     """
-    Sprite class for 
+    Sprite class for objects in the `Lobby` state.
     """
     def __init__(self, imagepath: str, coords: tuple[int, int], desc: str):
         super().__init__(False, imagepath, Vector2(34, 13))

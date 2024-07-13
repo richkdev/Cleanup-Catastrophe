@@ -11,6 +11,10 @@ if TYPE_CHECKING:
 
 
 class State(object):
+    """
+    Base class for game states to use.
+    """
+
     def __init__(self, game: "Game", gamemode: bool, desc: str):
         match gamemode:
             case True:
