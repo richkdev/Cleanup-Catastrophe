@@ -60,6 +60,9 @@ class Trash(Sprite):
 
         self.explosive = trashType == 3
 
+    def update(self, key, dt):
+        pass
+
 
 class MenuLogo(Sprite):
     def __init__(self):
