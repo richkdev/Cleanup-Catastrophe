@@ -180,8 +180,8 @@ class Lobby(State):
         for t in self.interactables:
             t.rect.x -= self.offset
 
-        for t in self.interactables:
-            t.rect.x -= self.offset
+        # for t in self.otherStuff:
+            # t.rect.x -= self.offset
 
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
 

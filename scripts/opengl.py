@@ -9,7 +9,7 @@ from array import array
 
 
 try:
-    ctx = moderngl.create_context(require=300)
+    ctx = moderngl.create_context(require=330)
     program = ctx.program(
         vertex_shader=open(vertexShader).read(),
         fragment_shader=open(fragmentShader).read()

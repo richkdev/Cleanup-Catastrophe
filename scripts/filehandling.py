@@ -12,9 +12,9 @@ def loadMap() -> list[list[int]]:
     return map
 
 
-def makeMap(start: int = 3, stop: int = 5) -> list[list[int]]:
+def makeMap(start: int = 4, stop: int = 4, offset: int = 4) -> list[list[int]]:
     rows, cols = randint(start, stop), randint(start, stop)
-    map = [[randint(0, 4) for _ in range(rows)] for _ in range(cols)]
+    map = [[randint(0, offset) for _ in range(rows)] for _ in range(cols)]
     return map
 
 

@@ -18,6 +18,7 @@ class Sprite(pygame.sprite.DirtySprite):
 
         self.sheetEnabled = sheetEnabled
         self.image: Surface
+
         if self.sheetEnabled:
             self.sheet = Sheet()
             self.sheet.add_animation("idle", cutSheet(imagepath, size))
@@ -35,7 +36,7 @@ class Sprite(pygame.sprite.DirtySprite):
 
         self.visible = 1
         self.dirty = 1
-        self.layer = 1
+        self._layer = 1
 
         print(f"Loaded {type(self).__name__} sprite, at ({self.rect.x}, {self.rect.y})")
 
@@ -54,6 +55,7 @@ class WorldObject(Sprite):
     """
     Sprite class for objects in the `Lobby` state.
     """
+
     def __init__(self, imagepath: str, coords: tuple[int, int], desc: str):
         super().__init__(False, imagepath, Vector2(34, 13))
 
@@ -77,17 +79,18 @@ class TileSprite(Sprite):
         self.target_size = target_size
 
     def update(self, key, dt):
-        pattern = numpy.zeros((int(self.target_size.y), int(self.target_size.x), 3), dtype=numpy.uint8)
+        self.pattern = numpy.zeros((int(self.target_size.y), int(self.target_size.x), 3), dtype=numpy.uint8)
 
         for y in range(int(self.tile_size.y)):
             for x in range(int(self.tile_size.x)):
-                pattern[x, y] = self.image.get_at((x % int(self.target_size.x), y % int(self.target_size.y)))[:3]
+                self.pattern[x, y] = self.image.get_at((x % int(self.target_size.x), y % int(self.target_size.y)))[:3]
 
-        self.image = pygame.surfarray.make_surface(pattern)
+        self.pattern_image = pygame.surfarray.make_surface(self.pattern)
+        self.image = Surface((int(self.target_size.x), int(self.target_size.y)))
 
-        for y in range(0, int(self.target_size.x), int(self.tile_size.y)):
-            for x in range(0, int(self.target_size.y), int(self.tile_size.x)):
-                self.image.blit(self.image, (x, y))
+        for y in range(0, int(self.target_size.y), int(self.tile_size.y)):
+            for x in range(0, int(self.target_size.x), int(self.tile_size.x)):
+                self.image.blit(self.pattern_image, (x, y))
 
 
 class Text(pygame.sprite.DirtySprite):
@@ -120,7 +123,7 @@ class Text(pygame.sprite.DirtySprite):
 
 def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):
     """
-    modified version of https://www.pygame.org/wiki/TextWrap
+    Modified version of https://www.pygame.org/wiki/TextWrap.
     """
 
     pos = (pos[0] + screen.get_width() / 2, pos[1] + screen.get_height() / 2)

@@ -88,6 +88,6 @@ class Background(TileSprite):
         super().__init__(
             imagepath=newPath("assets/img/bg/sky.png"),
             tile_size=Vector2(2, 300),
-            target_size=Vector2(WIDTH, HEIGHT),
+            target_size=Vector2(WIDTH, 300),
             coords=(0, 0)
         )
