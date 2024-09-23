@@ -1,5 +1,5 @@
 import pygame
-from pygame import Vector2, FRect, Surface, Rect
+from pygame import Color, Vector2, FRect, Surface, Rect
 import sys
 from json import loads
 from os import path, makedirs
@@ -46,14 +46,14 @@ logDirectory: str = newPath(settings['logDirectory'])
 
 clock = pygame.time.Clock()
 
-DARKRED = (100, 0, 0, 255)
-RED = (255, 0, 0, 255)
-YELLOW = (255, 255, 0, 255)
-GREEN = (0, 255, 0, 255)
-BLUE = (0, 0, 255, 255)
-WHITE = (255, 255, 255, 255)
-BLACK = (0, 0, 0, 255)
-TRANSPARENT = (0, 0, 0, 0)
+DARKRED = Color(100, 0, 0, 255)
+RED = Color(255, 0, 0, 255)
+YELLOW = Color(255, 255, 0, 255)
+GREEN = Color(0, 255, 0, 255)
+BLUE = Color(0, 0, 255, 255)
+WHITE = Color(255, 255, 255, 255)
+BLACK = Color(0, 0, 0, 255)
+TRANSPARENT = Color(0, 0, 0, 0)
 
 pygame.font.init()
 

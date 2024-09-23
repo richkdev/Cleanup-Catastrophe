@@ -32,7 +32,8 @@ class State(object):
 
     def update(self):
         self.key = pygame.key.get_pressed()
-        self.key_just_pressed = pygame.key.get_just_pressed()
+        # self.key_recent = pygame.key.get_just_pressed()
+        self.event = pygame.event.get()
         self.dt = clock.tick_busy_loop(FPS) / 1000
 
         self.sprites.update(self.key, self.dt)

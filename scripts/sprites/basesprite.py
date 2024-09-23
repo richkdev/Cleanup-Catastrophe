@@ -56,12 +56,13 @@ class WorldObject(Sprite):
     Sprite class for objects in the `Lobby` state.
     """
 
-    def __init__(self, imagepath: str, coords: tuple[int, int], desc: str):
+    def __init__(self, imagepath: str, coords: tuple[int, int], desc: str, interactable: bool = False):
         super().__init__(False, imagepath, Vector2(34, 13))
 
         self.rect.x, self.rect.y = coords
         self.old_x = coords[0]
 
+        self.interactable = interactable
         self.desc = desc
 
 
@@ -98,7 +99,7 @@ class Text(pygame.sprite.DirtySprite):
     Sprite class for displaying text on screen.
     """
 
-    def __init__(self, text: str = "lorem ipsum", font: pygame.font.Font = bigFont, color: tuple[int, int, int, int] = WHITE, coords: tuple[int, int] = (0, 0)):
+    def __init__(self, text: str = "lorem ipsum", font: pygame.font.Font = bigFont, color = WHITE, coords = Vector2(0, 0)):
         pygame.sprite.DirtySprite.__init__(self)
 
         self.text = text
@@ -108,20 +109,20 @@ class Text(pygame.sprite.DirtySprite):
         self.image = self.font.render(self.text, False, self.color, None)
 
         self.rect: Rect = self.image.get_rect()
-        self.old_x, self.old_y = coords[0], coords[1]
+        self.old_x, self.old_y = coords.x, coords.y
         self.rect.x, self.rect.y = self.old_x, self.old_y
 
     def update(self, key, dt):
         self.image = self.font.render(self.text, False, self.color, None)
 
-    def displace(self, coords: tuple[int, int] = (0, 0)):
-        self.rect.x, self.rect.y = coords[0], coords[1]
+    def displace(self, coords: Vector2):
+        self.rect.x, self.rect.y = coords.x, coords.y
 
     def shake(self, seedX: int = 2, seedY: int = 2):
         self.rect.x, self.rect.y = self.old_x + randint(0, seedX), self.old_y + randint(0, seedY)
 
 
-def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font, screen: Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):
+def drawText(text: str, color: Color, font: pygame.font.Font, screen: Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):
     """
     Modified version of https://www.pygame.org/wiki/TextWrap.
     """
@@ -150,7 +151,7 @@ def drawText(text: str, color: tuple[int, int, int, int], font: pygame.font.Font
                 # Find the last space in the current substring
                 i = paragraph.rfind(" ", 0, i) + 1
 
-            newText = Text(text=paragraph[:i], font=font, color=color, coords=(rect.left, y))
+            newText = Text(text=paragraph[:i], font=font, color=color, coords=Vector2(rect.left, y))
             y += fontHeight + lineSpacing
 
             paragraph = paragraph[i:]

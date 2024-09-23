@@ -12,14 +12,13 @@ class Splash(State):
     def __init__(self, game):
         super().__init__(game, False, "At the splash screen")
 
-        self.text = "The FitnessGram™ Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly, but gets faster each minute after you hear this signal. [beep] A single lap should be completed each time you hear this sound. [ding] Remember to run in a straight line, and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark, get ready, start."
-
+        self.introText = drawText(text="press ENTER key to begin", color=WHITE,
+                     font=smallFont, screen=self.screen)
         self.logo = MenuLogo()
 
         self.sprites.add(
             self.logo,
-            drawText(text=self.text, color=WHITE,
-                     font=smallFont, screen=self.screen)
+            self.introText
         )
 
         if self.game.music_sound_id:
@@ -42,7 +41,7 @@ class Catastrophe(State):
         self.background = Background()
         self.player = Player()
         self.rod = Rod()
-        self.textDisplay = Text(font=bigFont, color=WHITE, coords=(10, 10))
+        self.textDisplay = Text(font=bigFont, color=WHITE, coords=Vector2(10, 10))
 
         self.trashSprites = pygame.sprite.Group()
 
@@ -51,7 +50,7 @@ class Catastrophe(State):
         for row in range(len(spawn_map)):
             for col in range(len(spawn_map[0])):
                 if spawn_map[row][col] != 4:
-                    self.trashSprites.add(Trash(spawn_map[row][col], (int(row * 25 + xBorder * 6), int(col * 25 + HEIGHT / 2)), xBorder * 2))
+                    self.trashSprites.add(Trash(spawn_map[row][col], ((row ** 25 + xBorder ** 6), (col ** 25 + HEIGHT//2)), xBorder * 2))
 
         self.sprites.add(
             self.background,
@@ -119,12 +118,12 @@ class Catastrophe(State):
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
-        if self.key_just_pressed[K_ESCAPE]:
-            self.game.state = Lobby(self.game)
+        # if self.key[K_ESCAPE]:
+        #     self.game.state = Lobby(self.game)
 
 
 class Lobby(State):
-    player_offset = 0
+    player_offset = -40
 
     def __init__(self, game):
         super().__init__(game, False, "At the lobby...")
@@ -132,33 +131,34 @@ class Lobby(State):
         self.background = Background()
         self.player = Player(pos=(HEIGHT/2 + self.player_offset, HEIGHT/3))
 
-        self.mapInteractables = {
+        self.interactables_map = {
             "Shop": [20, Shop],
             "Play": [120, Catastrophe],
             "Score": [220, Scoreboard]
         }
         self.interactables = pygame.sprite.Group()
-        for name, stuff in self.mapInteractables.items():
+        for name, stuff in self.interactables_map.items():
             self.interactables.add(
                 WorldObject(
-                    newPath(f"assets/img/ui/{name}.png"),
-                    (stuff[0], 70),
-                    name
+                    imagepath=newPath(f"assets/img/ui/{name}.png"),
+                    coords=(stuff[0], 70), desc=name, interactable=True
                 )
             )
 
-        # self.mapOthers = [randint(-50, 50) for _ in range(5)]
-        # self.otherStuff = pygame.sprite.Group()
-        # for name, stuff in self.mapInteractables.items():
-        #     self.interactables.add(
-        #         WorldObject(newPath(f"assets/img/ui/{name}.png"), (stuff[0], 70), name)
-        #     )
-
+        self.backgroundStuff_map = [((WIDTH//2 + randint(-200, 200)), (HEIGHT//3 + randint(-10, 10))) for _ in range(5)]
+        self.backgroundStuff = pygame.sprite.Group()
+        for coords in self.backgroundStuff_map:
+            self.backgroundStuff.add(
+                WorldObject(
+                    imagepath=newPath(f"assets/img/bg/tree.png"),
+                    coords=coords, desc="tree", interactable=False
+                )
+            )
 
         self.sprites.add(
             self.background,
             self.interactables,
-            # self.otherStuff,
+            self.backgroundStuff,
             self.player
         )
         self.offset = 0
@@ -173,19 +173,19 @@ class Lobby(State):
         elif self.key[K_RIGHT] and self.player.rect.x <= (WIDTH - xBorder - self.player.rect.width):
             self.player.velocity += 80
 
-        # self.player.rect.x += self.player.velocity * self.dt
+        self.player.rect.x += self.player.velocity * self.dt
         self.offset = self.player.velocity * self.dt
         self.player_offset = self.player.rect.x - HEIGHT/2  # doesnt work correctly
 
         for t in self.interactables:
             t.rect.x -= self.offset
 
-        # for t in self.otherStuff:
-            # t.rect.x -= self.offset
+        for t in self.backgroundStuff:
+            t.rect.x -= self.offset
 
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
 
-        if isinstance(collided_sprite, WorldObject) and self.key_just_pressed[K_RETURN]:
+        if isinstance(collided_sprite, WorldObject) and collided_sprite.interactable and self.key[K_RETURN]:
             print("interacted with an interactable worldobject")
 
             # in each of these checks we could do something special like play a sound effect.
@@ -196,7 +196,7 @@ class Lobby(State):
             elif collided_sprite.desc == "Shop":
                 pass
 
-            self.game.state = self.mapInteractables[collided_sprite.desc][1](self.game)
+            self.game.state = self.interactables_map[collided_sprite.desc][1](self.game)
 
 
 class Scoreboard(State):
@@ -212,7 +212,7 @@ class Scoreboard(State):
     def update(self):
         super().update()
 
-        if self.key_just_pressed[K_ESCAPE]:
+        if self.key[K_ESCAPE]:
             self.game.state = Lobby(self.game)
 
 
@@ -228,5 +228,5 @@ class Shop(State):
     def update(self):
         super().update()
 
-        if self.key_just_pressed[K_ESCAPE]:
+        if self.key[K_ESCAPE]:
             self.game.state = Lobby(self.game)

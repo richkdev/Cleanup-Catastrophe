@@ -1,9 +1,5 @@
-from scripts.settings import *
+from scripts.settings import emscripten, volume
 import pygame
-
-# "Maybe make this class completly static, so you can call SoundManager.play(...) from everywhere." -hulah, 2024
-# 2024-06-06 hulahhh: Maybe there is no point in doing so since every object has a link towards the main game class, where the soundmanager instance could be
-# 2024-06-06 richy: thank you hulah :heart:
 
 if not pygame.mixer.get_init():
     pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=512)
