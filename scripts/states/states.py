@@ -203,9 +203,13 @@ class Scoreboard(State):
     def __init__(self, game):
         super().__init__(game, False, "Lookin\' at the scoreboard")
 
-        self.text = str(getLocal())
+        highscores = getLocal()
+        text = ""
 
-        self.sprites.add(drawText(text=self.text, color=WHITE,
+        for i in highscores:
+            text += f"{(i['name'])}: {i['score']}\n"
+
+        self.sprites.add(drawText(text=text, color=WHITE,
                          font=smallFont, screen=self.screen,
                          pos=(0, 0)))
 
