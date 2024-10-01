@@ -4,7 +4,7 @@ from random import randint
 from scripts.settings import mapDirectory, saveFileDirectory
 
 
-def loadMap() -> list[list[int]]:
+def loadMap() -> list[dict[list, int]]:
     try:
         map = load(open(mapDirectory))
     except JSONDecodeError or FileNotFoundError:
@@ -22,7 +22,7 @@ def saveMap(mapPath: str) -> None:
     dump(mapPath, open(mapDirectory, "w"))
 
 
-def getLocal() -> list[list[int]]:
+def getLocal() -> list[dict[str, int]]:
     try:
         highscores = load(open(saveFileDirectory))
     except JSONDecodeError or FileNotFoundError:
