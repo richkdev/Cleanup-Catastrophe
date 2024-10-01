@@ -40,7 +40,7 @@ class Sprite(pygame.sprite.DirtySprite):
 
         print(f"Loaded {type(self).__name__} sprite, at ({self.rect.x}, {self.rect.y})")
 
-    def update(self, key, dt):
+    def update(self, key: pygame.key.ScancodeWrapper, dt: int):
         pygame.sprite.DirtySprite.update(self)
 
         self.key = key

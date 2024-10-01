@@ -30,7 +30,7 @@ def getLocal() -> list[list[int]]:
     return highscores
 
 
-def saveLocal(name, score) -> None:
+def saveLocal(name: str, score: int) -> None:
     highscores = getLocal()
 
     player_exists = False
