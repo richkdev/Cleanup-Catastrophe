@@ -63,5 +63,4 @@ smallFont = pygame.font.SysFont("helvetica", 15)
 if not path.exists(newPath(logDirectory)):
     makedirs(newPath(logDirectory))
 
-# richy: very basic logging system, will remove later
-sys.stdout = open(newPath(f"{logDirectory}{current_time}.log"), "w+")
+# sys.stdout = open(newPath(f"{logDirectory}{current_time}.log"), "w+")
