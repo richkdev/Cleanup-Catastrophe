@@ -45,12 +45,21 @@ class Catastrophe(State):
 
         self.trashSprites = pygame.sprite.Group()
 
-        spawn_map = makeMap()
+        spawn_map = loadMap()
 
         for row in range(len(spawn_map)):
             for col in range(len(spawn_map[0])):
-                if spawn_map[row][col] != 4:
-                    self.trashSprites.add(Trash(spawn_map[row][col], ((row ** 25 + xBorder ** 6), (col ** 25 + HEIGHT//2)), xBorder * 2))
+                if spawn_map[row][col] != 0:
+                    self.trashSprites.add(
+                        Trash(
+                            trashType=spawn_map[row][col],
+                            coords=Vector2(
+                                (row * 25 + xBorder*2),
+                                (col * 25 + HEIGHT//2)
+                            ),
+                            offset=20
+                        )
+                    )
 
         self.sprites.add(
             self.background,
@@ -69,7 +78,7 @@ class Catastrophe(State):
         else:
             self.textDisplay.color = YELLOW
 
-        self.textDisplay.text = f"SCORE: {self.score}"
+        self.textDisplay.text = f"FPS: {round(clock.get_fps())}\nSCORE: {self.score}"
 
         if not any(isinstance(sprite, Trash) and not sprite.explosive for sprite in self.trashSprites) or self.score < 0:
             self.game.state = Lobby(self.game)
@@ -96,7 +105,7 @@ class Catastrophe(State):
                     self.sprites.remove(self.rod)
 
             case True:
-                for collided in pygame.sprite.spritecollide(self.rod, self.trashSprites, True, pygame.sprite.collide_mask):
+                for collided in pygame.sprite.spritecollide(self.rod, self.trashSprites, True, pygame.sprite.collide_rect):
                     if isinstance(collided, Trash):
                         match collided.explosive:
                             case True:
@@ -114,7 +123,7 @@ class Catastrophe(State):
                     self.sound_manager.play("noTrash")
                 else:
                     self.rod.rect.y += self.rod.velocity * self.dt
-                    pygame.draw.line(self.screen, (123, 63, 0),
+                    pygame.draw.line(self.screen, DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
@@ -174,6 +183,8 @@ class Lobby(State):
             self.player.velocity += 80
 
         self.player.rect.x += self.player.velocity * self.dt
+        self.background.rect.x += self.background.velocity * self.dt
+
         self.offset = self.player.velocity * self.dt
         self.player_offset = self.player.rect.x - HEIGHT/2  # doesnt work correctly
 
