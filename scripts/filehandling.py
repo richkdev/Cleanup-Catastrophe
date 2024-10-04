@@ -4,7 +4,7 @@ from random import randint
 from scripts.settings import mapDirectory, saveFileDirectory
 
 
-def loadMap() -> list[dict[list, int]]:
+def loadMap() -> list[list[int]]:
     try:
         map = load(open(mapDirectory))
     except JSONDecodeError or FileNotFoundError:
@@ -12,9 +12,15 @@ def loadMap() -> list[dict[list, int]]:
     return map
 
 
-def makeMap(start: int = 4, stop: int = 4, offset: int = 4) -> list[list[int]]:
+def makeMap(start: int = 4, stop: int = 4) -> list[list[int]]:
+    """
+    trashType
+    0 = empty
+    1-3 = not empty
+    """
+    
     rows, cols = randint(start, stop), randint(start, stop)
-    map = [[randint(0, offset) for _ in range(rows)] for _ in range(cols)]
+    map = [[randint(0, 4) for _ in range(rows)] for _ in range(cols)]
     return map
 
 
@@ -22,7 +28,7 @@ def saveMap(mapPath: str) -> None:
     dump(mapPath, open(mapDirectory, "w"))
 
 
-def getLocal() -> list[dict[str, int]]:
+def getLocal() -> list[dict[str, str|int]]:
     try:
         highscores = load(open(saveFileDirectory))
     except JSONDecodeError or FileNotFoundError:
@@ -35,8 +41,8 @@ def saveLocal(name: str, score: int) -> None:
 
     player_exists = False
     for i in highscores:
-        if i['name'] == name:
-            if i['score'] <= score:
+        if str(i['name']) == name:
+            if int(i['score']) <= score:
                 i['score'] = score
             player_exists = True
             if not player_exists:
