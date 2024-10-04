@@ -42,23 +42,22 @@ class Rod(Sprite):
 
         self.rect.x, self.rect.y = -10, -10
 
-        self.velocity = WIDTH / 4
+        self.velocity = WIDTH/4
 
         self.isFishing = False
         self.durable = 20
 
 
 class Trash(Sprite):
-    def __init__(self, trashType: int = 0, coords: tuple[int, int] = (0, 0), offset: int = 8):
-        super().__init__(True, newPath(f"assets/img/sprites/trash.png"),
-                         Vector2(12, 13))
+    def __init__(self, trashType: int = 1, coords: Vector2 = Vector2(0, 0), offset: int = 8):
+        super().__init__(True, newPath(f"assets/img/sprites/trash.png"), Vector2(12, 13))
 
-        self.image = self.sheet.states["idle"][trashType]
+        self.image = self.sheet.states["idle"][trashType-1]
 
         self.rect.x, self.rect.y = int(
             coords[0] + randint(1, offset)), int(coords[1] + randint(1, offset))
 
-        self.explosive = trashType == 3
+        self.explosive = trashType == 4
 
     def update(self, key, dt):
         pass
@@ -76,8 +75,8 @@ class MenuLogo(Sprite):
 
         self.rect = self.image.get_frect()
 
-        self.old_x = (WIDTH - self.rect.width) / 2
-        self.old_y = (HEIGHT - self.rect.height) / 2
+        self.old_x = (WIDTH - self.rect.width)//2
+        self.old_y = (HEIGHT - self.rect.height)//2
 
         self.rect.x = self.old_x
         self.rect.y = self.old_y
@@ -88,6 +87,6 @@ class Background(TileSprite):
         super().__init__(
             imagepath=newPath("assets/img/bg/sky.png"),
             tile_size=Vector2(2, 300),
-            target_size=Vector2(WIDTH, 300),
+            target_size=Vector2((WIDTH**1.5), 300),
             coords=(0, 0)
         )
