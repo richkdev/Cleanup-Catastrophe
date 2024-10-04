@@ -1,4 +1,9 @@
-#!/usr/bin/env python
+# /// script
+# dependencies = [
+#  "pygame-ce",
+#  "numpy"
+# ]
+# ///
 
 from os import chdir, path
 chdir(path.dirname(path.abspath(__file__)))
