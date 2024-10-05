@@ -6,7 +6,7 @@ if not pygame.mixer.get_init():
     pygame.mixer.init()
 
 if emscripten:
-    pygame.mixer.SoundPatch()  # type: ignore
+    pygame.mixer.SoundPatch()  # type: ignore -> for web
 
 class SoundManager:
     def __init__(self) -> None:
@@ -18,6 +18,7 @@ class SoundManager:
         self.__global_volume = volume
 
         self._next_channel_id = 0
+        print("Initialized sound manager")
 
     @property
     def global_volume(self) -> float:
@@ -41,7 +42,7 @@ class SoundManager:
 
     def add_sound(self, sound_name: str, path: str) -> None:
         self._sound_cache[sound_name] = pygame.mixer.Sound(path)
-        print(f"Loaded sound {sound_name} at {path}")
+        print(f"Added sound {sound_name} at {path}")
 
     def play(self, sound_name: str, loop: int = 0, fade_in_time: int = 0, max_time: int = 0, volume: float | None = None) -> int:
         if sound_name not in self._sound_cache:
@@ -69,6 +70,7 @@ class SoundManager:
         if sound_id in self._currently_playing:
             self._currently_playing[sound_id][1].stop()
             del self._currently_playing[sound_id]
+        print(f"Stopped sound {sound_id}")
 
     def update(self) -> None:
         to_delete = []

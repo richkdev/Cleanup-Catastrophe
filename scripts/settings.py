@@ -25,6 +25,7 @@ version = open(newPath("VERSION"), "r").read()
 settings = loads(open(newPath("settings.json")).read())
 
 emscripten = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
+print(f"Running on emscripten or nah? {emscripten}")
 
 WIDTH: int = 320
 HEIGHT: int = 224
