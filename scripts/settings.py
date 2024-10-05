@@ -4,6 +4,7 @@ import sys
 from json import loads
 import os
 from datetime import datetime
+import platform
 
 if not getattr(pygame, "IS_CE", False):
     raise ImportError("This game requires pygame-ce 2.5.0 and above to function, not pygame.",
@@ -11,6 +12,7 @@ if not getattr(pygame, "IS_CE", False):
 
 if sys.version_info < (3, 12):
     raise DeprecationWarning("This game requires Python versions 3.12+ to function.")
+
 
 def newPath(relPath: str):
     relPath = relPath.replace("/", os.sep)
@@ -26,6 +28,11 @@ settings = loads(open(newPath("settings.json")).read())
 
 emscripten = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
 print(f"Running on emscripten or nah? {emscripten}")
+
+print(platform.platform())
+
+if emscripten:
+    platform.window.canvas.style.imageRendering = "pixelated"  # type: ignore -> no more blurriness yay
 
 WIDTH: int = 320
 HEIGHT: int = 224
