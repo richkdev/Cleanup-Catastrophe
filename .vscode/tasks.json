@@ -28,7 +28,7 @@
         {
             "label": "Build for web",
             "type": "shell",
-            "command": "pygbag main.py",
+            "command": "pygbag --PYBUILD 3.12 --ume_block 0 main.py",
             "problemMatcher": [
                 "$msCompile"
             ],
