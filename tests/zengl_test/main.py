@@ -5,10 +5,6 @@
 # ]
 # ///
 
-# based on:
-#   https://github.com/szabolcsdombi/zengl/blob/main/examples/pygbag/main.py
-#   https://github.com/pygame-web/showcases/blob/main/org/zengl/zengl-normal-mapping/zengl-normal-mapping.py
-
 # run this command
 #   pygbag --PYBUILD 3.12 --ume_block 0 --template noctx.tmpl "tests\zengl_test\main.py"
 
@@ -17,15 +13,16 @@ import pygame
 import zengl
 
 pygame.init()
-pygame.display.set_mode((640, 480), flags=pygame.OPENGL, vsync=True)
+screen = pygame.display.set_mode((640, 480), flags=pygame.OPENGL, vsync=True)
 
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
 
 ctx = zengl.context()
 
 window_size = pygame.display.get_window_size()
-overlay = ctx.image(window_size, 'rgba8unorm')
+screen_texture = ctx.image(window_size, 'rgba8unorm')
 
 vertexShader = """
 #version 300 es
@@ -77,7 +74,7 @@ pipeline = ctx.pipeline(
         {
             'type': 'sampler',
             'binding': 0,
-            'image': overlay,
+            'image': screen_texture,
         },
     ],
     framebuffer=None,
@@ -89,31 +86,28 @@ pipeline = ctx.pipeline(
 rectangle = pygame.Surface((100, 200))
 rectangle.fill(pygame.Color(255, 255, 255))
 
-screen = pygame.surface.Surface(window_size).convert_alpha()
 clock = pygame.Clock()
 FPS = 100
 
+running = True
 
 async def main():
-    while True:
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-
-        # mouse_x, mouse_y = pygame.mouse.get_pos()
-        # mouse_x = mouse_x / window_size[0] - 0.5
-        # mouse_y = 0.5 - mouse_y / window_size[1]
+                running = False
 
         ctx.new_frame()
-        screen.fill((0, 0, 0))
+        screen.fill(pygame.Color(0, 0, 0))
         screen.blit(rectangle, (10, 10))
 
-        overlay.write(pygame.image.tobytes(screen, 'RGBA', flipped=True))
+        screen_texture.write(pygame.image.tobytes(screen, 'RGBA', flipped=True))
         pipeline.render()
         ctx.end_frame()
 
         pygame.display.flip()
         clock.tick(FPS)
         await asyncio.sleep(0)
+    pygame.quit()
 
 asyncio.run(main())

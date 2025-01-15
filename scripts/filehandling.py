@@ -1,7 +1,7 @@
 from json import load, dump, JSONDecodeError
 from random import randint
 
-from scripts.settings import mapDirectory, saveFileDirectory
+from scripts.globals import mapDirectory, saveFileDirectory
 
 
 def loadMap() -> list[list[int]]:

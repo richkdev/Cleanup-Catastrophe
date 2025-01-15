@@ -16,9 +16,6 @@ a = Analysis(
         ('scripts', 'scripts'),
         ('savefiles', 'savefiles')
     ],
-    hiddenimports=[
-        'glcontext'
-    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

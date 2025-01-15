@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *  # type: ignore
 
-from scripts.settings import *
+from scripts import globals, utils
 from scripts.filehandling import *
 
 from scripts.states.basestate import State
@@ -12,8 +12,8 @@ class Splash(State):
     def __init__(self, game):
         super().__init__(game, False, "At the splash screen")
 
-        self.introText = drawText(text="press ENTER key to begin", color=WHITE,
-                     font=smallFont, screen=self.screen)
+        self.introText = drawText(text="press ENTER key to begin", color=globals.WHITE,
+                     font=globals.smallFont, screen=self.screen)
         self.logo = MenuLogo()
 
         self.sprites.add(
@@ -39,9 +39,9 @@ class Catastrophe(State):
         self.score = 0
 
         self.background = Background()
-        self.player = Player()
+        self.player = Player(pos=(globals.SCREEN_WIDTH//3, globals.SCREEN_HEIGHT//3), collideables=pygame.sprite.Group())
         self.rod = Rod()
-        self.textDisplay = Text(font=bigFont, color=WHITE, coords=Vector2(10, 10))
+        self.textDisplay = Text(font=globals.bigFont, color=globals.WHITE, coords=(10, 10))
 
         self.trashSprites = pygame.sprite.Group()
 
@@ -53,9 +53,9 @@ class Catastrophe(State):
                     self.trashSprites.add(
                         Trash(
                             trashType=spawn_map[row][col],
-                            coords=Vector2(
-                                (row * 25 + xBorder*2),
-                                (col * 25 + HEIGHT//2)
+                            coords=pygame.Vector2(
+                                (row * 25 + globals.xBorder*2),
+                                (col * 25 + globals.SCREEN_HEIGHT//2)
                             ),
                             offset=20
                         )
@@ -73,27 +73,22 @@ class Catastrophe(State):
         super().update()
 
         if self.score <= 0:
-            self.textDisplay.color = DARKRED
+            self.textDisplay.color = globals.DARKRED
             self.textDisplay.shake(3, 0)
         else:
-            self.textDisplay.color = YELLOW
+            self.textDisplay.color = globals.YELLOW
 
-        self.textDisplay.text = f"FPS: {round(clock.get_fps())}\nSCORE: {self.score}"
+        self.textDisplay.text = f"FPS: {round(globals.clock.get_fps())}\nSCORE: {self.score}"
 
-        if not any(isinstance(sprite, Trash) and not sprite.explosive for sprite in self.trashSprites) or self.score < 0:
+        if not any(isinstance(sprite, Trash) and (not sprite.explosive) for sprite in self.trashSprites) or self.score < 0:
             self.game.state = Lobby(self.game)
 
         match self.rod.isFishing:
             case False:
-                self.player.velocity = 0
-
-                if self.key[K_LEFT] and self.player.rect.x >= xBorder:
-                    self.player.velocity = -100
-
-                if self.key[K_RIGHT] and self.player.rect.x <= (WIDTH - self.player.rect.width - xBorder):
-                    self.player.velocity = 100
-
-                self.player.rect.x += self.player.velocity * self.dt
+                if self.key[K_LEFT] and self.player.rect.x >= globals.xBorder:
+                    self.player.velocity.x = -50
+                if self.key[K_RIGHT] and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder):
+                    self.player.velocity.x = +50
 
                 if self.key[K_DOWN]:
                     self.rod.rect.x = self.player.rect.right - 8
@@ -114,16 +109,16 @@ class Catastrophe(State):
                             case False:
                                 self.score += 1
                                 self.sound_manager.play("getTrash")
-                        print(f"Session score: {self.score}, durability: {self.rod.durable}")
+                        print(f"Session score: {self.score}, durability: {self.rod.durability}")
                         collided.kill()
                         self.rod.isFishing = False
 
-                if self.rod.rect.y >= (HEIGHT - self.rod.rect.height - yBorder):
+                if self.rod.rect.y >= (globals.SCREEN_HEIGHT - self.rod.rect.height - globals.yBorder):
                     self.rod.isFishing = False
                     self.sound_manager.play("noTrash")
                 else:
-                    self.rod.rect.y += self.rod.velocity * self.dt
-                    pygame.draw.line(self.screen, DARKRED,
+                    self.rod.rect.y += self.rod.velocity.y * self.dt
+                    pygame.draw.line(self.screen, globals.DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
@@ -132,80 +127,103 @@ class Catastrophe(State):
 
 
 class Lobby(State):
-    player_offset = -40
-
     def __init__(self, game):
         super().__init__(game, False, "At the lobby...")
 
         self.background = Background()
-        self.player = Player(pos=(HEIGHT/2 + self.player_offset, HEIGHT/3))
+
+        self.temp_ground = WorldObject(
+            imagepath=utils.newPath(f"assets/img/ui/Play.png"),
+            desc="ground",
+            interactable=False, collidable=True
+        )
+        self.temp_ground.image = resizeImage(
+            input_image=self.temp_ground.image,
+            tile_size=(34, 13),
+            target_size=(globals.SCREEN_WIDTH, 50)
+        )
+        self.temp_ground.rect = self.temp_ground.image.get_frect()
+        self.temp_ground.rect.x, self.temp_ground.rect.y = 0, globals.GROUND_HEIGHT
+
+        self.temp_platform = WorldObject(
+            imagepath=utils.newPath(f"assets/img/ui/Shop.png"),
+            desc="ground",
+            interactable=False, collidable=True
+        )
+        self.temp_platform.image = resizeImage(
+            input_image=self.temp_platform.image,
+            tile_size=(34, 13),
+            target_size=(50, 50)
+        )
+        self.temp_platform.rect = self.temp_platform.image.get_frect()
+        self.temp_platform.rect.x, self.temp_platform.rect.y = 100, 50
+
+        self.collideables = pygame.sprite.Group()
+        self.collideables.add(
+            self.temp_ground,
+            self.temp_platform
+        )
+
+        self.player = Player(pos=(int(globals.SCREEN_HEIGHT//3), int(globals.GROUND_HEIGHT-100)), collideables=self.collideables)
 
         self.interactables_map = {
-            "Shop": [20, Shop],
-            "Play": [120, Catastrophe],
-            "Score": [220, Scoreboard]
+            "Shop": [20, Shop, (34, 13)],
+            "Play": [120, Catastrophe, (34, 13)],
+            "Score": [220, Scoreboard, (34, 13)]
         }
         self.interactables = pygame.sprite.Group()
         for name, stuff in self.interactables_map.items():
             self.interactables.add(
                 WorldObject(
-                    imagepath=newPath(f"assets/img/ui/{name}.png"),
-                    coords=(stuff[0], 70), desc=name, interactable=True
+                    imagepath=utils.newPath(f"assets/img/ui/{name}.png"),
+                    coords=pygame.Vector2(stuff[0], (globals.GROUND_HEIGHT-25)), size=stuff[2], desc=name,
+                    interactable=True, collidable=False
                 )
             )
 
-        self.backgroundStuff_map = [((WIDTH//2 + randint(-200, 200)), (HEIGHT//3 + randint(-10, 10))) for _ in range(5)]
+        self.backgroundStuff_map = [(randint(1, 11)*20, (globals.GROUND_HEIGHT-61)) for _ in range(5)]
         self.backgroundStuff = pygame.sprite.Group()
         for coords in self.backgroundStuff_map:
             self.backgroundStuff.add(
                 WorldObject(
-                    imagepath=newPath(f"assets/img/bg/tree.png"),
-                    coords=coords, desc="tree", interactable=False
+                    imagepath=utils.newPath(f"assets/img/bg/tree.png"),
+                    coords=pygame.Vector2(coords), size=pygame.Vector2(23, 61), desc="tree",
+                    interactable=False, collidable=False
                 )
             )
 
         self.sprites.add(
             self.background,
-            self.interactables,
             self.backgroundStuff,
-            self.player
+            self.interactables,
+            self.player,
+            self.collideables,
         )
-        self.offset = 0
 
     def update(self):
         super().update()
 
-        self.player.velocity = 0
+        if self.key[K_LEFT] and self.player.rect.x >= globals.xBorder and not self.player.collisions['left']:
+            self.player.velocity.x = -100
+        if self.key[K_RIGHT] and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder) and not self.player.collisions['right']:
+            self.player.velocity.x = +100
+        if self.key[K_UP]:
+            self.player.jump()
 
-        if self.key[K_LEFT] and self.player.rect.x >= xBorder:
-            self.player.velocity -= 80
-        elif self.key[K_RIGHT] and self.player.rect.x <= (WIDTH - xBorder - self.player.rect.width):
-            self.player.velocity += 80
-
-        self.player.rect.x += self.player.velocity * self.dt
-        self.background.rect.x += self.background.velocity * self.dt
-
-        self.offset = self.player.velocity * self.dt
-        self.player_offset = self.player.rect.x - HEIGHT/2  # doesnt work correctly
-
-        for t in self.interactables:
-            t.rect.x -= self.offset
-
-        for t in self.backgroundStuff:
-            t.rect.x -= self.offset
-
+        # will implement camera system later as a class/function (?)
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
 
         if isinstance(collided_sprite, WorldObject) and collided_sprite.interactable and self.key[K_RETURN]:
             print("interacted with an interactable worldobject")
 
             # in each of these checks we could do something special like play a sound effect.
+            # it's kinda hardcoded rn but i'll change it later
             if collided_sprite.desc == "Play":
-                pass
+                self.sound_manager.play("explode")
             elif collided_sprite.desc == "Score":
-                pass
+                self.sound_manager.play("getTrash")
             elif collided_sprite.desc == "Shop":
-                pass
+                self.sound_manager.play("noTrash")
 
             self.game.state = self.interactables_map[collided_sprite.desc][1](self.game)
 
@@ -220,9 +238,12 @@ class Scoreboard(State):
         for i in highscores:
             text += f"{(i['name'])}: {i['score']}\n"
 
-        self.sprites.add(drawText(text=text, color=WHITE,
-                         font=smallFont, screen=self.screen,
+        self.sprites.add(drawText(text=text, color=globals.WHITE,
+                         font=globals.smallFont, screen=self.screen,
                          pos=(0, 0)))
+    
+        msgbox = pygame.display.message_box(title="WIP", message='rahhh', message_type='info', buttons=('OK',))
+        print(msgbox.imag)
 
     def update(self):
         super().update()
@@ -236,8 +257,8 @@ class Shop(State):
         super().__init__(game, False, "Lookin\' for things to buy.. or not.")
 
         text = "This is the shop, in future iterations of this project even this page will be completed!\nHang tight as we develop this project."
-        self.sprites.add(drawText(text=text, color=WHITE,
-                         font=smallFont, screen=self.screen,
+        self.sprites.add(drawText(text=text, color=globals.WHITE,
+                         font=globals.smallFont, screen=self.screen,
                          pos=(0, 0)))
 
     def update(self):

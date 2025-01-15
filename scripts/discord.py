@@ -1,4 +1,4 @@
-from scripts.settings import version, emscripten
+from scripts.globals import version, emscripten
 from time import time
 
 if not emscripten:

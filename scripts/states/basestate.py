@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *  # type: ignore
 
-from scripts.settings import *
+from scripts import globals
 from scripts.sound import SoundManager
 
 
@@ -28,13 +28,19 @@ class State(object):
         self.sound_manager: SoundManager = game.sound_manager
         self.sprites.empty()
 
+        # self.mouse = Vector2()
+
         print(f"Loaded {type(self).__name__} state, with description: {desc}")
 
     def update(self):
         self.key = pygame.key.get_pressed()
-        # self.key_recent = pygame.key.get_just_pressed()
         self.event = pygame.event.get()
-        self.dt = clock.tick_busy_loop(FPS) / 1000
+
+        # self.mouse.x, self.mouse.y = pygame.mouse.get_pos()  # will use one day
+        # print(self.mouse.x, self.mouse.y)
+
+        self.dt = max(0.001, min(globals.clock.tick_busy_loop(globals.FPS)/1000, 0.1))
 
         self.sprites.update(self.key, self.dt)
+        # self.sprites.update(self.key, self.mouse, self.dt)
         self.sprites.draw(self.screen)

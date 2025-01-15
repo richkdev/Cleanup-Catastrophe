@@ -1,4 +1,4 @@
-from scripts.settings import emscripten, volume
+from scripts.globals import emscripten, volume
 import pygame
 
 if not pygame.mixer.get_init():
@@ -10,7 +10,7 @@ if emscripten:
 
 class SoundManager:
     def __init__(self) -> None:
-        pygame.mixer.set_num_channels(64)
+        # pygame.mixer.set_num_channels(64)
 
         self._sound_cache: dict[str, pygame.mixer.Sound] = {}
         self._currently_playing: dict[int, tuple[pygame.mixer.Channel, pygame.mixer.Sound]] = {}

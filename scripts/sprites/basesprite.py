@@ -3,40 +3,42 @@ import numpy
 
 from random import randint
 
-from scripts.settings import *
+from scripts import globals, utils
 
 from scripts.sprites.sheet import Sheet, cutSheet
 
 
 class Sprite(pygame.sprite.DirtySprite):
     """
-    Sprite class with a `pygame.sprite.DirtySprite` base
+    Sprite class with a `DirtySprite` base
     """
 
-    def __init__(self, sheetEnabled: bool, imagepath: str, size: Vector2 = Vector2(0, 0)):
+    def __init__(self, sheetEnabled: bool, imagepath: str, size: pygame.Vector2):
         pygame.sprite.DirtySprite.__init__(self)
 
         self.sheetEnabled = sheetEnabled
-        self.image: Surface
+        self.image: pygame.Surface
 
-        if self.sheetEnabled:
-            self.sheet = Sheet()
-            self.sheet.add_animation("idle", cutSheet(imagepath, size))
-            self.action = "idle"
-            self.sheet.set_action(self.action)
-            self.image = self.sheet.states["idle"][0]
-        else:
-            self.image = pygame.image.load(newPath(imagepath)).convert_alpha()
-            self.image = pygame.transform.scale(self.image, (self.image.get_width(), self.image.get_height()))
+        match self.sheetEnabled:
+            case True:
+                self.sheet = Sheet()
+                self.sheet.add_animation("idle", cutSheet(imagepath, size))
+                self.action = "idle"
+                self.sheet.set_action(self.action)
+                self.image = self.sheet.states["idle"][0]
+            case False:
+                self.image = pygame.image.load(utils.newPath(imagepath)).convert_alpha()
+                self.image = pygame.transform.scale(self.image, (self.image.get_width(), self.image.get_height()))
 
-        self.rect: FRect = self.image.get_frect()
+        self.rect: pygame.FRect = self.image.get_frect()
+        # self.hitbox: FRect # must be specified when init
+        # self.mask = pygame.mask.from_surface(self.image) # maybe??
 
-        self.velocity = 0
-        self.acceleration = 0
-
-        self.visible = 1
-        self.dirty = 1
-        self._layer = 1
+        self.old_x: int
+        self.old_y: int
+        self.velocity = pygame.Vector2()
+        self.acceleration = pygame.Vector2()
+        self.top_speed = pygame.Vector2()
 
         print(f"Loaded {type(self).__name__} sprite, at ({self.rect.x}, {self.rect.y})")
 
@@ -50,48 +52,37 @@ class Sprite(pygame.sprite.DirtySprite):
             self.image = self.sheet.draw(flip_x=False, flip_y=False)
             self.sheet.update()
 
+        self.displace()
+
+    def displace(self):
+        self.velocity += self.acceleration
+
+        self.rect.x += self.velocity.x * self.dt
+        self.rect.y += self.velocity.y * self.dt
+
 
 class WorldObject(Sprite):
     """
-    Sprite class for objects in the `Lobby` state.
+    Sprite class for interactable and/or collidable objects in the `Lobby` state.
     """
 
-    def __init__(self, imagepath: str, coords: tuple[int, int], desc: str, interactable: bool = False):
-        super().__init__(False, imagepath, Vector2(34, 13))
+    def __init__(
+            self,
+            imagepath: str,
+            coords: pygame.Vector2 = pygame.Vector2(0, 0),
+            size: pygame.Vector2 = pygame.Vector2(0, 0),
+            desc: str = "lipsum",
+            interactable: bool = False,
+            collidable: bool = False
+        ):
+        super().__init__(False, imagepath, size)
 
+        self.rect = self.image.get_frect()
         self.rect.x, self.rect.y = coords
-        self.old_x = coords[0]
 
         self.interactable = interactable
+        self.collidable = collidable
         self.desc = desc
-
-
-class TileSprite(Sprite):
-    """
-    Sprite class for mutliplying an image based on a given `target_size` and `tile_size`.    
-    """
-
-    def __init__(self, imagepath: str, coords: tuple[int, int], tile_size: Vector2, target_size: Vector2):
-        super().__init__(False, imagepath, target_size)
-
-        self.rect.x, self.rect.y = coords
-
-        self.tile_size = tile_size
-        self.target_size = target_size
-
-    def update(self, key, dt):
-        self.pattern = numpy.zeros((int(self.target_size.y), int(self.target_size.x), 3), dtype=numpy.uint8)
-
-        for y in range(int(self.tile_size.y)):
-            for x in range(int(self.tile_size.x)):
-                self.pattern[x, y] = self.image.get_at((x % int(self.target_size.x), y % int(self.target_size.y)))[:3]
-
-        self.pattern_image = pygame.surfarray.make_surface(self.pattern)
-        self.image = Surface((int(self.target_size.x), int(self.target_size.y)))
-
-        for y in range(0, int(self.target_size.y), int(self.tile_size.y)):
-            for x in range(0, int(self.target_size.x), int(self.tile_size.x)):
-                self.image.blit(self.pattern_image, (x, y))
 
 
 class Text(pygame.sprite.DirtySprite):
@@ -99,7 +90,7 @@ class Text(pygame.sprite.DirtySprite):
     Sprite class for displaying text on screen.
     """
 
-    def __init__(self, text: str = "lorem ipsum", font: pygame.font.Font = bigFont, color = WHITE, coords = Vector2(0, 0)):
+    def __init__(self, text: str = "", font: pygame.font.Font = globals.bigFont, color: pygame.typing.ColorLike = globals.BLACK, coords: pygame.typing.Point = (0, 0)):
         pygame.sprite.DirtySprite.__init__(self)
 
         self.text = text
@@ -108,21 +99,23 @@ class Text(pygame.sprite.DirtySprite):
 
         self.image = self.font.render(self.text, False, self.color, None)
 
-        self.rect: Rect = self.image.get_rect()
-        self.old_x, self.old_y = coords.x, coords.y
+        self.rect: pygame.FRect = self.image.get_frect()
+        self.old_x, self.old_y = coords[0], coords[1]
         self.rect.x, self.rect.y = self.old_x, self.old_y
 
     def update(self, key, dt):
+        pygame.sprite.DirtySprite.update(self)
+
         self.image = self.font.render(self.text, False, self.color, None)
 
-    def displace(self, coords: Vector2):
+    def displace(self, coords: pygame.Vector2):
         self.rect.x, self.rect.y = coords.x, coords.y
 
-    def shake(self, seedX: int = 2, seedY: int = 2):
+    def shake(self, seedX: int, seedY: int):
         self.rect.x, self.rect.y = self.old_x + randint(0, seedX), self.old_y + randint(0, seedY)
 
 
-def drawText(text: str, color: Color, font: pygame.font.Font, screen: Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):
+def drawText(text: str, color: pygame.typing.ColorLike, font: pygame.font.Font, screen: pygame.Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):
     """
     Modified version of https://www.pygame.org/wiki/TextWrap.
     """
@@ -151,7 +144,7 @@ def drawText(text: str, color: Color, font: pygame.font.Font, screen: Surface, l
                 # Find the last space in the current substring
                 i = paragraph.rfind(" ", 0, i) + 1
 
-            newText = Text(text=paragraph[:i], font=font, color=color, coords=Vector2(rect.left, y))
+            newText = Text(text=paragraph[:i], font=font, color=color, coords=pygame.Vector2(rect.left, y))
             y += fontHeight + lineSpacing
 
             paragraph = paragraph[i:]
@@ -160,3 +153,20 @@ def drawText(text: str, color: Color, font: pygame.font.Font, screen: Surface, l
         y += fontHeight + lineSpacing
 
     return textGroup
+
+
+def resizeImage(input_image: pygame.Surface, tile_size: tuple[int, int], target_size: tuple[int, int]):
+    pattern = numpy.zeros((int(target_size[1]), int(target_size[0]), 3), dtype=numpy.uint8)
+
+    for y in range(int(tile_size[1])):
+        for x in range(int(tile_size[0])):
+            pattern[x, y] = input_image.get_at((x % int(target_size[0]), y % int(target_size[1])))[:3]
+
+    pattern_image = pygame.surfarray.make_surface(pattern)
+    output_image = pygame.Surface(target_size)
+
+    for y in range(0, int(target_size[1]), int(tile_size[1])):
+        for x in range(0, int(target_size[0]), int(tile_size[0])):
+            output_image.blit(pattern_image, (x, y))
+
+    return output_image

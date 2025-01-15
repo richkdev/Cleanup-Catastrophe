@@ -1,15 +1,13 @@
 import pygame
-from scripts.settings import *
 
 
-def cutSheet(path: str, size: pygame.math.Vector2) -> list[pygame.surface.Surface]:
+def cutSheet(path: str, size: pygame.Vector2) -> list[pygame.surface.Surface]:
     frames = []
     sheet_img = pygame.image.load(path).convert_alpha()
     # sheet_img.set_colorkey((0, 0, 0))
 
-    for i in range(int(sheet_img.get_width() // size.x)):
-        frames.append(sheet_img.subsurface(
-            pygame.rect.Rect(i * size.x, 0, size.x, size.y)))
+    for i in range(int(sheet_img.get_width() / size.x)):
+        frames.append(sheet_img.subsurface(pygame.rect.Rect(i * size.x, 0, size.x, size.y)))
 
     print(f"Loaded and split spritesheet at {path}")
     return frames

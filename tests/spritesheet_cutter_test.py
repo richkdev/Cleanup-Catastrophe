@@ -1,12 +1,12 @@
 import pygame
-from scripts.settings import *
+from scripts.utils import newPath
 from scripts.sprites.sheet import cutSheet, Sheet
 
 screen = pygame.display.set_mode((300, 200))
 clock = pygame.time.Clock()
 
 anim1 = Sheet()
-anim1.add_animation("idle", cutSheet(newPath("assets/img/sprites/paul_run.png"), pygame.math.Vector2(31, 43)))
+anim1.add_animation("idle", cutSheet(newPath("assets/img/sprites/paul_run.png"), pygame.Vector2(31, 43)))
 anim1.set_action(action="idle")
 
 while True:
