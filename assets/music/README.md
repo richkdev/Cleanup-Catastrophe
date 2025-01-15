@@ -1,5 +1,9 @@
 # MUSIC
 
+## TEMPLATE
+
+_<https://www.beepbox.co/#9n31sbk0l00e03t2ma3g0gj07r1i0o432T0v0u00f0qM000d08w3h0E0T0v1u00f0q00d03w4h0E0T0v1u00f10s4q00d00w2h2E0T2v4u15f10w4qw02d03w0E0b4h40000000014h000000000h4g000000004h4000000000p16000000>_
+
 ## VOLUME 0 (20 seconds edition)
 
 made with beepbox and love!
