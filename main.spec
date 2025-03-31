@@ -16,6 +16,12 @@ a = Analysis(
         ('scripts', 'scripts'),
         ('savefiles', 'savefiles')
     ],
+    hiddenimports=[
+        'pygame-ce',
+        'numpy',
+        'zengl'
+        'pypresence',
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -42,9 +48,9 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False, # True (only for debugging)
+    console=False,
     icon='icon.ico',
-    disable_windowed_traceback=False,
+    disable_windowed_traceback=True,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
