@@ -30,7 +30,7 @@ WIP
 ## BUILDING
 
 * For local: `pyinstaller main.spec` (exported file type will depend on your system)
-* For WebAssembly: `pygbag --git --template noctx.tmpl main.py`
+* For web: `pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no-opt main.py` (run this command)
 
 ## LICENSE
 
