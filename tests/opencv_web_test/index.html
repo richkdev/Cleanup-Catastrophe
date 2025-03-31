@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        table td,
+        canvas,
+        video {
+            border: 1px black solid;
+            margin: 5px;
+        }
+
+        img,
+        .videoPlayer {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>playing video test</h1>
+
+    <h2>pygame-ce + opencv-python + ffmpeg + pyodide on canvas element (using setCanvas2D, check console)</h2>
+    <canvas class="videoPlayer" id="canvas"></canvas>
+
+    <h2>pygame-ce + opencv-python + ffmpeg + pyodide on canvas element (using HTMLImageElement, check console)</h2>
+    <canvas class="videoPlayer" id="canvasTwo"></canvas>
+    <img src="" id="imagelol">
+
+    <h2>HTMLVideoElement (intended result, only video & no audio)</h2>
+    <video controls muted autoplay class="videoPlayer" id="video">
+        <source src="video.mp4" type="video/mp4">
+    </video>
+</body>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
+<script>
+    (async () => {
+        const pyodide = await loadPyodide();
+
+        let canvas = document.getElementById("canvas");
+        pyodide.canvas.setCanvas2D(canvas);
+
+        let canvasTwo = document.getElementById("canvasTwo");
+        let canvasTwo_ctx = canvasTwo.getContext("2d");
+        let imagelol = document.getElementById("imagelol");
+
+        await pyodide.loadPackage([
+            'numpy',
+            'opencv-python',
+            'pygame-ce'
+        ]);
+
+        pyodide.globals.set("currentURL", window.location.host);
+
+        const main = await fetch('main.py'); // switch this out with main.py
+        pyodide.runPython(await main.text());
+        window.pyodide = pyodide;
+    })();
+</script>
+
+</html>
