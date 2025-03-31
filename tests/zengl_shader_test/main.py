@@ -6,7 +6,11 @@
 # ///
 
 # run this command
-#   pygbag --PYBUILD 3.12 --ume_block 0 --template noctx.tmpl "tests\zengl_shader_test\main.py"
+#   pygbag --PYBUILD 3.12 --git --ume_block 0 --template noctx.tmpl "tests/zengl_shader_test/main.py"
+
+# thanks to @
+# discussion: https://discord.com/channels/550302843777712148/1333440038293209171
+
 
 import asyncio
 import pygame
@@ -71,8 +75,8 @@ void main() {
 
 screen_texture = ctx.image(screen_size, 'rgba8unorm')
 
-vertexBuffer = ctx.buffer(data=struct.pack('8f', *[-1, -1,  1, -1, -1,  1,  1,  1]))
-instanceBuffer = ctx.buffer(data=struct.pack('8f', *[0, 1,  1, 1, 0, 0,  1, 0]))
+vertexBuffer = ctx.buffer(data=struct.pack('8f', *[-1, -1, 1, -1, -1, 1, 1, 1]), index=False)
+instanceBuffer = ctx.buffer(data=struct.pack('8f', *[0, 1, 1, 1, 0, 0, 1, 0]), index=False)
 indexBuffer = ctx.buffer(data=struct.pack('6I', *[0, 1, 2, 1, 2, 3]), index=True)
 
 pipeline = ctx.pipeline(
@@ -103,7 +107,7 @@ pipeline = ctx.pipeline(
         *zengl.bind(instanceBuffer, '2f', 1),
     ),
     index_buffer=indexBuffer,
-    vertex_count=vertexBuffer.size,
+    vertex_count=indexBuffer.size//4,
 )
 
 rectangle = pygame.Surface((100, 200))
@@ -115,11 +119,12 @@ FPS = 60
 print(screen_size, screen_texture.size)
 
 async def main():
-    while True:
+    running = True
+
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                break
+                running = False
 
         screen.fill((0, 255, 0))
         screen.blit(rectangle, (10, 10))
@@ -136,5 +141,6 @@ async def main():
         ctx.end_frame()
 
         await asyncio.sleep(0)
+    pygame.quit()
 
 asyncio.run(main())

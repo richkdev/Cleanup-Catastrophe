@@ -35,8 +35,8 @@ match not globals.retroMode:
             vertex_count=3,
         )
     case False:
-        vertexBuffer = ctx.buffer(data=struct.pack('8f', *[-1, -1,  1, -1, -1,  1,  1,  1]))
-        instanceBuffer = ctx.buffer(data=struct.pack('8f', *[0, 1,  1, 1, 0, 0,  1, 0]))
+        vertexBuffer = ctx.buffer(data=struct.pack('8f', *[-1, -1, 1, -1, -1, 1, 1, 1]), index=False)
+        instanceBuffer = ctx.buffer(data=struct.pack('8f', *[0, 1, 1, 1, 0, 0, 1, 0]), index=False)
         indexBuffer = ctx.buffer(data=struct.pack('6I', *[0, 1, 2, 1, 2, 3]), index=True)
 
         pipeline = ctx.pipeline(
@@ -67,5 +67,5 @@ match not globals.retroMode:
                 *zengl.bind(instanceBuffer, '2f', 1),
             ),
             index_buffer=indexBuffer,
-            vertex_count=vertexBuffer.size,
+            vertex_count=indexBuffer.size//4,
         )
