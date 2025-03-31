@@ -55,7 +55,7 @@ class Player(Sprite):
                 hit_list.append(tile)
         return hit_list
     
-    def move(self, tiles: pygame.sprite.Group):
+    def collide_with(self, tiles: pygame.sprite.Group):
         collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
         
         hit_list = self.collision_test(self.rect, tiles)
@@ -71,9 +71,6 @@ class Player(Sprite):
                     collision_types['left'] = True
                     self.velocity.x = 0
 
-        # hit_list = self.collision_test(self.rect, tiles)
-        # for tile in hit_list:
-        #     if isinstance(tile, WorldObject) and tile.collidable:
                 if self.velocity.y > 0:
                     self.rect.bottom = tile.rect.top
                     collision_types['bottom'] = True
@@ -91,11 +88,12 @@ class Player(Sprite):
 
         self.velocity.x = 0
 
-        self.collisions = self.move(self.collideables)
+        self.collisions = self.collide_with(self.collideables)
+
+        # print(self.velocity, self.collisions)
 
         if self.collisions['bottom']:
             self.grounded = True
-
 
 class Rod(Sprite):
     def __init__(self):

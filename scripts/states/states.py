@@ -147,7 +147,7 @@ class Lobby(State):
 
         self.temp_platform = WorldObject(
             imagepath=utils.newPath(f"assets/img/ui/Shop.png"),
-            desc="ground",
+            desc="platform",
             interactable=False, collidable=True
         )
         self.temp_platform.image = resizeImage(
@@ -196,8 +196,8 @@ class Lobby(State):
             self.background,
             self.backgroundStuff,
             self.interactables,
-            self.player,
             self.collideables,
+            self.player,
         )
 
     def update(self):

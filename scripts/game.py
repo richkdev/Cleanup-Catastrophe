@@ -31,12 +31,10 @@ class Game(object):
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
 
-        pygame.mixer.set_num_channels(64)
-
         globals.INITIAL_WINDOW_SIZE = pygame.display.get_window_size()
         # globals.INITIAL_WINDOW_SIZE = self.window.size
 
-        print(pygame.display.Info(), globals.INITIAL_WINDOW_SIZE, globals.SCREEN_SIZE)
+        print(pygame.display.Info(), pygame.print_debug_info(), globals.INITIAL_WINDOW_SIZE, globals.SCREEN_SIZE)
 
         pygame.display.set_caption(f"Cleanup Catastrophe! {globals.version}")
         pygame.display.set_icon(pygame.image.load(utils.newPath("icon.ico")))

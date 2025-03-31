@@ -7,7 +7,7 @@
 - [x] add ability to add line breaks into `drawText` func
 - [ ] custom sizes for the spritesheet, but same hitbox rect & diff image rects **(WIP)**
 - [ ] log everything!!!
-- [x] make a hub world for menu select **(might scrap lol)**
+- [x] make a hub world for menu select
 - [ ] make levels to teach new players how to play
 - [x] fix normal shader
 - [x] port blubberquark's crt shader for moderngl to zengl
@@ -16,11 +16,12 @@
   - [x] local, using `opencv-python` + `ffmpeg`
   - [ ] web, using all of local dependencies + pyodide/pygbag (?)
 - [ ] write tests for game, using `unittest` module **(WIP)**
+- [ ] use pymunk (python wrapper for box2d) for physics system, then display that data using with pygame
 
 ## art
 
 - [ ] recolor all sprites using sega genesis palette **(might not do cuz im lazy)**
-- [ ] make intro cutscene as comic (either as video using moviepy or as like a slideshow thing)
+- [ ] make intro cutscene as comic, display using "video player" thingy
 
 ## ideas
 
