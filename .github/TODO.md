@@ -5,13 +5,17 @@
 - [x] make state management possible using `State` class
 - [ ] use requests module to check latest game version on gh repo via githack _<https://raw.githack.com/richkdev/Cleanup-Catastrophe/main/VERSION>_
 - [x] add ability to add line breaks into `drawText` func
-- [x] custom sizes for the spritesheet, but same rect (rect functions as hitbox btw)
-- [x] log stdout in case game crashes
+- [ ] custom sizes for the spritesheet, but same hitbox rect & diff image rects **(WIP)**
+- [ ] log everything!!!
 - [x] make a hub world for menu select **(might scrap lol)**
 - [ ] make levels to teach new players how to play
 - [x] fix normal shader
 - [x] port blubberquark's crt shader for moderngl to zengl
-- [ ] use `pygame.Window` instead of `pygame.display.set_mode` for creating window
+- [ ] use `pygame.Window` instead of `pygame.display.set_mode` for creating window **(WIP)**
+- [ ] make "video player" that works on:
+  - [x] local, using `opencv-python` + `ffmpeg`
+  - [ ] web, using all of local dependencies + pyodide/pygbag (?)
+- [ ] write tests for game, using `unittest` module **(WIP)**
 
 ## art
 
