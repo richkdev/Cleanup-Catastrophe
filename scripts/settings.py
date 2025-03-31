@@ -5,11 +5,11 @@ import platform
 from scripts import globals
 
 if not getattr(pygame, "IS_CE", False):
-    raise ImportError("This game requires pygame-ce 2.5.0 and above to function, not pygame.",
-                      "Uninstall pygame then install pygame-ce 2.5.0+")
+    raise ImportError("This game requires pygame-ce 2.5.2 or above to function, not pygame.",
+                      "Uninstall pygame then install pygame-ce 2.5.2 or above")
 
 if sys.version_info < (3, 12):
-    raise DeprecationWarning("This game requires Python versions 3.12+ to function.")
+    raise DeprecationWarning("This game requires Python versions 3.12 and above to function.")
 
 print(f"Running on emscripten or nah? {globals.emscripten}\nSupports OpenGL? {pygame.OPENGL}")
 

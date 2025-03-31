@@ -50,7 +50,7 @@ class Discord(object):
                 ]
             )
             print("Discord RPC updated!")
-        self.increment +=1
+        self.increment += 1
 
 
 discord = Discord()

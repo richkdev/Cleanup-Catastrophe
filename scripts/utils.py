@@ -1,11 +1,13 @@
 import sys
 import os
-
+from scripts import globals
 
 def newPath(relPath: str):
-    relPath = relPath.replace("/", os.sep)
+    relPath = relPath.replace(("/" if len(relPath.split("/"))>1 else "\\"), os.sep)
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        basePath = sys._MEIPASS  # type: ignore -> pyinstaller temp folder
+        basePath = sys._MEIPASS # type: ignore -> pyinstaller temp folder
+    elif globals.emscripten and globals.pyodide:
+        basePath = currentURL # type: ignore -> currentURL is set by pyodide
     else:
         basePath = os.path.abspath('.')
     return os.path.join(basePath, relPath)

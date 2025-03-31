@@ -12,6 +12,7 @@ version = open(newPath("VERSION"), "r").read()
 game_settings = loads(open(newPath("settings.json")).read())
 
 emscripten = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
+pyodide = "pyodide" in sys.modules
 
 SCREEN_WIDTH: int = 320
 SCREEN_HEIGHT: int = 224

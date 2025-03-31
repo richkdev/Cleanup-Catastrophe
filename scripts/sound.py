@@ -4,14 +4,13 @@ import pygame
 if not pygame.mixer.get_init():
     pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=512)
     pygame.mixer.init()
+    pygame.mixer.set_num_channels(64)
 
 if emscripten:
     pygame.mixer.SoundPatch()  # type: ignore -> for web
 
 class SoundManager:
     def __init__(self) -> None:
-        # pygame.mixer.set_num_channels(64)
-
         self._sound_cache: dict[str, pygame.mixer.Sound] = {}
         self._currently_playing: dict[int, tuple[pygame.mixer.Channel, pygame.mixer.Sound]] = {}
 
