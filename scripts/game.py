@@ -10,16 +10,12 @@ if not globals.emscripten:
 
 
 class Game(object):
-    def __init__(self) -> None:
-        flags = pygame.SCALED | pygame.OPENGL | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE
+    def __init__(self, debug: bool = False) -> None:
+        self.debug = debug
 
-        # self.window = pygame.Window(size=globals.SCREEN_SIZE, opengl=True, resizable=True)  # might use later
-        # self.screen = self.window.get_surface()
+        self.window_flags = pygame.SCALED | pygame.OPENGL | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE
 
-        try:
-            self.screen = pygame.display.set_mode(globals.SCREEN_SIZE, flags, vsync=1)
-        except pygame.error:
-            self.screen = pygame.display.set_mode(globals.SCREEN_SIZE, flags)
+        self.screen = pygame.display.set_mode(globals.SCREEN_SIZE, self.window_flags)
 
         if pygame.OPENGL:
             from scripts.renderer import ctx, pipeline, screen_texture
@@ -31,8 +27,7 @@ class Game(object):
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0)
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
 
-        globals.INITIAL_WINDOW_SIZE = pygame.display.get_window_size()
-        # globals.INITIAL_WINDOW_SIZE = self.window.size
+        globals.INITIAL_WINDOW_SIZE = self.screen.size
 
         print(pygame.display.Info(), pygame.print_debug_info(), globals.INITIAL_WINDOW_SIZE, globals.SCREEN_SIZE)
 
@@ -41,15 +36,16 @@ class Game(object):
 
         self.sprites = pygame.sprite.Group()
 
+        self.sounds_lol = [
+            ["cleanup-time", "assets/music/cleanup-time.wav"],
+            ["getTrash", "assets/music/cleanup-time.wav"],
+            ["noTrash", "assets/music/cleanup-time.wav"],
+            ["explode", "assets/music/cleanup-time.wav"],
+        ]
         self.sound_manager = SoundManager()
-        self.sound_manager.add_sound(
-            "cleanup-time", utils.newPath("assets/music/cleanup-time.wav"))
-        self.sound_manager.add_sound(
-            "getTrash", utils.newPath("assets/sfx/getTrash.wav"))
-        self.sound_manager.add_sound(
-            "noTrash", utils.newPath("assets/sfx/noTrash.wav"))
-        self.sound_manager.add_sound(
-            "explode", utils.newPath("assets/sfx/explode.wav"))
+        for title, old_path in self.sounds_lol:
+            self.sound_manager.add_sound(title, utils.newPath(old_path))
+        del self.sounds_lol
 
         self.music_sound_id = 0
         self.running = True
@@ -99,7 +95,6 @@ class Game(object):
         if pygame.OPENGL:
             if not globals.emscripten:
                 globals.WINDOW_SIZE = pygame.display.get_window_size()
-                # globals.WINDOW_SIZE = self.window.size
 
                 globals.FINAL_WINDOW_SIZE = utils.aspectScale(*globals.SCREEN_SIZE, *globals.WINDOW_SIZE)
                 self.pipeline.viewport = (0, 0, *globals.FINAL_WINDOW_SIZE)
@@ -117,10 +112,8 @@ class Game(object):
             self.pipeline.render()
 
             pygame.display.flip()
-            # self.window.flip()
             self.ctx.end_frame()
         else:
             pygame.display.flip()
-            # self.window.flip()
 
         self.screen.fill(globals.BLACK)

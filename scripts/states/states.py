@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *  # type: ignore
+import pygame._sdl2.video as sdl2
 
 from scripts import globals, utils
 from scripts.filehandling import *
@@ -241,9 +242,16 @@ class Scoreboard(State):
         self.sprites.add(drawText(text=text, color=globals.WHITE,
                          font=globals.smallFont, screen=self.screen,
                          pos=(0, 0)))
-    
-        msgbox = pygame.display.message_box(title="WIP", message='rahhh', message_type='info', buttons=('OK',))
-        print(msgbox.imag)
+
+        if not globals.emscripten:
+            sdl2.messagebox( # type: ignore
+                title="WIP",
+                message="test",
+                info=True,
+                buttons=('OK',),
+                return_button=False,
+                escape_button=False,
+            )
 
     def update(self):
         super().update()
