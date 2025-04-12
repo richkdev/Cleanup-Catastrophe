@@ -19,7 +19,6 @@ print(platform.platform())
 
 if globals.emscripten:
     platform.window.canvas.style.imageRendering = "pixelated"  # type: ignore -> no more blurriness yay
-    # platform.window.canvas.style.aspectRatio = "8/7" # type: ignore -> change aspect ratio
 
 os.environ['SDL_VIDEO_ALLOW_SCREENSAVER'] = 'permonitorv2'
 
