@@ -10,13 +10,16 @@
 - [x] make a hub world for menu select
 - [ ] make levels to teach new players how to play
 - [x] fix normal shader
-- [x] port blubberquark's crt shader for moderngl to zengl
-- [ ] use `pygame.Window` instead of `pygame.display.set_mode` for creating window **(WIP)**
+- [x] port blubberquark's crt shader for `moderngl` to `zengl`
 - [ ] make "video player" that works on:
   - [x] local, using `opencv-python` + `ffmpeg`
-  - [ ] web, using all of local dependencies + pyodide/pygbag (?)
-- [ ] write tests for game, using `unittest` module **(WIP)**
-- [ ] use pymunk (python wrapper for box2d) for physics system, then display that data using with pygame
+  - [ ] web, using all of said dependencies + pyodide/pygbag (?)
+- [ ] write unit tests, using `unittest` module
+- [ ] write integration tests, using github ci/cd workflows
+- [ ] use `pymunk` (python wrapper for box2d) for physics system, then display that data using with pygame
+- [ ] refactor state management so that it doesnt inherit `Game` since it'll cause memory issues later and set all states as enums or as items on a dictionary
+- [ ] make loading screen and loading functions (loads state, assets, etc), reference: _<https://www.youtube.com/watch?v=KWGDgPldPVo>_
+- [ ] add ability to detect cmdline options for game, using `argparse` module
 
 ## art
 

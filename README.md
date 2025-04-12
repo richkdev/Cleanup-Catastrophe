@@ -4,7 +4,7 @@
 
 ## ABOUT
 
-**_Cleanup Catastrophe!_** (sometimes abbreviated as CC!) is an educational free-to-play indie game that aims to raise awareness about the issue of plastic pollution in the ocean among young minds. Inspired by the vibrant colors of the SEGA Genesis home console, our game introduces the player to a simple user interface as you clean various trash items scattered throughout the ocean floor. Through this game, we hope to educate our players the importance of effective solid waste management, and how to apply them in their daily lives.
+**_Cleanup Catastrophe!_** (sometimes abbreviated as _CC!_) is an educational free-to-play indie game that aims to raise awareness about the issue of plastic pollution in the ocean among young minds. Inspired by the vibrant colors of the SEGA Genesis home console, our game introduces the player to a simple user interface as you clean various trash items scattered throughout the ocean floor. Through this game, we hope to educate our players the importance of effective solid waste management, and how to apply them in their daily lives.
 
 ## STATISTICS
 
@@ -26,11 +26,14 @@ WIP
 
 1. **Install all the dependencies**, listed in `requirements.txt`. If an error occurs when trying install the libraries using pip, try to [upgrade pip](https://pip.pypa.io/en/stable/installation/#upgrading-pip).
 2. **Clone the repository**. See this [article](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for more information. You're now good to go!
+3. **Run the game**. You can run the game by running one of the following command in your terminal:
+   * `python main.py` (for local)
+   * `pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt main.py` (for web)
 
 ## BUILDING
 
-* For local: `pyinstaller main.spec` (exported file type will depend on your system)
-* For web: `pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt main.py` (run this command)
+* For local: `pyinstaller main.spec` (exported file type will depend on your system, e.g. `.exe` for Windows, `.app` for macOS, etc.)
+* For web: `pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt --build main.py` (run this command)
 
 ## LICENSE
 

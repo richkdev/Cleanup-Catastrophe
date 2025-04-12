@@ -13,9 +13,7 @@
 
 ### notes
 
-1. everybody left :skull: im alone now
-2. might pump out demo build for sage 2024? only if i manage to make finish most of stuff in the new todo
-3. added `requirements.txt` because why not lol
+wip!!!
 
 ## v.0.2.0 - the extra awesome update
 
