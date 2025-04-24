@@ -34,6 +34,10 @@ class Game(object):
         pygame.display.set_caption(f"Cleanup Catastrophe! {globals.version}")
         pygame.display.set_icon(pygame.image.load(utils.newPath("icon.ico")))
 
+        if pygame.OPENGL:
+            pygame.mouse.set_relative_mode(True) # fixes mouse opengl scaling issue but it makes the mouse invisible
+            pygame.mouse.set_visible(True) # so we set the mouse to visible using this func
+
         self.sprites = pygame.sprite.Group()
 
         self.sounds_lol = [

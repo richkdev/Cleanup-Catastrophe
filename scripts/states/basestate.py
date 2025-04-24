@@ -28,7 +28,7 @@ class State(object):
         self.sound_manager: SoundManager = game.sound_manager
         self.sprites.empty()
 
-        # self.mouse = Vector2()
+        self.mouse = pygame.Vector2()
 
         print(f"Loaded {type(self).__name__} state, with description: {desc}")
 
@@ -36,8 +36,8 @@ class State(object):
         self.key = pygame.key.get_pressed()
         self.event = pygame.event.get()
 
-        # self.mouse.x, self.mouse.y = pygame.mouse.get_pos()  # will use one day
-        # print(self.mouse.x, self.mouse.y)
+        self.mouse.x, self.mouse.y = pygame.mouse.get_pos()  # will use one day
+        print(self.mouse.x, self.mouse.y)
 
         self.dt = max(0.001, min(globals.clock.tick_busy_loop(globals.FPS)/1000, 0.1))
 
