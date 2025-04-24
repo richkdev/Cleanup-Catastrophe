@@ -8,7 +8,7 @@
 # run this command
 #   pygbag --PYBUILD 3.12 --git --ume_block 0 --template noctx.tmpl "tests/zengl_shader_test/main.py"
 
-# thanks to @
+# thanks to @szabolcsdombi for the help!
 # discussion: https://discord.com/channels/550302843777712148/1333440038293209171
 
 

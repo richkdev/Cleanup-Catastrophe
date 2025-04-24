@@ -11,9 +11,7 @@
 - [ ] make levels to teach new players how to play
 - [x] fix normal shader
 - [x] port blubberquark's crt shader for `moderngl` to `zengl`
-- [ ] make "video player" that works on:
-  - [x] local, using `opencv-python` + `ffmpeg`
-  - [ ] web, using all of said dependencies + pyodide/pygbag (?)
+- [ ] make "video player" that works on local (using `opencv-python` + `ffmpeg`) and web (using all of said dependencies + pygbag) **(WIP, just need to add audio)**
 - [ ] write unit tests, using `unittest` module
 - [ ] write integration tests, using github ci/cd workflows
 - [ ] use `pymunk` (python wrapper for box2d) for physics system, then display that data using with pygame
