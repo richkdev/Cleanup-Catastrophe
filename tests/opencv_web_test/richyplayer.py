@@ -1,3 +1,11 @@
+# /// script
+# dependencies = [
+#   'numpy',
+#   'opencv-python',
+#   'pygame-ce'
+# ]
+# ///
+
 import os
 import sys
 import pygame
@@ -54,10 +62,7 @@ class VideoPlayer(object):
         self.remove_dir = remove_dir
 
         if not IS_WEB and not self.tmp_dir.exists():
-            try:
-                os.mkdir(self.tmp_dir)
-            except FileExistsError:
-                pass
+            os.makedirs(self.tmp_dir, exist_ok=True)
 
         if self._isURL(self.path):
             tmp_video = await self._fetch(self.path, self.tmp_dir)
@@ -100,10 +105,7 @@ class VideoPlayer(object):
                 raise TypeError
 
         if self.remove_dir:
-            try:
-                os.rmdir(self.tmp_dir)
-            except OSError:
-                pass
+            os.removedirs(self.tmp_dir)
 
     async def _fetch(
             self,
