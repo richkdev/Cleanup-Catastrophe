@@ -11,8 +11,10 @@ import sys
 import pygame
 import cv2
 from pathlib import Path
+from warnings import warn
 
 IS_WEB = sys.platform in ('emscripten', 'wasi')
+EMPTY_AUDIO_PATH = "https://github.com/pygame-web/pygbag/raw/refs/heads/main/static/empty.ogg"
 
 if not pygame.mixer.get_init():
     pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=512)
@@ -24,13 +26,13 @@ if IS_WEB:
     import platform
 else:
     from moviepy import VideoFileClip
-    import requests
+    from requests import request
 
 
 class VideoPlayer(object):
     def __init__(self) -> None:
         self.video = cv2.VideoCapture()
-        self.channel = pygame.mixer.find_channel(True)
+        self.channel: pygame.Channel = pygame.mixer.find_channel(True)
         self.audio: pygame.Sound
         self.width: int
         self.height: int
@@ -45,20 +47,21 @@ class VideoPlayer(object):
         self.remove_dir: bool
 
     def __repr__(self) -> str:
-        return f"{__name__}.{type(self).__name__}(path=\"{self.path}\", has_audio={self.has_audio}, override_audio_source={self.override_audio_source is not None})"
+        return f"{__name__}.{type(self).__name__}(path=\"{self.path}\", has_audio={self.has_audio}, override_audio_source={self.override_audio_source})"
 
     async def open(
-            self,
-            path: Path | str,
-            tmp_dir: Path | str,
-            has_audio: bool,
-            override_audio_source: Path | str | None,
-            remove_dir: bool = True
-        ) -> None:
+        self,
+        path: Path | str,
+        tmp_dir: Path | str,
+        has_audio: bool,
+        override_audio_source: Path | str | None,
+        remove_dir: bool = True
+    ) -> None:
         self.path = Path(path)
         self.tmp_dir = Path(tmp_dir)
         self.has_audio = has_audio
-        self.override_audio_source = Path(override_audio_source) if override_audio_source is not None else None
+        self.override_audio_source = Path(
+            override_audio_source) if override_audio_source is not None else None
         self.remove_dir = remove_dir
 
         if not IS_WEB and not self.tmp_dir.exists():
@@ -86,11 +89,17 @@ class VideoPlayer(object):
                         if clip.audio is not None:
                             clip.audio.write_audiofile(tmp_audio)
                         else:
-                            tmp_audio = await self._fetch("https://github.com/pygame-web/pygbag/raw/refs/heads/main/static/empty.ogg", self.tmp_dir) # use pygbag's empty ogg file for now, since other empty files just causes errors
+                            tmp_audio = await self._fetch(EMPTY_AUDIO_PATH, self.tmp_dir)
                         clip.close()
+
+                    self.audio = pygame.Sound(tmp_audio)
                 else:
-                    raise NotImplementedError(
-                        "Haven't figured out how to extract audio from video on pygbag, sorry. To play audio, you must manually set the path to the video\'s audio as the desired path."
+                    self.audio = pygame.Sound(
+                        await self._fetch(EMPTY_AUDIO_PATH, self.tmp_dir)
+                    )
+                    warn(
+                        message="Haven't figured out how to extract audio from video on pygbag, sorry. To play audio, you must manually set override_audio_source as the desired path.",
+                        category=UserWarning
                     )
             elif isinstance(self.override_audio_source, Path):
                 if self._isURL(self.override_audio_source):
@@ -105,13 +114,16 @@ class VideoPlayer(object):
                 raise TypeError
 
         if self.remove_dir:
-            os.removedirs(self.tmp_dir)
+            try:
+                os.rmdir(self.tmp_dir)
+            except OSError:
+                pass
 
     async def _fetch(
-            self,
-            url: Path | str,
-            tmp_dir: Path,
-        ) -> str:
+        self,
+        url: Path | str,
+        tmp_dir: Path,
+    ) -> str:
         url = self._urlify(url)
         tmp_path = tmp_dir.joinpath(Path(url).name)
 
@@ -119,7 +131,7 @@ class VideoPlayer(object):
             if not IS_WEB:
                 # copied from https://stackoverflow.com/questions/76628078/downloading-video-with-python-requests-content-receiving-status
 
-                response = requests.request(method="GET", url=url, stream=True)
+                response = request(method="GET", url=url, stream=True)
                 # file_size = int(response.headers['Content-Length'])
                 # downloaded = 0
                 with open(tmp_path, "wb") as data:
@@ -134,14 +146,17 @@ class VideoPlayer(object):
         else:
             raise FileNotFoundError("File is not a URL.")
 
-    def _isURL(self, path: Path | str) -> bool:
+    @staticmethod
+    def _isURL(path: Path | str) -> bool:
         return "http" in str(path)
 
-    def _urlify(self, url: Path | str) -> str:
+    @staticmethod
+    def _urlify(url: Path | str) -> str:
         return Path(url).as_posix().replace("https", "http").replace(":/", "://")
 
     def set_frame(self, frameNumber: int) -> None:
-        self.currentFrame = int(self.video.set(cv2.CAP_PROP_POS_FRAMES, frameNumber))
+        self.currentFrame = int(self.video.set(
+            cv2.CAP_PROP_POS_FRAMES, frameNumber))
 
     def get_frame(self) -> pygame.Surface:
         self.currentFrame = int(self.video.get(cv2.CAP_PROP_POS_FRAMES))
@@ -149,9 +164,7 @@ class VideoPlayer(object):
         status, video_frame = self.video.read()
 
         if not IS_WEB and not status:
-            blank =  pygame.Surface((self.width, self.height))
-            blank.fill((0, 0, 0))
-            return blank
+            return pygame.Surface((self.width, self.height))
         else:
             return pygame.image.frombuffer(
                 video_frame.tobytes(),
@@ -162,6 +175,9 @@ class VideoPlayer(object):
     def play_audio(self, loops: int = 0, maxtime: int = 0, fade_ms: int = 0) -> None:
         self.channel.play(self.audio, loops, maxtime, fade_ms)
 
+    def pause_audio(self) -> None:
+        self.channel.pause()
+
     def busy_audio(self) -> bool:
         return self.channel.get_busy()
 
@@ -169,4 +185,4 @@ class VideoPlayer(object):
         self.video.release()
 
         if self.has_audio:
-            self.audio.stop()
+            self.channel.stop()
