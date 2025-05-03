@@ -26,7 +26,7 @@ if IS_WEB:
     import platform
 else:
     from moviepy import VideoFileClip
-    from requests import request
+    from requests import get
 
 
 class VideoPlayer(object):
@@ -129,9 +129,9 @@ class VideoPlayer(object):
 
         if self._isURL(url):
             if not IS_WEB:
-                # copied from https://stackoverflow.com/questions/76628078/downloading-video-with-python-requests-content-receiving-status
-
-                response = request(method="GET", url=url, stream=True)
+                # slightly modified ver of https://stackoverflow.com/a/76628270
+                response = get(url=url, stream=True)
+                response.raise_for_status()
                 # file_size = int(response.headers['Content-Length'])
                 # downloaded = 0
                 with open(tmp_path, "wb") as data:
