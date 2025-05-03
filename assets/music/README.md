@@ -35,3 +35,13 @@ back with old and the new!
 ### bliss
 
 _<https://www.beepbox.co/player/#song=9n31s6k0l00e06t1ga7g0gj07r1i0o432T0v0u00f0qM000d01w3h0E0T0v0u00f0q00d06w4h0E0T0v1u00f10s4q00d00w2h0E0T2v3u15f10w4qw02d03w0E0b4zhms00000018icO0000000i4x8g0000004h4h00000000p23bFILwCzMkR-3AkXmjkhM5D0mjJpdmPCm4t5fdpdh7rpwmtB4vbmkRklmOarz_O-CzUlkQRQQSSTkQFIL_0arw-NBXeRB4uRAVS9Y15WVK3ViEpsyyypu2KNBTtNBTd7Rl7cL4Rhdpllll6L1nuhdkjmllllhHwFH-B5543hhhAR555B5505cFgmEmAmAmAQq1qhqhqhqjh00>_
+
+rest of the songs were made by wheaty, go check him out at _<https://wheatnsticks.carrd.co/>_
+
+### straight fundamentals
+
+wheaty's remix of `wake-up-call`
+
+### supadood
+
+an original track by wheaty, inspired by the prologue of mega man world 5

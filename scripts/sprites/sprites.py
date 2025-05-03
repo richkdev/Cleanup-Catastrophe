@@ -21,7 +21,6 @@ class Player(Sprite):
         self.acceleration.y = globals.GRAVITY
         self.jump_strength = globals.GRAVITY*50
 
-        self.stuck_left = False
         self.grounded = False
         self.collideables = collideables
 
@@ -33,7 +32,7 @@ class Player(Sprite):
 
         if self.sheetEnabled:
             self.image = self.sheet.draw(flip_x=bool(self.key[K_LEFT]), flip_y=False)
-            self.sheet.update(0.15)
+            self.sheet.update(self.velocity.x/750)
 
         if self.key[K_LEFT] or self.key[K_RIGHT]:
             self.sheet.set_action("run")
@@ -57,7 +56,7 @@ class Player(Sprite):
     
     def collide_with(self, tiles: pygame.sprite.Group):
         collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
-        
+
         hit_list = self.collision_test(self.rect, tiles)
         for tile in hit_list:
             if isinstance(tile, WorldObject) and tile.collidable:
@@ -87,6 +86,8 @@ class Player(Sprite):
         super().displace()
 
         self.velocity.x = 0
+        
+        self.old_x
 
         self.collisions = self.collide_with(self.collideables)
 

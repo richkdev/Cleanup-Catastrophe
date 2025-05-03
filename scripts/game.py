@@ -2,17 +2,18 @@ import pygame
 import asyncio
 from scripts import globals, utils
 from scripts.settings import *
-from scripts.states.states import State, Splash
+from scripts.states.states import *
 from scripts.sound import SoundManager
 
 if not globals.emscripten:
-    from scripts.discord import discord
+    from scripts.discord import Discord
 
 
 class Game(object):
     def __init__(self, debug: bool = False) -> None:
         self.debug = debug
 
+    def run(self) -> None:
         self.window_flags = pygame.SCALED | pygame.OPENGL | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE
 
         self.screen = pygame.display.set_mode(globals.SCREEN_SIZE, self.window_flags)
@@ -40,39 +41,66 @@ class Game(object):
 
         self.sprites = pygame.sprite.Group()
 
-        self.sounds_lol = [
-            ["cleanup-time", "assets/music/cleanup-time.wav"],
-            ["getTrash", "assets/music/cleanup-time.wav"],
-            ["noTrash", "assets/music/cleanup-time.wav"],
-            ["explode", "assets/music/cleanup-time.wav"],
-        ]
-        self.sound_manager = SoundManager()
-        for title, old_path in self.sounds_lol:
-            self.sound_manager.add_sound(title, utils.newPath(old_path))
-        del self.sounds_lol
+        sounds_lol: dict[str, str] = {
+            # ost part
+            "cleanup-time": "assets/music/cleanup-time.wav",
+            "bliss": "assets/music/bliss.wav",
+            "pause": "assets/music/pause.wav",
+            "waiting": "assets/music/waiting.wav",
+            # "wake-up-call": "assets/music/wake-up-call.wav",
+            "straight-fundamentals": "assets/music/straight-fundamentals.wav",
+            "supadood": "assets/music/supadood.wav",
 
-        self.music_sound_id = 0
+            # sfx part
+            "getTrash": "assets/sfx/getTrash.wav",
+            "noTrash": "assets/sfx/noTrash.wav",
+            "explode": "assets/sfx/cleanup-time.wav",
+        }
+        self.sound_manager = SoundManager()
+        self.sound_manager.global_volume = 0.5
+        for title, old_path in sounds_lol.items():
+            self.sound_manager.add_sound(title, utils.newPath(old_path))
+
+        self.states: dict[StateID, State] = {
+            StateID.SPLASH: Splash(False, "At the splash screen..."),
+            StateID.LOBBY: Lobby(False, "At the lobby..."),
+            StateID.CATASTROPHE: Catastrophe(True),
+            StateID.SHOP: Shop(False, "Lookin\' for things to buy... or not."),
+            StateID.SCOREBOARD: Scoreboard(False, "Lookin\' at the scoreboard"),
+        }
+        self.current_state: State
+        self.state_times_switched: int = 0
+
+        self.discord = Discord()
+
         self.running = True
-        self.state: State
 
         if not globals.emscripten:
             self.loop = asyncio.get_event_loop()
             try:
                 self.loop.run_until_complete(
-                    asyncio.gather(self.game(), self.discord_stuff())
+                    asyncio.gather(self.game(), self.discord_stuff(), return_exceptions=True)
                 )
             finally:
                 self.loop.close()
         else:
             asyncio.run(self.game())
 
-    async def game(self):
-        self.state = Splash(self)
+    def switch_state(self, state_id: StateID) -> None:
+        if self.state_times_switched != 0:
+            self.current_state.unload()
+        self.state_times_switched += 1
+        self.current_state = self.states[state_id]
+        self.current_state.load(self.screen, self.sprites, self.sound_manager, self.switch_state)
+
+        print(f"Switched to {type(self.current_state).__name__} state")
+
+    async def game(self) -> None:
+        self.switch_state(StateID.SPLASH)
 
         while self.running:
-            self.state.update()
+            self.current_state.update()
             self.render()
-            self.sound_manager.update()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -83,35 +111,29 @@ class Game(object):
 
         pygame.quit()
 
-    async def discord_stuff(self):
+    async def discord_stuff(self) -> None:
         while self.running:
-            try:
-                match discord.connected:
-                    case False:
-                        discord.prepare()
-                    case True:
-                        discord.update(self.state.desc)
-            except Exception as e:
-                print(type(e).__name__, e)
-            await asyncio.sleep(1)
+            match self.discord.connected:
+                case False:
+                    self.discord.prepare()
+                case True:
+                    self.discord.update(self.current_state.desc)
+            await asyncio.sleep(5)
 
-    def render(self):
+    def render(self) -> None:
         if pygame.OPENGL:
             if not globals.emscripten:
                 globals.WINDOW_SIZE = pygame.display.get_window_size()
 
                 globals.FINAL_WINDOW_SIZE = utils.aspectScale(*globals.SCREEN_SIZE, *globals.WINDOW_SIZE)
-                self.pipeline.viewport = (0, 0, *globals.FINAL_WINDOW_SIZE)
+                self.pipeline.viewport = ((globals.WINDOW_SIZE[0]-globals.FINAL_WINDOW_SIZE[0])//2, 0, *globals.FINAL_WINDOW_SIZE)
             else:
                 self.pipeline.viewport = (0, 0, *globals.SCREEN_SIZE)
 
             self.ctx.new_frame()
             self.screen_texture.clear()
 
-            if globals.retroMode:
-                self.screen_texture.write(data=pygame.image.tobytes(self.screen, 'RGBA', flipped=False), size=globals.SCREEN_SIZE)
-            else:
-                self.screen_texture.write(data=pygame.image.tobytes(self.screen, 'RGBA', flipped=True), size=globals.SCREEN_SIZE)
+            self.screen_texture.write(data=pygame.image.tobytes(self.screen, 'RGBA', flipped=(not globals.retroMode)), size=globals.SCREEN_SIZE)
 
             self.pipeline.render()
 

@@ -58,7 +58,7 @@ class SoundManager:
 
         self._next_channel_id += 1
 
-        print(f"Playing {s}, {c}, busy? {c.get_busy()}")
+        print(f"Playing {sound_name} at {c.id}, busy? {c.get_busy()}")
         return id
 
     def fade_sound(self, sound_id: int, fade_out_seconds: int) -> None:

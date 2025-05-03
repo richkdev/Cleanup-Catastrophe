@@ -5,16 +5,17 @@ import pygame._sdl2.video as sdl2
 from scripts import globals, utils
 from scripts.filehandling import *
 
-from scripts.states.basestate import State
+from scripts.states.basestate import State, StateID
 from scripts.sprites.sprites import *
 
 
 class Splash(State):
-    def __init__(self, game):
-        super().__init__(game, False, "At the splash screen")
-
-        self.introText = drawText(text="press ENTER key to begin", color=globals.WHITE,
-                     font=globals.smallFont, screen=self.screen)
+    def load_sprites(self):
+        self.introText = drawText(
+            text="press [ENTER] key to begin",
+            color=globals.WHITE,
+            font=globals.smallFont,
+        )
         self.logo = MenuLogo()
 
         self.sprites.add(
@@ -22,21 +23,16 @@ class Splash(State):
             self.introText
         )
 
-        if self.game.music_sound_id:
-            self.sound_manager.stop_sound(self.game.music_sound_id)
-        self.game.music_sound_id = self.sound_manager.play("cleanup-time")
+    def load_sounds(self):
+        self.sound_manager.play("cleanup-time")
 
-    def update(self):
-        super().update()
-
+    def logic(self):
         if self.key[K_RETURN]:
-            self.game.state = Lobby(self.game)
+            self.switch_state(StateID.LOBBY)
 
 
 class Catastrophe(State):
-    def __init__(self, game):
-        super().__init__(game, True, "CATASTROPHE")
-
+    def load_sprites(self):
         self.score = 0
 
         self.background = Background()
@@ -70,9 +66,10 @@ class Catastrophe(State):
             self.rod
         )
 
-    def update(self):
-        super().update()
+    def load_sounds(self):
+        self.sound_manager.play("waiting")
 
+    def logic(self):
         if self.score <= 0:
             self.textDisplay.color = globals.DARKRED
             self.textDisplay.shake(3, 0)
@@ -82,7 +79,7 @@ class Catastrophe(State):
         self.textDisplay.text = f"FPS: {round(globals.clock.get_fps())}\nSCORE: {self.score}"
 
         if not any(isinstance(sprite, Trash) and (not sprite.explosive) for sprite in self.trashSprites) or self.score < 0:
-            self.game.state = Lobby(self.game)
+            self.switch_state(StateID.SCOREBOARD)
 
         match self.rod.isFishing:
             case False:
@@ -103,6 +100,7 @@ class Catastrophe(State):
             case True:
                 for collided in pygame.sprite.spritecollide(self.rod, self.trashSprites, True, pygame.sprite.collide_rect):
                     if isinstance(collided, Trash):
+                        self.rod.durability -= 1
                         match collided.explosive:
                             case True:
                                 self.score -= 1
@@ -123,14 +121,12 @@ class Catastrophe(State):
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
-        # if self.key[K_ESCAPE]:
-        #     self.game.state = Lobby(self.game)
+        if self.key[K_ESCAPE]:
+            self.switch_state(StateID.LOBBY)
 
 
 class Lobby(State):
-    def __init__(self, game):
-        super().__init__(game, False, "At the lobby...")
-
+    def load_sprites(self):
         self.background = Background()
 
         self.temp_ground = WorldObject(
@@ -167,10 +163,10 @@ class Lobby(State):
 
         self.player = Player(pos=(int(globals.SCREEN_HEIGHT//3), int(globals.GROUND_HEIGHT-100)), collideables=self.collideables)
 
-        self.interactables_map = {
-            "Shop": [20, Shop, (34, 13)],
-            "Play": [120, Catastrophe, (34, 13)],
-            "Score": [220, Scoreboard, (34, 13)]
+        self.interactables_map: dict[str, list] = {
+            "Shop": [20, StateID.SHOP, (34, 13)],
+            "Play": [120, StateID.CATASTROPHE, (34, 13)],
+            "Score": [220, StateID.SCOREBOARD, (34, 13)]
         }
         self.interactables = pygame.sprite.Group()
         for name, stuff in self.interactables_map.items():
@@ -201,9 +197,10 @@ class Lobby(State):
             self.player,
         )
 
-    def update(self):
-        super().update()
+    def load_sounds(self):
+        self.sound_manager.play("supadood")
 
+    def logic(self):
         if self.key[K_LEFT] and self.player.rect.x >= globals.xBorder and not self.player.collisions['left']:
             self.player.velocity.x = -100
         if self.key[K_RIGHT] and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder) and not self.player.collisions['right']:
@@ -226,22 +223,23 @@ class Lobby(State):
             elif collided_sprite.desc == "Shop":
                 self.sound_manager.play("noTrash")
 
-            self.game.state = self.interactables_map[collided_sprite.desc][1](self.game)
+            self.switch_state(self.interactables_map[collided_sprite.desc][1])
 
 
 class Scoreboard(State):
-    def __init__(self, game):
-        super().__init__(game, False, "Lookin\' at the scoreboard")
-
+    def load_sprites(self):
         highscores = getLocal()
         text = ""
 
         for i in highscores:
             text += f"{(i['name'])}: {i['score']}\n"
 
-        self.sprites.add(drawText(text=text, color=globals.WHITE,
-                         font=globals.smallFont, screen=self.screen,
-                         pos=(0, 0)))
+        self.sprites.add(drawText(
+            text=text,
+            color=globals.WHITE,
+            font=globals.smallFont,
+            pos=(0, 0)
+        ))
 
         if not globals.emscripten:
             sdl2.messagebox( # type: ignore
@@ -253,24 +251,25 @@ class Scoreboard(State):
                 escape_button=False,
             )
 
-    def update(self):
-        super().update()
-
+    def logic(self):
         if self.key[K_ESCAPE]:
-            self.game.state = Lobby(self.game)
+            self.switch_state(StateID.LOBBY)
 
 
 class Shop(State):
-    def __init__(self, game):
-        super().__init__(game, False, "Lookin\' for things to buy.. or not.")
-
+    def load_sprites(self):
         text = "This is the shop, in future iterations of this project even this page will be completed!\nHang tight as we develop this project."
-        self.sprites.add(drawText(text=text, color=globals.WHITE,
-                         font=globals.smallFont, screen=self.screen,
-                         pos=(0, 0)))
+        text_sprite = drawText(
+            text=text,
+            color=globals.WHITE,
+            font=globals.smallFont,
+            pos=(0, 0)
+        )
+        self.sprites.add(text_sprite)
 
-    def update(self):
-        super().update()
+    def load_sounds(self):
+        self.sound_manager.play("straight-fundamentals")
 
+    def logic(self):
         if self.key[K_ESCAPE]:
-            self.game.state = Lobby(self.game)
+            self.switch_state(StateID.LOBBY)

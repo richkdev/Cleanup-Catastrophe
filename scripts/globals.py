@@ -4,10 +4,6 @@ from json import loads
 from datetime import datetime
 from scripts.utils import newPath
 
-# global version, game_settings, emscripten
-# global SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_SIZE
-# global WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_SIZE, SCALE_X, SCALE_Y
-
 version = open(newPath("VERSION"), "r").read()
 game_settings = loads(open(newPath("settings.json")).read())
 
@@ -19,9 +15,7 @@ SCREEN_HEIGHT: int = 224
 SCREEN_SIZE: tuple[int, int] = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 INITIAL_WINDOW_SIZE: tuple[int, int]
-
 WINDOW_SIZE: tuple[int, int]
-
 FINAL_WINDOW_SIZE: tuple[int, int]
 
 xBorder: int = int(SCREEN_WIDTH ** 0.02)
@@ -34,13 +28,8 @@ retroMode: bool = game_settings['retroMode']
 fragShader_path: str
 vertShader_path: str
 
-match retroMode:
-    case True:
-        fragShader_path = newPath("assets/shaders/fragment_shaders/crt.glsl")
-        vertShader_path = newPath("assets/shaders/vertex_shaders/crt.glsl")
-    case False:
-        fragShader_path = newPath("assets/shaders/fragment_shaders/normal.glsl")
-        vertShader_path = newPath("assets/shaders/vertex_shaders/normal.glsl")
+fragShader_path = newPath(f"assets/shaders/fragment_shaders/{"crt" if retroMode else "normal"}.glsl")
+vertShader_path = newPath(f"assets/shaders/vertex_shaders/{"crt" if retroMode else "normal"}.glsl")
 
 mapDirectory: str = newPath(game_settings['mapDirectory'])
 saveFileDirectory: str = newPath(game_settings['saveFileDirectory'])

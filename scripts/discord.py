@@ -2,13 +2,7 @@ from scripts.globals import version, emscripten
 from time import time
 
 if not emscripten:
-    try:
-        from pypresence import Presence
-        from nest_asyncio import apply
-        apply()
-    except ImportError:
-        print("Couldn't import pypresence for Discord RPC.")
-
+    from pypresence import Presence
 
 class Discord(object):
     def __init__(self):
@@ -29,28 +23,23 @@ class Discord(object):
             self.connected = True
 
     def update(self, state: str):
-        if self.increment % 10 == 0:
-            self.RPC.update(
-                state=state,
-                details=version,
-                start=self.startTime,
-                large_image="icon",
-                # join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",
-                # party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",
-                # party_size=[1, 5]
-                buttons=[
-                    {
-                        "label": "Play the prototype!",
-                        "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
-                    },
-                    {
-                        "label": "Check out the source!",
-                        "url": "https://github.com/richkdev/Cleanup-Catastrophe"
-                    }
-                ]
-            )
-            print("Discord RPC updated!")
-        self.increment += 1
-
-
-discord = Discord()
+        self.RPC.update(
+            state=state,
+            details=version,
+            start=self.startTime,
+            large_image="icon",
+            # join="MTI4NzM0OjFpMmhuZToxMjMxMjM= ",
+            # party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",
+            # party_size=[1, 5]
+            buttons=[
+                {
+                    "label": "Play the prototype!",
+                    "url": "https://richkdev.itch.io/cleanup-catastrophe-proto"
+                },
+                {
+                    "label": "Check out the source!",
+                    "url": "https://github.com/richkdev/Cleanup-Catastrophe"
+                }
+            ]
+        )
+        print("Discord RPC updated!")

@@ -2,7 +2,6 @@
 
 ## code stuff
 
-- [x] make state management possible using `State` class
 - [ ] use requests module to check latest game version on gh repo via githack _<https://raw.githack.com/richkdev/Cleanup-Catastrophe/main/VERSION>_
 - [x] add ability to add line breaks into `drawText` func
 - [ ] custom sizes for the spritesheet, but same hitbox rect & diff image rects **(WIP)**
@@ -11,11 +10,11 @@
 - [ ] make levels to teach new players how to play
 - [x] fix normal shader
 - [x] port blubberquark's crt shader for `moderngl` to `zengl`
-- [ ] make "video player" that works on local (using `opencv-python` + `ffmpeg`) and web (using all of said dependencies + pygbag) **(WIP, just need to add audio)**
+- [x] make "video player" that works on local (using `opencv-python` + `ffmpeg`) and web
 - [ ] write unit tests, using `unittest` module
 - [ ] write integration tests, using github ci/cd workflows
 - [ ] use `pymunk` (python wrapper for box2d) for physics system, then display that data using with pygame
-- [ ] refactor state management so that it doesnt inherit `Game` since it'll cause memory issues later and set all states as enums or as items on a dictionary
+- [ ] overhaul state management so that it doesnt inherit `Game` since it'll cause memory issues later and set all states as enums or as items on a dictionary
 - [ ] make loading screen and loading functions (loads state, assets, etc), reference: _<https://www.youtube.com/watch?v=KWGDgPldPVo>_
 - [ ] add ability to detect cmdline options for game, using `argparse` module
 

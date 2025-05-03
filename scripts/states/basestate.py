@@ -1,38 +1,68 @@
 import pygame
 from pygame.locals import *  # type: ignore
 
+import enum
+import typing
+
 from scripts import globals
 from scripts.sound import SoundManager
 
 
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from ..game import Game
+class StateID(enum.IntEnum):
+    SPLASH = 0
+    LOBBY = enum.auto()
+    CATASTROPHE = enum.auto()
+    SHOP = enum.auto()
+    SCOREBOARD = enum.auto()
 
 
-class State(object):
+class State:
     """
     Base class for game states to use.
     """
 
-    def __init__(self, game: "Game", gamemode: bool, desc: str):
-        match gamemode:
-            case True:
-                self.desc = f"In a heck of a {desc.upper()}"
-            case False:
-                self.desc = desc
+    def __init__(self, is_gamemode: bool, desc: str = "lipsum") -> None:
+        self.screen: pygame.Surface
+        self.sprites: pygame.sprite.Group
+        self.sound_manager: SoundManager
+        self.switch_state: typing.Callable[[StateID], None]
 
-        self.game = game
-        self.screen: pygame.surface.Surface = game.screen
-        self.sprites: pygame.sprite.Group = game.sprites
-        self.sound_manager: SoundManager = game.sound_manager
-        self.sprites.empty()
+        self.is_gamemode = is_gamemode
+        self.desc = f"In a heck of a {type(self).__name__}" if self.is_gamemode else desc
 
+        self.is_loaded: bool = False
+
+        self.key: pygame.key.ScancodeWrapper
+        self.event: list[pygame.Event]
         self.mouse = pygame.Vector2()
+        self.dt: float = 0.0
 
-        print(f"Loaded {type(self).__name__} state, with description: {desc}")
+        print(f"Prepared {type(self).__name__} state")
 
-    def update(self):
+    def load(
+        self,
+        screen: pygame.Surface,
+        sprites: pygame.sprite.Group,
+        sound_manager: SoundManager,
+        switch_state: typing.Callable[[StateID], None],
+    ) -> None:
+        self.screen = screen
+        self.sprites = sprites
+        self.sound_manager = sound_manager
+        self.switch_state = switch_state
+
+        self.load_sprites()
+        self.load_sounds()
+
+        print(f"Loaded {type(self).__name__} state")
+
+    def load_sprites(self) -> None:
+        ...
+
+    def load_sounds(self) -> None:
+        ...
+
+    def update(self) -> None:
         self.key = pygame.key.get_pressed()
         self.event = pygame.event.get()
 
@@ -42,5 +72,15 @@ class State(object):
         self.dt = max(0.001, min(globals.clock.tick_busy_loop(globals.FPS)/1000, 0.1))
 
         self.sprites.update(self.key, self.dt)
-        # self.sprites.update(self.key, self.mouse, self.dt)
         self.sprites.draw(self.screen)
+
+        self.sound_manager.update()
+
+        self.logic()
+
+    def logic(self) -> None:
+        ...
+
+    def unload(self) -> None:
+        self.sprites.empty()
+        self.sound_manager.stop_all()

@@ -30,8 +30,8 @@ class Sprite(pygame.sprite.DirtySprite):
                 self.image = pygame.image.load(utils.newPath(imagepath)).convert_alpha()
                 self.image = pygame.transform.scale(self.image, (self.image.get_width(), self.image.get_height()))
 
-        self.rect: pygame.FRect = self.image.get_frect()
-        # self.hitbox: FRect # must be specified when init
+        self.image_rect: pygame.FRect = self.image.get_frect()
+        self.rect: pygame.FRect = pygame.FRect(0, 0, *size) # must be specified when init
         # self.mask = pygame.mask.from_surface(self.image) # maybe??
 
         self.old_x: int
@@ -115,7 +115,7 @@ class Text(pygame.sprite.DirtySprite):
         self.rect.x, self.rect.y = self.old_x + randint(0, seedX), self.old_y + randint(0, seedY)
 
 
-def drawText(text: str, color: pygame.typing.ColorLike, font: pygame.font.Font, screen: pygame.Surface, lineSpacing: int = -2, pos: tuple = (0, 0)):
+def drawText(text: str, color: pygame.typing.ColorLike, font: pygame.font.Font, screen: pygame.Surface = pygame.Surface(globals.SCREEN_SIZE), lineSpacing: int = -2, pos: tuple = (0, 0)):
     """
     Modified version of https://www.pygame.org/wiki/TextWrap.
     """
