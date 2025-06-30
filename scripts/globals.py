@@ -10,26 +10,26 @@ game_settings = loads(open(newPath("settings.json")).read())
 emscripten = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
 pyodide = "pyodide" in sys.modules
 
-SCREEN_WIDTH: int = 320
-SCREEN_HEIGHT: int = 224
-SCREEN_SIZE: tuple[int, int] = (SCREEN_WIDTH, SCREEN_HEIGHT)
+SCREEN_WIDTH = 320
+SCREEN_HEIGHT = 224
+SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
-INITIAL_WINDOW_SIZE: tuple[int, int]
-WINDOW_SIZE: tuple[int, int]
-FINAL_WINDOW_SIZE: tuple[int, int]
+INITIAL_WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
+WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
+FINAL_WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
 
-xBorder: int = int(SCREEN_WIDTH ** 0.02)
-yBorder: int = int(SCREEN_HEIGHT ** 0.02)
+xBorder: int = int(SCREEN_WIDTH ** 0.05)
+yBorder: int = int(SCREEN_HEIGHT ** 0.05)
 
 FPS: int = game_settings['maxFPS']
+MIN_DT: float = FPS/1000000
+MAX_DT: float = FPS/100
+
 volume: float = game_settings['volume'] / 100
 
 retroMode: bool = game_settings['retroMode']
-fragShader_path: str
-vertShader_path: str
-
-fragShader_path = newPath(f"assets/shaders/fragment_shaders/{"crt" if retroMode else "normal"}.glsl")
-vertShader_path = newPath(f"assets/shaders/vertex_shaders/{"crt" if retroMode else "normal"}.glsl")
+fragShader_path: str  = newPath(f"assets/shaders/fragment_shaders/{"crt" if retroMode else "normal"}.glsl")
+vertShader_path: str = newPath(f"assets/shaders/vertex_shaders/{"crt" if retroMode else "normal"}.glsl")
 
 mapDirectory: str = newPath(game_settings['mapDirectory'])
 saveFileDirectory: str = newPath(game_settings['saveFileDirectory'])
@@ -51,7 +51,7 @@ TRANSPARENT = pygame.Color(0, 0, 0, 0)
 pygame.font.init()
 
 bigFont = pygame.font.Font(newPath("assets/fonts/genesis.ttf"), 20)
-smallFont = pygame.font.SysFont("helvetica", 15)
+smallFont = pygame.font.Font(newPath("assets/fonts/UnifontExMono.ttf"), 15)
 
 GRAVITY: float = 2
 GROUND_HEIGHT: int = int(SCREEN_HEIGHT//1.5)

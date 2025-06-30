@@ -40,7 +40,7 @@ rest of the songs were made by wheaty, go check him out at _<https://wheatnstick
 
 ### straight fundamentals
 
-wheaty's remix of `wake-up-call`
+wheaty's remix of `wake-up-call`, might replace the original in the future
 
 ### supadood
 

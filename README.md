@@ -26,13 +26,17 @@ WIP
 
 1. **Install all the dependencies**, listed in `requirements.txt`. If an error occurs when trying install the libraries using pip, try to [upgrade pip](https://pip.pypa.io/en/stable/installation/#upgrading-pip).
 2. **Clone the repository**. See this [article](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for more information. You're now good to go!
-3. **Run the game**. You can run the game by running one of the following command in your terminal:
-   * `python main.py` (for local)
-   * `pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt main.py` (for web)
+
+## USAGE
+
+You can run the game by running one of the following command in your terminal:
+
+* `python main.py` (for local)
+* `python -m pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt main.py` (for web)
 
 ## BUILDING
 
-* For local: `pyinstaller main.spec` (exported file type will depend on your system, e.g. `.exe` for Windows, `.app` for macOS, etc.)
+* For local: `pyinstaller main.spec` (exported file type will depend on your system, e.g. `.exe` for Windows, `.app` for macOS, `.bin` for Linux, etc.)
 * For web: `pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt --build main.py` (run this command)
 
 ## LICENSE
@@ -43,12 +47,10 @@ See [`LICENSE`](/LICENSE) for more information.
 
 ## CONTRIBUTE
 
-Contributions to the _Cleanup Catastrophe!_ game repository are greatly appreciated. It helps us to improve and develop the game to appeal to the masses. If you have a suggestion that you think would make the game better, you can either:
+Contributions to the _Cleanup Catastrophe!_ game repository are greatly appreciated. It helps us to improve and develop the game to appeal to the masses. If you would like to contribute to this game, please:
 
 * fork the repository and create a pull request, or
-* open an issue with the tag "improvement"
-
-See [`CODE_OF_CONDUCT.md`](https://github.com/richkdev/cleanup-catastrophe/blob/f0fc7395761dbb8b380c6c47c284c66016e03edf/CODE_OF_CONDUCT.md) for more information.
+* open an issue with the appropriate tag/tags
 
 [![contributors](https://contrib.rocks/image?repo=richkdev/Cleanup-Catastrophe)](https://github.com/richkdev/Cleanup-Catastrophe/graphs/contributors)
 
@@ -57,4 +59,5 @@ See [`CODE_OF_CONDUCT.md`](https://github.com/richkdev/cleanup-catastrophe/blob/
 Here is a complete list that credits the original authors of the assets used in the game.
 
 * Sonic 1 Genesis/Megadrive font, licensed under Creative Commons Attribution Share Alike
+* stgiga's Unifont Ex Mono font, licensed under the public domain
 * Blubberquark's ModernGL CRT shader (ported to ZenGL by richkdev with some modifications)

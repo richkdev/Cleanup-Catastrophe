@@ -2,28 +2,26 @@ from scripts.globals import version, emscripten
 from time import time
 
 if not emscripten:
-    from pypresence import Presence
+    from pypresence import AioPresence
 
-class Discord(object):
-    def __init__(self):
+class DiscordPresence:
+    def __init__(self) -> None:
         self.client_id: str = "1125682987552481311"
         self.connected: bool = False
         self.startTime = int(time())
-        self.increment = 0
+        self.RPC = AioPresence(client_id=self.client_id)
 
-    def prepare(self):
+    async def prepare(self) -> None:
         try:
-            self.RPC = Presence(client_id=self.client_id)
-            self.RPC.connect()
+            await self.RPC.connect()
         except Exception as e:
             print(type(e).__name__, e)
-            pass
         else:
             print("Discord RPC server found")
             self.connected = True
 
-    def update(self, state: str):
-        self.RPC.update(
+    async def update(self, state: str) -> None:
+        await self.RPC.update(
             state=state,
             details=version,
             start=self.startTime,
@@ -43,3 +41,6 @@ class Discord(object):
             ]
         )
         print("Discord RPC updated!")
+
+    def quit(self) -> None:
+        self.RPC.close()

@@ -4,16 +4,16 @@
 
 ### details
 
-- switched to pygame community edition!
-- fixed `RuntimeError` with discord rpc ~~thread~~ process, had to use nest-asyncio _<https://pypi.org/project/nest-asyncio>_ and turn it into asyncio process that sleeps for 10 seconds then updates
+- switched to pygame community edition! frects are so cool
+- switched from multithreading to asyncio for web compat
 - added state management with my own finite state machine
-- fixed a problem, since moderngl stuffs needs to refer to a context, i turn it into a ~~main thread~~ async process
-- WIP hub world for menu select
+- switched from moderngl to zengl for pygbag compatc
+- WIP hub world for selecting gamemodes, just need to add a camera system
 - custom descriptions for discord rich presence based on gamestate
 
 ### notes
 
-wip!!!
+WIP
 
 ## v.0.2.0 - the extra awesome update
 
@@ -24,7 +24,7 @@ wip!!!
 - actually made the game core
 - added local highscore as proof-of-concept for a cloud server
 - made classes for each sprite so they can be easily called
-- added emscripten detection for web building
+- added emscripten detection for running on pygbag
 - added `_MEIPASS` detection for native building
 
 ### notes

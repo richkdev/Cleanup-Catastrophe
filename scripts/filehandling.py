@@ -12,15 +12,14 @@ def loadMap() -> list[list[int]]:
     return map
 
 
-def makeMap(start: int = 4, stop: int = 4) -> list[list[int]]:
+def makeMap(size: tuple[int, int] = (4, 4)) -> list[list[int]]:
     """
     trashType
     0 = empty
     1-3 = not empty
     """
-    
-    rows, cols = randint(start, stop), randint(start, stop)
-    map = [[randint(0, 4) for _ in range(rows)] for _ in range(cols)]
+
+    map = [[randint(0, 4) for _ in range(size[0])] for _ in range(size[1])]
     return map
 
 
@@ -36,7 +35,7 @@ def getLocal() -> list[dict[str, str|int]]:
     return highscores
 
 
-def saveLocal(name: str, score: int) -> None:
+def saveLocal(name: str, score: int, save: bool) -> None:
     highscores = getLocal()
 
     player_exists = False
@@ -48,4 +47,5 @@ def saveLocal(name: str, score: int) -> None:
             if not player_exists:
                 highscores.append({"name": name, "score": score})
 
-    dump(highscores, open(saveFileDirectory, "w"), indent=4)
+    if save:
+        dump(highscores, open(saveFileDirectory, "w"), indent=4)

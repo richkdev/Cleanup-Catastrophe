@@ -6,10 +6,10 @@ from scripts.states.states import *
 from scripts.sound import SoundManager
 
 if not globals.emscripten:
-    from scripts.discord import Discord
+    from scripts.discord import DiscordPresence
 
 
-class Game(object):
+class Game:
     def __init__(self, debug: bool = False) -> None:
         self.debug = debug
 
@@ -41,25 +41,8 @@ class Game(object):
 
         self.sprites = pygame.sprite.Group()
 
-        sounds_lol: dict[str, str] = {
-            # ost part
-            "cleanup-time": "assets/music/cleanup-time.wav",
-            "bliss": "assets/music/bliss.wav",
-            "pause": "assets/music/pause.wav",
-            "waiting": "assets/music/waiting.wav",
-            # "wake-up-call": "assets/music/wake-up-call.wav",
-            "straight-fundamentals": "assets/music/straight-fundamentals.wav",
-            "supadood": "assets/music/supadood.wav",
-
-            # sfx part
-            "getTrash": "assets/sfx/getTrash.wav",
-            "noTrash": "assets/sfx/noTrash.wav",
-            "explode": "assets/sfx/cleanup-time.wav",
-        }
         self.sound_manager = SoundManager()
-        self.sound_manager.global_volume = 0.5
-        for title, old_path in sounds_lol.items():
-            self.sound_manager.add_sound(title, utils.newPath(old_path))
+        self.sound_manager.global_volume = globals.volume
 
         self.states: dict[StateID, State] = {
             StateID.SPLASH: Splash(False, "At the splash screen..."),
@@ -69,11 +52,12 @@ class Game(object):
             StateID.SCOREBOARD: Scoreboard(False, "Lookin\' at the scoreboard"),
         }
         self.current_state: State
-        self.state_times_switched: int = 0
+        self.states_accessed: list[StateID] = []
 
-        self.discord = Discord()
+        if not globals.emscripten:
+            self.discord = DiscordPresence()
 
-        self.running = True
+        self.running: bool = True
 
         if not globals.emscripten:
             self.loop = asyncio.get_event_loop()
@@ -87,13 +71,24 @@ class Game(object):
             asyncio.run(self.game())
 
     def switch_state(self, state_id: StateID) -> None:
-        if self.state_times_switched != 0:
+        if len(self.states_accessed) != 0:
             self.current_state.unload()
-        self.state_times_switched += 1
+
+        self.prepare_state(state_id)
+
         self.current_state = self.states[state_id]
+
+        self.states_accessed.append(state_id)
+
         self.current_state.load(self.screen, self.sprites, self.sound_manager, self.switch_state)
 
-        print(f"Switched to {type(self.current_state).__name__} state")
+        print(f"Switched to {type(self.current_state).__name__} state, list of states accessed: {self.states_accessed}")
+
+        for state in self.current_state.next_states:
+            self.prepare_state(state)
+
+    def prepare_state(self, state_id: StateID) -> None:
+        self.states[state_id].prepare()
 
     async def game(self) -> None:
         self.switch_state(StateID.SPLASH)
@@ -113,12 +108,18 @@ class Game(object):
 
     async def discord_stuff(self) -> None:
         while self.running:
-            match self.discord.connected:
-                case False:
-                    self.discord.prepare()
-                case True:
-                    self.discord.update(self.current_state.desc)
+            try:
+                match self.discord.connected:
+                    case False:
+                        await self.discord.prepare()
+                    case True:
+                        await self.discord.update(self.current_state.desc)
+            except Exception as e:
+                print(type(e).__name__, e)
+
             await asyncio.sleep(5)
+
+        self.discord.quit()
 
     def render(self) -> None:
         if pygame.OPENGL:
