@@ -4,188 +4,187 @@ import typing
 from random import randint
 
 from scripts import globals, utils
+from scripts.sprites.sheet import Sheet, cut_sheet_fixed_size
 
-from scripts.sprites.sheet import Sheet, cutSheet
 
-
-class Sprite(pygame.sprite.DirtySprite):
+class BaseSprite(pygame.sprite.DirtySprite):
     """
-    Sprite class with a `DirtySprite` base
+    Bare bones sprite class, don't use directly!
     """
 
-    def __init__(self, sheetEnabled: bool, imagepath: str, size: pygame.typing.IntPoint, pos: pygame.typing.Point = (0, 0)):
-        super().__init__() # i really should fix things up in this base class
+    def __init__(self, *groups):
+        super().__init__(*groups)
 
-        self.sheetEnabled = sheetEnabled
+        self.key: pygame.key.ScancodeWrapper
+        self.dt: float = 0.0
+
+        self.dirty = 1
+        self.blendmode = pygame.BLENDMODE_NONE # check https://pyga.me/docs/ref/special_flags_list.html
+        self.visible = 1
+
+        self.sheetEnabled: bool
+        self.sheetStatic: bool = False
+        self.image_path: str
         self.image: pygame.Surface
+        self.old_image: pygame.Surface
 
-        match self.sheetEnabled:
-            case True:
-                self.sheet = Sheet()
-                self.sheet.add_animation("idle", cutSheet(imagepath, size))
-                self.action = "idle"
-                self.sheet.set_action(self.action)
-                self.image = self.sheet.states["idle"][0]
-            case False:
-                self.image = pygame.image.load(utils.newPath(imagepath)).convert_alpha()
+        self.sheet: Sheet
+        self.action: str = "idle"
 
-        self.image_rect: pygame.Rect = self.image.get_rect()
-        self.image_size = self.image.size
+        self.image_rect: pygame.Rect
+        self.image_size: pygame.typing.IntPoint
 
-        self.rect: pygame.FRect = pygame.FRect(0, 0, *size) # set frect size to a custom hitbox size later, needs major refactor so that each child takes a pos param with pygame.typing.Point type
+        self.size: pygame.typing.IntPoint = (1, 1)
+        self.rect: pygame.FRect
 
-        # self.mask = pygame.mask.from_surface(self.image) # maybe??
-
-        self.old_pos = pygame.Vector2(self.rect.x, self.rect.y)
+        self.pos: pygame.Vector2 = pygame.Vector2(0, 0)
+        self.old_pos: pygame.Vector2
 
         self.velocity = pygame.Vector2()
         self.acceleration = pygame.Vector2()
-        self.top_speed = pygame.Vector2()
+        self.max_velocity = pygame.Vector2()
 
-        print(f"Loaded {type(self).__name__} sprite, at ({self.rect.x}, {self.rect.y})")
+    def update(self, dt: float):
+        pygame.sprite.DirtySprite.update(self)
 
-    def update(self, key: pygame.key.ScancodeWrapper, dt: float):
-        super().update()
-
-        self.key = key
         self.dt = dt
 
-        if self.sheetEnabled:
-            self.image = self.sheet.draw(flip_x=False, flip_y=False)
-            self.sheet.update()
-
         self.move()
-
-    def move(self):
-        self.velocity += self.acceleration
 
         self.rect.x += self.velocity.x * self.dt
         self.rect.y += self.velocity.y * self.dt
 
-    def displace(self, pos: pygame.typing.Point):
+        if self.visible:
+            self.animate()
+
+    def animate(self):
+        """modifiable"""
+
+        if self.sheetEnabled:
+            self.image = self.sheet.draw(flip_x=False, flip_y=False)
+
+            if not self.sheetStatic:
+                self.sheet.update()
+
+    def move(self):
+        """modifiable"""
+
+        self.velocity += self.acceleration
+
+    def move_to(self, pos: pygame.typing.Point):
         self.rect.x, self.rect.y = pos[0], pos[1]
 
-    def shake(self, seedX: int, seedY: int):
-        self.rect.x, self.rect.y = self.old_pos.x + randint(0, seedX), self.old_pos.y + randint(0, seedY)
+    def move_ip(self, pos: pygame.typing.Point):
+        self.rect.x += pos[0]
+        self.rect.y += pos[1]
 
-class SpriteGroup(pygame.sprite.Group):
-    def sprites(self) -> list[Sprite]:
-        return super().sprites()
+    def shake(self, seed: pygame.typing.IntPoint):
+        self.rect.x, self.rect.y = self.old_pos.x + randint(0, seed[0]), self.old_pos.y + randint(0, seed[1])
 
-    def displace(self, pos: pygame.typing.Point):
+
+class RSprite(BaseSprite):
+    """
+    Custom sprite class with added utilities
+    """
+
+    def __init__(
+        self,
+        sheetEnabled: bool = False,
+        sheetStatic: bool = False,
+        image_path: pygame.typing._PathLike = globals.TEMPLATE_IMAGE_PATH,
+        # image_src: pygame.Surface = globals.TEMPLATE_IMAGE_SURF, # TODO: make this work so that we dont have to load it images every single time and it can receive json spritesheet stuff as well
+        size: pygame.typing.IntPoint = (1, 1),
+        pos: pygame.typing.Point = (0, 0),
+        *groups: pygame.sprite.Group["RSprite"]
+    ) -> None:
+        super().__init__(*groups)
+
+        self.sheetEnabled = sheetEnabled
+        self.sheetStatic = sheetStatic
+        self.pos = pygame.Vector2(pos)
+
+        match self.sheetEnabled:
+            case True:
+                self.sheet = Sheet()
+                self.action = "idle"
+                self.sheet.add_animation(self.action, cut_sheet_fixed_size(image_path, size))
+                self.sheet.set_animation(self.action)
+                self.image = self.sheet.states[self.action][0]
+            case False:
+                self.image = pygame.image.load(utils.newPath(str(image_path))).convert_alpha()
+
+        self.old_image = self.image
+
+        self.image_rect: pygame.Rect = self.image.get_rect()
+        self.image_size = self.image.get_size()
+
+        self.rect: pygame.FRect = pygame.FRect(pos, size) # TODO: set frect size to a custom hitbox size later, needs major refactor so that each child takes a pos param with pygame.typing.Point type
+
+        # self.mask = pygame.mask.from_surface(self.image) # maybe??
+
+        self.old_pos = self.pos
+
+        print(f"Loaded {type(self).__name__} sprite, at ({pos})")
+
+    def add(self, *groups: pygame.sprite.Group["RSprite"]) -> None:
+        return super().add(*groups)
+
+_RSprite = typing.TypeVar("_RSprite", bound=RSprite) # solution: https://sorokin.engineer/posts/en/python_type_aliasing.html
+
+
+class RGroup(pygame.sprite.Group[_RSprite]):
+    """
+    Custom sprite group with added utilities.
+    """
+
+    def __init__(self, *sprites: "RSprite | RGroup[RSprite]") -> None:
+        pygame.sprite.Group.__init__(self, *sprites)
+
+    def add(
+        self,
+        *sprites: "RSprite | RGroup",
+        **kwargs: typing.Any
+    ) -> None:
+        return pygame.sprite.Group.add(self, *sprites, **kwargs)
+
+    def update(self, dt: float) -> None:
         for sprite in self.sprites():
-            sprite.rect.x += pos[0]
-            sprite.rect.y += pos[1]
+            sprite.update(dt)
 
-class WorldObject(Sprite):
+    def sprites(self) -> list[RSprite]:
+        return pygame.sprite.Group.sprites(self)
+
+    def move_ip(self, pos: pygame.typing.Point) -> None:
+        for sprite in self.sprites():
+            sprite.move_ip(pos)
+
+
+class WorldObject(RSprite):
     """
     Sprite class for interactable and/or collidable objects
     """
 
     def __init__(
-            self,
-            imagepath: str,
-            coords: pygame.typing.Point = pygame.Vector2(),
-            size: pygame.typing.IntPoint = (1, 1),
-            desc: str = "lipsum",
-            interactable: bool = False,
-            collidable: bool = False
-        ):
-        super().__init__(False, imagepath, size)
+        self,
+        sheetEnabled: bool = False,
+        sheetStatic: bool = False,
+        image_path: pygame.typing._PathLike = globals.TEMPLATE_IMAGE_PATH,
+        # image_src: pygame.Surface = globals.TEMPLATE_IMAGE_SURF,
+        size: pygame.typing.IntPoint = (1, 1),
+        pos: pygame.typing.Point = (0, 0), # TODO: make this do something later!
+        *groups: RGroup
+    ):
+        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
 
         self.image_rect.size = size
         self.rect = pygame.FRect(*self.image_rect.topleft, *size)
-        self.rect.x, self.rect.y = coords
+        self.rect.x, self.rect.y = pos
 
+        self.desc: str = "lipsum"
+        self.interactable: bool = False
+        self.collidable: bool
+
+    def set_worldobj(self, desc: str, interactable: bool, collidable: bool):
         self.interactable = interactable
         self.collidable = collidable
         self.desc = desc
-
-
-class Text(Sprite):
-    """
-    Sprite class for displaying text on screen.
-    """
-
-    def __init__(
-        self, text: str = "",
-        font: pygame.font.Font = globals.bigFont,
-        color: pygame.typing.ColorLike = globals.BLACK,
-        pos: pygame.typing.Point = (0, 0)
-    ):
-        super().__init__(False, utils.newPath("assets/img/sprites/trash.png"), (0, 0))
-        self.text = text
-        self.font = font
-        self.color = color
-
-        self.image = self.font.render(self.text, False, self.color, None)
-
-        self.rect: pygame.FRect = self.image.get_frect()
-
-        self.old_pos = pygame.Vector2(pos)
-        self.rect.x, self.rect.y = pos
-
-    def update(self, key, dt):
-        self.key = key
-        self.dt = dt
-
-        self.image = self.font.render(self.text, False, self.color, None)
-
-        self.move()
-
-
-def drawText(
-        text: str,
-        color: pygame.typing.ColorLike,
-        font: pygame.font.Font,
-        screen: pygame.Surface = pygame.Surface(globals.SCREEN_SIZE),
-        lineSpacing: int = -2,
-        pos: pygame.typing.Point = (0, 0)
-    ) -> pygame.sprite.Group:
-    """
-    Modified version of https://www.pygame.org/wiki/TextWrap.
-    """
-
-    pos = (pos[0] + screen.get_width() / 2, pos[1] + screen.get_height() / 2)
-    rect = screen.get_rect(center=pos)
-    textGroup = pygame.sprite.Group()
-
-    y = rect.top
-
-    fontHeight = font.size("Tg")[1]
-
-    paragraphs = text.split('\n')  # Split text by newline characters first
-    for paragraph in paragraphs:
-        while paragraph:
-            i = 1
-
-            if y + fontHeight > rect.bottom:
-                break
-
-            while font.size(paragraph[:i])[0] < rect.width and i < len(paragraph):
-                i += 1
-
-            # If we've reached the end of the text, break out of the loop
-            if not i == len(paragraph):
-                # Find the last space in the current substring
-                i = paragraph.rfind(" ", 0, i) + 1
-
-            newText = Text(text=paragraph[:i], font=font, color=color, pos=pygame.Vector2(rect.left, y))
-            y += fontHeight + lineSpacing
-
-            paragraph = paragraph[i:]
-            textGroup.add(newText)
-
-        y += fontHeight + lineSpacing
-
-    return textGroup
-
-
-def resizeImage(input_image: pygame.Surface, tile_size: pygame.typing.Point, target_size: pygame.typing.Point):
-    output_image = pygame.Surface(target_size, pygame.SRCALPHA)
-
-    for y in range(0, int(target_size[1]), int(tile_size[1])):
-        for x in range(0, int(target_size[0]), int(tile_size[0])):
-            output_image.blit(input_image, (x, y))
-
-    return output_image

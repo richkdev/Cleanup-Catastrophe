@@ -1,5 +1,7 @@
+import pygame
+import random
+
 from json import load, dump, JSONDecodeError
-from random import randint
 
 from scripts.globals import mapDirectory, saveFileDirectory
 
@@ -12,19 +14,19 @@ def loadMap() -> list[list[int]]:
     return map
 
 
-def makeMap(size: tuple[int, int] = (4, 4)) -> list[list[int]]:
+def makeMap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[int]]:
     """
     trashType
     0 = empty
     1-3 = not empty
     """
 
-    map = [[randint(0, 4) for _ in range(size[0])] for _ in range(size[1])]
+    map = [[random.randint(0, 4) for _ in range(size[0])] for _ in range(size[1])]
     return map
 
 
-def saveMap(mapPath: str) -> None:
-    dump(mapPath, open(mapDirectory, "w"))
+def saveMap(mapData: list[list[int]]) -> None:
+    dump(mapData, open(mapDirectory, "w"))
 
 
 def getLocal() -> list[dict[str, str|int]]:

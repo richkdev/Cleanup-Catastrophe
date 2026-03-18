@@ -1,4 +1,6 @@
 {
+    "debug": false,
+    "opengl": true,
     "maxFPS": 60,
     "volume": 20,
     "retroMode": true,

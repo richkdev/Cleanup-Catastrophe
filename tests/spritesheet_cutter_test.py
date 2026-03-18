@@ -7,7 +7,7 @@ clock = pygame.time.Clock()
 
 anim1 = Sheet()
 anim1.add_animation("idle", cutSheet(newPath("assets/img/sprites/paul_run.png"), pygame.Vector2(31, 43)))
-anim1.set_action(action="idle")
+anim1.set_animation("idle")
 
 while True:
     screen.fill((255, 255, 0))
@@ -15,7 +15,7 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
-        
+
     anim1.update()
     screen.blit(anim1.draw(), (10, 10))
 

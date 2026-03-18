@@ -1,10 +1,10 @@
 # change log lol
 
-## v.0.2.1 - "shouldve been a seperate major version" update
+## v.0.2.1 - swagmoney update
 
 ### details
 
-- switched to pygame community edition! frects are so cool
+- switched to pygame-ce! frects are so cool
 - switched from multithreading to asyncio for web compat
 - added state management with my own finite state machine
 - switched from moderngl to zengl for pygbag compatc
@@ -32,7 +32,7 @@ WIP
 1. made a proof-of-concept for the 20 seconds jam 2023: _<https://richkdev.itch.io/cleanup-catastrophe-proto>_
 2. porting pygame to wasm is tiring, might scrap it next update
 
-## v.0.1.1 - the awesome update_
+## v.0.1.1 - the awesome update
 
 ### details
 

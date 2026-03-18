@@ -1,4 +1,4 @@
-from scripts.globals import emscripten, volume
+from scripts.globals import volume, IS_PYGBAG
 import pygame
 
 if not pygame.mixer.get_init():
@@ -6,7 +6,7 @@ if not pygame.mixer.get_init():
     pygame.mixer.init()
     pygame.mixer.set_num_channels(64)
 
-if emscripten:
+if IS_PYGBAG:
     pygame.mixer.SoundPatch()  # type: ignore -> for web
 
 class SoundManager:
@@ -39,7 +39,7 @@ class SoundManager:
         pygame.mixer.unpause()
         print("Unpaused all sounds")
 
-    def add_sound(self, sound_name: str, path: str) -> None:
+    def add_sound(self, sound_name: str, path: pygame.typing._PathLike) -> None:
         self._sound_cache[sound_name] = pygame.mixer.Sound(path)
         print(f"Added sound {sound_name} at {path}")
 

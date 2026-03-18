@@ -1,4 +1,7 @@
 import pygame
+import random
+import numpy
+
 from pygame.locals import *  # type: ignore
 
 from scripts import globals, utils, filehandling
@@ -6,19 +9,22 @@ from scripts import globals, utils, filehandling
 from scripts.states.basestate import State, StateID
 from scripts.sprites.sprites import *
 
-import random
-
 
 class Splash(State):
     def prepare_sprites(self):
-        self.introText = Text(
-            text="press [ENTER] key to begin",
+        self.introText = Text()
+        self.introText.set_text(
+            text=f"press [ENTER] to begin",
             color=globals.WHITE,
             font=globals.smallFont,
         )
         self.introText.rect.center = (globals.SCREEN_WIDTH/2, globals.SCREEN_HEIGHT/1.25)
 
         self.logo = MenuLogo()
+        self.logo.rect.center = (
+            globals.SCREEN_WIDTH / 2,
+            globals.SCREEN_HEIGHT / 2
+        )
 
         self.sprites.add(
             self.logo,
@@ -37,73 +43,80 @@ class Splash(State):
         ]
 
     def load_sounds(self):
-        self.sound_manager.play("cleanup-time")
+        self.sound_manager.play("cleanup-time", loop=-1)
 
     def logic(self):
         if self.key[K_RETURN] or self.key[K_SPACE]:
-            self.switch_state(StateID.LOBBY)
+            self.switch_state(self.next_states[0])
 
 
 class Catastrophe(State):
     def prepare_sprites(self):
         self.score = 0
-        self.water_height = globals.GROUND_HEIGHT - 50
 
         self.background = Background()
 
         self.temp_ground = WorldObject(
-            imagepath=utils.newPath(f"assets/img/bg/sand.png"),
-            desc="ground",
-            interactable=False, collidable=True
+            image_path=utils.newPath(f"assets/img/bg/sand.png"),
         )
-        self.temp_ground.image = resizeImage(
+        self.temp_ground.set_worldobj(
+            desc="ground",
+            interactable=False,
+            collidable=True
+        )
+        self.temp_ground.image = multiply_image(
             input_image=self.temp_ground.image,
             tile_size=(1, 1),
-            target_size=(globals.SCREEN_WIDTH, 5)
+            target_size=(globals.SCREEN_WIDTH, 1)
         )
         self.temp_ground.image_rect = self.temp_ground.image.get_rect()
         self.temp_ground.image_size = self.temp_ground.image_rect.size
         self.temp_ground.rect = self.temp_ground.image.get_frect()
-        self.temp_ground.rect.x, self.temp_ground.rect.y = 0, self.water_height
-        # might want to make a new class for a resizable sprite
+        self.temp_ground.rect.x, self.temp_ground.rect.y = 0, globals.WATER_HEIGHT
+        # TODO: make a new class for a resizable sprite
 
-        self.collideables = pygame.sprite.GroupSingle()
-        self.collideables.add(self.temp_ground)
+        self.collidables = RGroup(self.temp_ground)
 
         self.player = Player(
-            pos=(0, self.water_height - 50),
-            collideables=self.collideables
+            pos=(0, globals.WATER_HEIGHT - 50),
         )
-        self.rod = Rod()
-        self.textDisplay = Text(font=globals.bigFont, color=globals.WHITE, pos=(10, 10))
+        self.player.set_collidables(self.collidables)
 
-        self.trashSprites = pygame.sprite.Group()
+        self.rod = Rod(pos=(-100, -100))
+        self.textDisplay = Text(pos=(10, 10))
+        self.textDisplay.set_text(text="", font=globals.bigFont, color=globals.WHITE)
 
-        self.spawn_map = filehandling.makeMap((3, 3))
-        self.start_pos = (globals.xBorder*20, self.water_height + 20)
+        self.trashSprites: RGroup[Trash] = RGroup()
+
+        trash_id_map = filehandling.makeMap((4, 8))
+        filehandling.saveMap(trash_id_map)
+        self.start_pos = (globals.xBorder*20, globals.WATER_HEIGHT + 30)
         self.distance_between_trash = (
-            (globals.SCREEN_WIDTH * len(self.spawn_map[0])) / 12,
-            (globals.SCREEN_HEIGHT * len(self.spawn_map)) / 20
+            globals.SCREEN_WIDTH * len(trash_id_map[0]) / 30,
+            globals.SCREEN_HEIGHT * len(trash_id_map) / 150
         )
 
-        for row in range(len(self.spawn_map)):
-            for col in range(len(self.spawn_map[0])):
-                if self.spawn_map[row][col] != 0:
-                    self.trashSprites.add(
-                        Trash(
-                            trashType=self.spawn_map[row][col],
-                            coords=pygame.Vector2(
-                                (row * self.distance_between_trash[0] + self.start_pos[0]),
-                                (col * self.distance_between_trash[1] + self.start_pos[1])
-                            ),
-                            offset=5
+        for row in range(len(trash_id_map)):
+            for col in range(len(trash_id_map[0])):
+                if trash_id_map[row][col] != 0:
+                    t = Trash(
+                        pos=(
+                            (row * self.distance_between_trash[0] + self.start_pos[0]),
+                            (col * self.distance_between_trash[1] + self.start_pos[1])
                         )
                     )
+                    t.set_trash(
+                        trash_type=trash_id_map[row][col],
+                        trash_id=(row, col),
+                        offset=10
+                    )
+                    self.trashSprites.add(t)
 
+    def load_sprites(self):
         self.sprites.add(
             self.background,
             self.trashSprites,
-            # self.collideables, # only show for debug purposes i guess
+            # self.collidables, # only show for debug purposes i guess
             self.player,
             self.textDisplay,
             self.rod
@@ -130,26 +143,39 @@ class Catastrophe(State):
     def logic(self):
         if self.score <= 0:
             self.textDisplay.color = globals.DARKRED
-            self.textDisplay.shake(3, 0)
+            self.textDisplay.shake((1, 0))
         else:
             self.textDisplay.color = globals.BLACK
 
-        self.textDisplay.text = f"FPS: {round(globals.clock.get_fps())}\nSCORE: {self.score}\nDURABILITY: {self.rod.durability}"
+        self.textDisplay.set_text(f"FPS: {round(globals.clock.get_fps())}\nSCORE: {self.score}\nDURABILITY: {self.rod.durability}")
 
-        if not any(isinstance(sprite, Trash) and (not sprite.explosive) for sprite in self.trashSprites) or self.score < 0:
+        if not any(isinstance(t, Trash) and (not t.is_explosive) for t in self.trashSprites) or self.score < 0:
             self.switch_state(self.next_states[1])
 
-        match self.rod.isFishing:
+        last_trash = list(self.trashSprites)[-1]
+        if last_trash.rect.right <= 0:
+            # checks if the last trash is at the rightmost of the spawn map, if so, will automatically end the game
+            self.switch_state(self.next_states[1])
+
+        for t in self.trashSprites:
+            if t.is_explosive:
+                t.velocity.x = -3
+            else:
+                t.velocity.x = -random.randint(4, 12)
+
+        match self.rod.is_fishing:
             case False:
                 if self.key[K_LEFT] and self.player.rect.x >= globals.xBorder:
                     self.player.velocity.x = -50
-                if self.key[K_RIGHT] and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder):
-                    self.player.velocity.x = 50
+                elif self.key[K_RIGHT] and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder):
+                    self.player.velocity.x = +50
+                else:
+                    self.player.velocity.x = 0
 
                 if self.key[K_DOWN]:
-                    self.rod.displace((self.player.rect.right - 8, self.player.rect.top + 5))
+                    self.rod.move_to((self.player.rect.right - 8, self.player.rect.top + 5))
                     print("fishing!")
-                    self.rod.isFishing = True
+                    self.rod.is_fishing = True
                     self.rod.velocity.y = 50
                     self.sprites.add(self.rod)
                 elif self.sprites.has(self.rod):
@@ -159,7 +185,7 @@ class Catastrophe(State):
                 for collided in pygame.sprite.spritecollide(self.rod, self.trashSprites, True, pygame.sprite.collide_rect):
                     if isinstance(collided, Trash):
                         self.rod.durability -= 1
-                        match collided.explosive:
+                        match collided.is_explosive:
                             case True:
                                 self.score -= 1
                                 self.sound_manager.play("explode")
@@ -168,19 +194,20 @@ class Catastrophe(State):
                                 self.sound_manager.play("getTrash")
                         print(f"Session score: {self.score}, durability: {self.rod.durability}")
                         collided.kill()
-                        self.rod.isFishing = False
+                        self.rod.is_fishing = False
                         self.rod.velocity.y = 0
 
                 if self.rod.rect.y >= (globals.SCREEN_HEIGHT - self.rod.rect.height - globals.yBorder):
-                    self.rod.isFishing = False
+                    self.rod.is_fishing = False
                     self.sound_manager.play("noTrash")
                 else:
                     pygame.draw.line(self.screen, globals.DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
+                    # TODO: make it so that all the pygame.draw stuff is displayed on top of self.screen so that it is actually visible!!!
 
         if self.key[K_ESCAPE]:
-            self.switch_state(self.next_states[0])
+            self.switch_state(self.next_states[1])
 
 
 class Lobby(State):
@@ -204,24 +231,40 @@ class Lobby(State):
         self.background = Background()
 
         self.temp_ground = WorldObject(
-            imagepath=utils.newPath(f"assets/img/bg/sand.png"),
-            desc="ground",
-            interactable=False, collidable=True
+            image_path=utils.newPath(f"assets/img/bg/sand.png")
         )
-        self.temp_ground.image = resizeImage(
+        self.temp_ground.set_worldobj(
+            desc="ground",
+            interactable=False,
+            collidable=True
+        )
+        self.temp_ground.image = multiply_image(
             input_image=self.temp_ground.image,
             tile_size=(3, 20),
             target_size=(globals.SCREEN_WIDTH, 50)
+        )
+
+        noise = numpy.random.uniform(0.8, 1.0, (25, 25))
+        img = noise[..., None] * [*globals.SAND[:3]]
+
+        self.temp_ground.image = mode7(
+            pygame.surfarray.make_surface(
+                img.swapaxes(0, 1)
+            ),
+            (globals.SCREEN_WIDTH, int(globals.SCREEN_HEIGHT+1-globals.GROUND_HEIGHT)),
         )
         self.temp_ground.rect = self.temp_ground.image.get_frect()
         self.temp_ground.rect.x, self.temp_ground.rect.y = 0, globals.GROUND_HEIGHT
 
         self.temp_platform = WorldObject(
-            imagepath=utils.newPath(f"assets/img/bg/grass.png"),
-            desc="platform",
-            interactable=False, collidable=True
+            image_path=utils.newPath(f"assets/img/bg/grass.png"),
         )
-        self.temp_platform.image = resizeImage(
+        self.temp_platform.set_worldobj(
+            desc="platform",
+            interactable=False,
+            collidable=True
+        )
+        self.temp_platform.image = multiply_image(
             input_image=self.temp_platform.image,
             tile_size=(3, 20),
             target_size=(50, 50)
@@ -229,54 +272,57 @@ class Lobby(State):
         self.temp_platform.rect = self.temp_platform.image.get_frect()
         self.temp_platform.rect.x, self.temp_platform.rect.y = 150, 50
 
-        self.collideables = pygame.sprite.Group()
-        self.collideables.add(
+        self.collidables = RGroup()
+        self.collidables.add(
             self.temp_ground,
             self.temp_platform
         )
 
         self.player = Player(
-            pos=(globals.SCREEN_HEIGHT//3, globals.GROUND_HEIGHT-50),
-            collideables=self.collideables
+            pos=(globals.SCREEN_HEIGHT/3, globals.GROUND_HEIGHT-50),
         )
+        self.player.set_collidables(self.collidables)
 
         self.interactables_map: dict[str, list] = {
-            "Shop": [20, self.next_states[0], (55, 58), "explode"],
-            "Play": [120, self.next_states[1], (35, 33), "getTrash"],
-            "Score": [220, self.next_states[2], (50, 25), "noTrash"]
+            "Shop": [20, StateID.SHOP, (55, 58), "explode"],
+            "Play": [120, StateID.CATASTROPHE, (35, 33), "getTrash"],
+            "Score": [220, StateID.SCOREBOARD, (50, 25), "noTrash"]
         }
-        self.interactables = pygame.sprite.Group()
+        self.interactables: RGroup[WorldObject] = RGroup()
         for name, stuff in self.interactables_map.items():
-            self.interactables.add(
-                WorldObject(
-                    imagepath=utils.newPath(f"assets/img/ui/{name}.png"),
-                    coords=(stuff[0], (globals.GROUND_HEIGHT - stuff[2][1])),
-                    size=stuff[2],
-                    desc=name,
-                    interactable=True,
-                    collidable=True
-                )
+            d = WorldObject(
+                image_path=utils.newPath(f"assets/img/ui/{name}.png"),
+                pos=(stuff[0], (globals.GROUND_HEIGHT - stuff[2][1])),
+                size=stuff[2],
             )
+            d.set_worldobj(
+                desc=name,
+                interactable=True,
+                collidable=True
+            )
+            self.interactables.add(d)
 
         self.backgroundStuff_map = [(random.randint(1, 11)*20, (globals.GROUND_HEIGHT-61)) for _ in range(15)]
-        self.backgroundStuff = pygame.sprite.Group()
-        for coords in self.backgroundStuff_map:
-            self.backgroundStuff.add(
-                WorldObject(
-                    imagepath=utils.newPath(f"assets/img/bg/tree.png"),
-                    coords=pygame.Vector2(coords),
-                    size=(23, 61),
-                    desc="tree",
-                    interactable=False,
-                    collidable=False
-                )
+        self.backgroundStuff = RGroup()
+        for pos in self.backgroundStuff_map:
+            d = WorldObject(
+                image_path=utils.newPath(f"assets/img/bg/tree.png"),
+                pos=pos,
+                size=(23, 61),
             )
+            d.set_worldobj(
+                desc="tree",
+                interactable=False,
+                collidable=False
+            )
+            self.backgroundStuff.add(d)
 
+    def load_sprites(self):
         self.sprites.add(
             self.background,
             self.backgroundStuff,
             self.interactables,
-            self.collideables,
+            self.collidables,
             self.player,
         )
 
@@ -284,14 +330,19 @@ class Lobby(State):
         self.sound_manager.play("supadood", loop=-1)
 
     def logic(self):
+        self.player.rect.clamp_ip(self.screen.get_rect())
+
         if (self.key[K_LEFT] or self.key[K_a]) and self.player.rect.x >= globals.xBorder:
-            self.player.velocity.x = -100
-        if (self.key[K_RIGHT] or self.key[K_d]) and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder):
-            self.player.velocity.x = +100
+            self.player.velocity.x -= self.player.acceleration.x if abs(self.player.velocity.x) < self.player.max_velocity.x else 0
+        elif (self.key[K_RIGHT] or self.key[K_d]) and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder):
+            self.player.velocity.x += self.player.acceleration.x if abs(self.player.velocity.x) < self.player.max_velocity.x else 0
+        else:
+            self.player.velocity.x = 0
+
         if (self.key[K_UP] or self.key[K_w]):
             self.player.jump()
 
-        # will implement camera system later as a class/function (?)
+        # TODO: implement camera system later as a class/functions
         self.camera_offset = pygame.Vector2()
 
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
@@ -317,14 +368,17 @@ class Scoreboard(State):
 
         text += "todo: implement shared state data, because your score isnt actually 10 billion lol"
 
-        self.sprites.add(drawText(
+        self.text = Text()
+        self.text.set_text(
             text=text,
             color=globals.WHITE,
-            font=globals.smallFont,
-            pos=(0, 0)
-        ))
+            font=globals.smallFont
+        )
 
-    def prepare_sounds(self) -> None:
+    def load_sprites(self):
+        self.sprites.add(self.text)
+
+    def prepare_sounds(self):
         self.sounds = {
             "wake-up-call": "assets/music/pause.wav"
         }
@@ -336,7 +390,7 @@ class Scoreboard(State):
         ]
 
     def load_sounds(self):
-        self.sound_manager.play("wake-up-call")
+        self.sound_manager.play("wake-up-call", loop=-1)
 
     def logic(self):
         if self.key[K_ESCAPE]:
@@ -346,21 +400,21 @@ class Scoreboard(State):
 class Shop(State):
     def prepare_sprites(self):
         text = "This is the shop, in future iterations of this project even this page will be completed!\nHang tight as we develop this project."
-        text_sprite = drawText(
+        text_sprite = Text()
+        text_sprite.set_text(
             text=text,
             color=globals.WHITE,
-            font=globals.smallFont,
-            pos=(0, 0)
+            font=globals.smallFont
         )
         self.sprites.add(text_sprite)
 
-    def prepare_sounds(self) -> None:
+    def prepare_sounds(self):
         self.sounds = {
             "straight-fundamentals": "assets/music/straight-fundamentals.wav"
         }
 
     def load_sounds(self):
-        self.sound_manager.play("straight-fundamentals")
+        self.sound_manager.play("straight-fundamentals", loop=-1)
 
     def prepare_next_states(self):
         self.is_reloadable = True

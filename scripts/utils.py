@@ -1,7 +1,11 @@
+import pathlib
 import sys
 import os
 
 def newPath(relPath: str):
+    return pathlib.Path(relPath)
+
+def newPath_old(relPath: str):
     relPath = relPath.replace(("/" if len(relPath.split("/"))>1 else "\\"), os.sep)
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         basePath = sys._MEIPASS # type: ignore -> pyinstaller temp folder
@@ -10,8 +14,11 @@ def newPath(relPath: str):
     return os.path.join(basePath, relPath)
 
 
-def aspectScale(image_x, image_y, target_x, target_y):
-    # very slightly modified version of https://www.pygame.org/pcr/transform_scale/
+def aspectScale(image_x: int, image_y: int, target_x: int, target_y: int) -> tuple[int, int]:
+    """
+    for zengl scaling.
+    very slightly modified ver of https://www.pygame.org/pcr/transform_scale/
+    """
 
     if image_x > image_y:
         # fit to width

@@ -12,7 +12,5 @@ chdir(path.dirname(path.abspath(__file__)))
 
 if __name__ == "__main__":
     from scripts.game import Game
-    game = Game(
-        debug=False
-    )
+    game = Game()
     game.run()
