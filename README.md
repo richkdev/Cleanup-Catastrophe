@@ -1,4 +1,4 @@
-# Cleanup Catastrophe! [v.0.2.1-beta]
+# _Cleanup Catastrophe!_ (v.0.2.1-beta)
 
 ![cleanup catastrophe logo](/assets/img/ui/logo.png)
 
@@ -8,7 +8,7 @@
 
 ## STATISTICS
 
-[![python-version](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org/downloads/release/python-3112)
+[![python-version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://python.org/downloads/release/python-3120)
 ![stars](https://img.shields.io/github/stars/richkdev/cleanup-catastrophe)
 ![forks](https://img.shields.io/github/forks/richkdev/cleanup-catastrophe)
 ![license](https://img.shields.io/github/license/richkdev/cleanup-catastrophe)
@@ -24,20 +24,20 @@ WIP
 
 ## INSTALLATION
 
-1. **Install all the dependencies**, listed in `requirements.txt`. If an error occurs when trying install the libraries using pip, try to [upgrade pip](https://pip.pypa.io/en/stable/installation/#upgrading-pip).
-2. **Clone the repository**. See this [article](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for more information. You're now good to go!
+1. **Clone the repository**. See this [article](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for more information.
+2. **Install all the dependencies**, listed in `requirements.txt`.
 
 ## USAGE
 
 You can run the game by running one of the following command in your terminal:
 
-* `python main.py` (for local)
-* `python -m pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt main.py` (for web)
+* For local: `python main.py`
+* For web: `python -m pygbag --no_opt --disable-sound-format-error main.py`
 
 ## BUILDING
 
-* For local: `pyinstaller main.spec` (exported file type will depend on your system, e.g. `.exe` for Windows, `.app` for macOS, `.bin` for Linux, etc.)
-* For web: `pygbag --PYBUILD 3.12 --git --template noctx.tmpl --no_opt --build main.py` (run this command)
+* For local: `pyinstaller main.spec` (exported file type will depend on your system, e.g. `CleanupCatastrophe.exe` for Windows, `CleanupCatastrophe.app` for macOS, etc.)
+* For web: `python -m pygbag --no_opt --disable-sound-format-error --build main.py`
 
 ## LICENSE
 
@@ -54,10 +54,20 @@ Contributions to the _Cleanup Catastrophe!_ game repository are greatly apprecia
 
 [![contributors](https://contrib.rocks/image?repo=richkdev/Cleanup-Catastrophe)](https://github.com/richkdev/Cleanup-Catastrophe/graphs/contributors)
 
-## CREDITS
+## SPECIAL THANKS
 
-Here is a complete list that credits the original authors of the assets used in the game.
+The developer would like to thank:
 
-* Sonic 1 Genesis/Megadrive font, licensed under Creative Commons Attribution Share Alike
-* stgiga's Unifont Ex Mono font, licensed under the public domain
-* Blubberquark's ModernGL CRT shader (ported to ZenGL by richkdev with some modifications)
+* [RJ](https://github.com/TheRealRyanHajj), for laying the foundations for the spritesheet cutter.
+* [hulahhh](https://github.com/tea-enjoyer11), for introducing me to `pygame-ce`, as well as laying on the foundations for the sound manager and multi-line text drawer.
+* [wheaty](https://wheatnsticks.carrd.co/), for making custom music.
+* [Paul m. p. Peny](https://github.com/pmp-p), for developing `pygbag`, a utility that allows for `pygame-ce` projects to be playable on web browsers.
+* [Szabolcs Dombi](https://github.com/szabolcsdombi), for developing `zengl`.
+* [DickerDackel](https://github.com/DickerDackel), for introducing me to `uv`.
+* All the [`pygame-ce` contributors](https://github.com/pygame-community/pygame-ce) for making such an amazing game library.
+
+Here is a complete list of works that are used in the game.
+
+* [Fuzzball](https://fontstruct.com/fontstructions/show/1143200/sonic_genesis_mega_drive_font), for making the Sonic Genesis Font
+* [stgiga](https://www.dafont.com/unifontexmono.font), for making the Unifont Ex Mono font
+* [Blubberquark](https://blubberquark.tumblr.com/post/185013752945/using-moderngl-for-post-processing-shaders-with), for making the original CRT shader code for ModernGL
