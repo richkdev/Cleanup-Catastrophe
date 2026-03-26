@@ -1,31 +1,67 @@
-import json, sys
-from os import path
-from pygame.time import Clock
+import pygame
+import sys
+import os
 
-version = open("VERSION").read()
+try:
+    import zengl
+except ImportError:
+    zengl = None
 
-settings = json.loads(open("settings.json").read())
+try:
+    import PyInstaller as pyi
+except ImportError:
+    pyi = None
 
-WIDTH = settings["width"]
-HEIGHT = settings["height"]
+try:
+    import pygbag
+except ImportError:
+    pygbag = None
 
-xBorder = WIDTH*0.02
-yBorder = HEIGHT*0.02
+import platform
+from scripts import globals
 
-FPS = settings["fps"]
+if not hasattr(pygame, "IS_CE"):
+    raise ImportError("This game requires pygame-ce to function.")
 
-fragmentShader = settings["fragmentShader"]
-vertexShader = settings["vertexShader"]
+if sys.version_info < (3, 12):
+    raise DeprecationWarning("This game requires Python versions 3.12+ to function.")
 
-saveFileDirectory = settings["saveFileDirectory"]
+def get_game_data() -> str:
+    return f"""
+===================== GAME DATA =====================
 
-clock = Clock()
+Dependency info
+    Python version                  {platform.python_version()}
+    pygame-ce version               {pygame.version.vernum}
+    SDL version                     {pygame.version.SDL}
+    ZenGL version                   {zengl.__dict__['__version__'] if zengl else "UNKNOWN"}
+    pygbag version                  {pygbag.VERSION if pygbag else "UNKNOWN"}
+    PyInstaller version             {pyi.__version__ if pyi else "UNKNOWN"}
 
-from sys import platform
-emscripten = platform == "emscripten" # detect if wasm/emscripten
+Platform info
+    Platform name                   {platform.platform()}
+    Running on Emscripten?          {globals.IS_WEB}
+    Running on pygbag?              {globals.IS_PYGBAG}
+    Running on Pyodide?             {globals.IS_PYODIDE}
+    Supports OpenGL?                {bool(pygame.OPENGL)}
+    Running on OpenGL?              {globals.FLAG_OPENGL}
 
-def newPath(relPath: str): # https://pyinstaller.org/en/stable/runtime-information.html
-    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        return path.join(sys._MEIPASS, relPath) # pyinstaller temp folder
-    else:
-        return path.join(path.abspath("."), relPath)
+Game info
+    Game version                    {globals.VERSION}
+    Maximum FPS                     {globals.FPS}
+    CRT shader enabled?             {globals.retroMode}
+    Vertex shader path              {globals.vertShader_path}
+    Fragment shader path            {globals.fragShader_path}
+    Discord Presence allowed?       {not globals.IS_WEB}
+
+=====================================================
+"""
+
+if globals.IS_PYGBAG:
+    platform.window.canvas.style.imageRendering = "pixelated" # type: ignore -> no more blurriness yay
+
+os.environ['SDL_VIDEO_ALLOW_SCREENSAVER'] = '1'
+
+# if not os.path.exists(newPath(logDirectory)):
+#     os.makedirs(newPath(logDirectory))
+# sys.stdout = open(newPath(f"{logDirectory}{current_time}.log"), "w+")

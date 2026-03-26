@@ -1,0 +1,6 @@
+pygame-ce>=2.5.3
+numpy>=2.2.3
+zengl>=2.7.1
+pypresence>=4.3.0
+pyinstaller>=6.12.0
+pygbag>=0.9.3

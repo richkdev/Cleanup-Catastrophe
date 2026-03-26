@@ -17,7 +17,10 @@ a = Analysis(
         ('savefiles', 'savefiles')
     ],
     hiddenimports=[
-        'glcontext'
+        'pygame-ce',
+        'numpy',
+        'zengl'
+        'pypresence',
     ],
     hookspath=[],
     hooksconfig={},
@@ -38,16 +41,16 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='CleanupCatastrophe',
+    name='CleanupCatastrophe!',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     icon='icon.ico',
-    disable_windowed_traceback=False,
+    disable_windowed_traceback=True,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,

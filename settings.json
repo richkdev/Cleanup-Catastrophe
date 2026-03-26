@@ -1,8 +1,10 @@
 {
-    "width": 400,
-    "height": 300,
-    "fps": 30,
-    "vertexShader": "assets\\shaders\\vertex_shaders\\crt.glsl",
-    "fragmentShader": "assets\\shaders\\fragment_shaders\\crt.glsl",
-    "saveFileDirectory": "savefiles\\local.json"
+    "debug": false,
+    "opengl": true,
+    "maxFPS": 60,
+    "volume": 20,
+    "retroMode": true,
+    "mapDirectory": "savefiles/map.json",
+    "saveFileDirectory": "savefiles/local.json",
+    "logDirectory": "logs/"
 }
