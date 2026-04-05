@@ -6,7 +6,7 @@ from scripts.sprites.basesprite import RGroup
 from scripts.states.states import *
 from scripts.sound import SoundManager
 
-if not globals.IS_PYGBAG:
+if not globals.IS_WEB and not globals.IS_PYGBAG:
     from scripts.discord import DiscordPresence
 
 
@@ -62,10 +62,8 @@ class Game:
         self.states_accessed: list[StateID] = []
 
         if not globals.IS_WEB:
-            self.discord = DiscordPresence() # TODO: seperate discord stuff into its own file
-
-        if globals.IS_WEB and not globals.IS_PYGBAG:
-            self.loop = asyncio.get_running_loop()
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
             try:
                 self.loop.run_until_complete(
                     asyncio.gather(self.game(), self.discord_stuff(), return_exceptions=True)
@@ -108,6 +106,8 @@ class Game:
         pygame.quit()
 
     async def discord_stuff(self) -> None:
+        self.discord = DiscordPresence()
+
         while globals.IS_RUNNING:
             try:
                 if not self.discord.connected:
