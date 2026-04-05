@@ -1,6 +1,6 @@
 # change log lol
 
-## v.0.2.1 - swagmoney update
+## v.0.3.0 - swagmoney update
 
 ### details
 
