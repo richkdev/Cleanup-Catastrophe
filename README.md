@@ -1,4 +1,4 @@
-# _Cleanup Catastrophe!_ (v.0.2.1-beta)
+# _Cleanup Catastrophe!_ (v.0.3.0-beta)
 
 ![cleanup catastrophe logo](/assets/img/ui/logo.png)
 
