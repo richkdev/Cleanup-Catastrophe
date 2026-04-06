@@ -66,9 +66,13 @@ class Game:
             asyncio.set_event_loop(self.loop)
             try:
                 self.loop.run_until_complete(
-                    asyncio.gather(self.game(), self.discord_stuff(), return_exceptions=True)
+                    asyncio.wait(
+                        [self.loop.create_task(x) for x in [self.game(), self.discord_stuff()]],
+                        return_when=asyncio.ALL_COMPLETED,
+                    )
                 )
             finally:
+                self.loop.stop()
                 self.loop.close()
         else:
             asyncio.run(self.game())
@@ -120,7 +124,7 @@ class Game:
 
             await asyncio.sleep(5)
 
-        self.discord.quit()
+        await self.discord.quit()
 
     def render(self) -> None:
         globals.WINDOW_SIZE = pygame.display.get_window_size()
