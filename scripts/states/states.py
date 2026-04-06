@@ -89,7 +89,6 @@ class Catastrophe(State):
         self.trashSprites: RGroup[Trash] = RGroup()
 
         trash_id_map = filehandling.makeMap((4, 8))
-        filehandling.saveMap(trash_id_map)
         self.start_pos = (globals.xBorder*20, globals.WATER_HEIGHT + 30)
         self.distance_between_trash = (
             globals.SCREEN_WIDTH * len(trash_id_map[0]) / 30,
@@ -359,7 +358,7 @@ class Lobby(State):
 
 class Scoreboard(State):
     def prepare_sprites(self):
-        filehandling.saveLocal("the person that played this game", 10000000000, True)
+        filehandling.saveLocal("the person that played this game", 10)
         highscores = filehandling.getLocal()
         text = ""
 

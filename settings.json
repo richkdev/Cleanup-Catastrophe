@@ -4,7 +4,6 @@
     "maxFPS": 60,
     "volume": 20,
     "retroMode": true,
-    "mapDirectory": "savefiles/map.json",
-    "saveFileDirectory": "savefiles/local.json",
-    "logDirectory": "logs/"
+    "savefiles": "savefiles/local.json",
+    "logs": "logs/"
 }

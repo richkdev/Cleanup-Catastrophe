@@ -1,17 +1,16 @@
 import pygame
 import random
+import os
 
-from json import load, dump, JSONDecodeError
+from json import load, dump
 
-from scripts.globals import mapDirectory, saveFileDirectory
+from scripts.globals import saveFiles_path
 
-
-def loadMap() -> list[list[int]]:
+if not saveFiles_path.exists():
     try:
-        map = load(open(mapDirectory))
-    except JSONDecodeError or FileNotFoundError:
-        map = []
-    return map
+        os.mkdir(saveFiles_path.parent)
+    except FileExistsError:
+        pass
 
 
 def makeMap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[int]]:
@@ -25,19 +24,15 @@ def makeMap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[int]]:
     return map
 
 
-def saveMap(mapData: list[list[int]]) -> None:
-    dump(mapData, open(mapDirectory, "w"))
-
-
 def getLocal() -> list[dict[str, str|int]]:
     try:
-        highscores = load(open(saveFileDirectory))
-    except JSONDecodeError or FileNotFoundError:
+        highscores = load(open(saveFiles_path))
+    except FileNotFoundError:
         highscores = []
     return highscores
 
 
-def saveLocal(name: str, score: int, save: bool) -> None:
+def saveLocal(name: str, score: int) -> None:
     highscores = getLocal()
 
     player_exists = False
@@ -49,5 +44,4 @@ def saveLocal(name: str, score: int, save: bool) -> None:
             if not player_exists:
                 highscores.append({"name": name, "score": score})
 
-    if save:
-        dump(highscores, open(saveFileDirectory, "w"), indent=4)
+    dump(highscores, open(saveFiles_path, "w"), indent=4)

@@ -2,16 +2,13 @@ import pathlib
 import sys
 import os
 
-def newPath(relPath: str):
-    return pathlib.Path(relPath)
-
-def newPath_old(relPath: str):
+def newPath(relPath: str) -> pathlib.Path:
     relPath = relPath.replace(("/" if len(relPath.split("/"))>1 else "\\"), os.sep)
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         basePath = sys._MEIPASS # type: ignore -> pyinstaller temp folder
     else:
         basePath = os.path.abspath('.')
-    return os.path.join(basePath, relPath)
+    return pathlib.Path(os.path.join(basePath, relPath))
 
 
 def aspectScale(image_x: int, image_y: int, target_x: int, target_y: int) -> tuple[int, int]:

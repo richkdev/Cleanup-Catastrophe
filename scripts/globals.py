@@ -37,11 +37,10 @@ retroMode: bool = SETTINGS['retroMode']
 fragShader_path  = newPath(f"assets/shaders/fragment_shaders/{'crt' if retroMode else 'normal'}.glsl")
 vertShader_path = newPath(f"assets/shaders/vertex_shaders/{'crt' if retroMode else 'normal'}.glsl")
 
-mapDirectory = newPath(SETTINGS['mapDirectory'])
-saveFileDirectory = newPath(SETTINGS['saveFileDirectory'])
+saveFiles_path = newPath(SETTINGS['savefiles'])
 
 startGame_time = str(datetime.now().replace(microsecond=0)).replace(":", "-")
-logDirectory = newPath(SETTINGS['logDirectory'])
+logDirectory = newPath(SETTINGS['logs'])
 
 clock = pygame.time.Clock()
 

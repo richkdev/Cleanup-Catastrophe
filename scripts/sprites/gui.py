@@ -18,7 +18,7 @@ class Text(RSprite):
         bg_color: pygame.typing.ColorLike | None = None,
         wrap_length: int = 0,
         # linesize: int = 18,
-        align: int = pygame.FONT_CENTER
+        align: int = pygame.FONT_LEFT
     ):
         if font != None:
             self.font = font
