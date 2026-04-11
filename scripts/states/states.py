@@ -17,6 +17,8 @@ class Splash(State):
             text=f"press [ENTER] to begin",
             color=globals.WHITE,
             font=globals.smallFont,
+            antialiased=False,
+            align=pygame.FONT_CENTER
         )
         self.introText.rect.center = (globals.SCREEN_WIDTH/2, globals.SCREEN_HEIGHT/1.25)
 
@@ -200,10 +202,9 @@ class Catastrophe(State):
                     self.rod.is_fishing = False
                     self.sound_manager.play("noTrash")
                 else:
-                    pygame.draw.line(self.screen, globals.DARKRED,
+                    pygame.draw.line(self.draw_screen, globals.DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
-                    # TODO: make it so that all the pygame.draw stuff is displayed on top of self.screen so that it is actually visible!!!
 
         if self.key[K_ESCAPE]:
             self.switch_state(self.next_states[1])

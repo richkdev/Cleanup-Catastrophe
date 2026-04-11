@@ -27,11 +27,12 @@ class State:
     """
     event: list[pygame.Event]
     key: pygame.key.ScancodeWrapper
-    # mouse: pygame.Vector2
+    mouse: pygame.Vector2 = pygame.Vector2()
     dt: float = 0.0
 
     def __init__(self, is_gamemode: bool, desc: str = "lipsum") -> None:
         self.screen: pygame.Surface
+        self.draw_screen: pygame.Surface
 
         self.parent_sprites: RGroup
         self.sprites = RGroup()
@@ -70,11 +71,13 @@ class State:
     def load(
         self,
         screen: pygame.Surface,
+        draw_screen: pygame.Surface,
         sprites: RGroup,
         sound_manager: SoundManager,
         switch_state: typing.Callable[[StateID], None],
     ) -> None:
         self.screen = screen
+        self.draw_screen = draw_screen
 
         for name, path in self.sounds.items():
             sound_manager.add_sound(name, utils.newPath(path))
@@ -103,16 +106,12 @@ class State:
             if event.type == pygame.QUIT:
                 globals.IS_RUNNING = False
 
-        # self.mouse.x, self.mouse.y = pygame.mouse.get_pos(True) # will use one day
-
-        # scale_x = globals.FINAL_SCREEN_SIZE[0]/globals.SCREEN_SIZE[0]
-        # scale_y = globals.FINAL_SCREEN_SIZE[1]/globals.SCREEN_SIZE[1]
-        # print(scale_x, scale_y)
-
         self.logic()
 
         self.parent_sprites.update(self.dt)
         self.parent_sprites.draw(self.screen)
+
+        self.screen.blit(self.draw_screen)
 
         self.sound_manager.update()
 

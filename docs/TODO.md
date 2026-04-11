@@ -3,7 +3,7 @@
 ## code
 
 - [ ] use requests module to check latest game version on gh repo via githack _<https://raw.githack.com/richkdev/Cleanup-Catastrophe/main/VERSION>_
-- [ ] custom sizes for the spritesheet splitter, but same hitbox rect & diff image rects, with subsurface frame pos & size stored in json
+- [x] custom sizes for the spritesheet splitter, but same hitbox rect & diff image rects, with subsurface frame pos & size stored in json
 - [ ] seperate state manager from discord presence manager, for cleaner codebase
 - [ ] make dialogue engine, with dialogue stored in json
 - [ ] turn lobby state data into json

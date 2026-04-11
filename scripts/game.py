@@ -26,6 +26,7 @@ class Game:
         self.window_flags = pygame.SCALED | pygame.RESIZABLE
         self.window_flags |= (pygame.OPENGL | pygame.DOUBLEBUF) if globals.FLAG_OPENGL else 0
         self.screen = pygame.display.set_mode(globals.SCREEN_SIZE, self.window_flags, vsync=1)
+        self.draw_screen = pygame.Surface(self.screen.size, pygame.SRCALPHA)
 
         if globals.FLAG_OPENGL:
             # TODO: turn renderer into a manager
@@ -87,7 +88,7 @@ class Game:
 
         self.states_accessed.append(state_id)
 
-        self.current_state.load(self.screen, self.sprites, self.sound_manager, self.switch_state)
+        self.current_state.load(self.screen, self.draw_screen, self.sprites, self.sound_manager, self.switch_state)
 
         print(f"Switched to {type(self.current_state).__name__} state, list of states accessed: {self.states_accessed}")
 
@@ -151,3 +152,4 @@ class Game:
             pygame.display.flip()
 
         self.screen.fill(globals.BLACK)
+        self.draw_screen.fill(globals.TRANSPARENT)

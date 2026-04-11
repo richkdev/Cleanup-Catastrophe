@@ -52,6 +52,7 @@ GREEN = pygame.Color(0, 255, 0, 255)
 BLUE = pygame.Color(0, 0, 255, 255)
 WHITE = pygame.Color(255, 255, 255, 255)
 BLACK = pygame.Color(0, 0, 0, 255)
+TRANSPARENT = pygame.Color(0, 0, 0, 0)
 
 if not pygame.font.get_init():
     pygame.font.init()
