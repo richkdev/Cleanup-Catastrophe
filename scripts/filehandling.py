@@ -9,6 +9,8 @@ from scripts.globals import saveFiles_path
 if not saveFiles_path.exists():
     try:
         os.mkdir(saveFiles_path.parent)
+        with open(saveFiles_path, "w") as f:
+            f.write("[]")
     except FileExistsError:
         pass
 
