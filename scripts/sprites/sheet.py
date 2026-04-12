@@ -20,31 +20,6 @@ def cut_sheet_fixed_size(
     print(f"Loaded and split fixed size spritesheet at {path}")
     return frames
 
-def cut_sheet(
-    image_path: pygame.typing._PathLike,
-    data: pygame.typing._PathLike
-) -> Sheet:
-    raw_data: list[SheetData] = json.loads(open(data).read(), object_hook=SheetData)
-    sheet = Sheet()
-
-    sheet_img = pygame.image.load(image_path).convert_alpha()
-
-    for d in raw_data:
-        anim: list[pygame.Surface] = []
-        for f in d.frames:
-            anim.append(sheet_img.subsurface(f.bounds.x, f.bounds.y, f.bounds.w, f.bounds.h))
-
-        sheet.add_animation(
-            d.action,
-            anim
-        )
-
-    print(f"Loaded and split dynamic size spritesheet at {image_path} with data from {data}")
-
-    sheet.current_state = raw_data[0].action # default setting
-
-    return sheet
-
 
 class Sheet:
     def __init__(self) -> None:
@@ -69,16 +44,42 @@ class Sheet:
         return surf
 
 
-class SheetData(types.SimpleNamespace):
-    action: str
-    frames: list[SheetFrame]
-
-class SheetFrame(types.SimpleNamespace):
-    frame: int
-    bounds: SheetBounds
-
 class SheetBounds(types.SimpleNamespace):
     x: int
     y: int
     w: int
     h: int
+
+class SheetFrame(types.SimpleNamespace):
+    frame: int
+    bounds: SheetBounds
+
+class SheetData(types.SimpleNamespace):
+    action: str
+    frames: list[SheetFrame]
+
+
+def cut_sheet(
+    image_path: pygame.typing._PathLike,
+    data: pygame.typing._PathLike
+) -> Sheet:
+    raw_data: list[SheetData] = json.loads(open(data).read(), object_hook=SheetData)
+    sheet = Sheet()
+
+    sheet_img = pygame.image.load(image_path).convert_alpha()
+
+    for d in raw_data:
+        anim: list[pygame.Surface] = []
+        for f in d.frames:
+            anim.append(sheet_img.subsurface(f.bounds.x, f.bounds.y, f.bounds.w, f.bounds.h))
+
+        sheet.add_animation(
+            d.action,
+            anim
+        )
+
+    print(f"Loaded and split dynamic size spritesheet at {image_path} with data from {data}")
+
+    sheet.current_state = raw_data[0].action # default setting
+
+    return sheet

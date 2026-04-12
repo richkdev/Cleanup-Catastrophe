@@ -137,12 +137,12 @@ class RGroup(pygame.sprite.Group[_RSprite]):
     Custom sprite group with added utilities.
     """
 
-    def __init__(self, *sprites: "RSprite | RGroup[RSprite]") -> None:
+    def __init__(self, *sprites: "_RSprite | RGroup[_RSprite]") -> None:
         pygame.sprite.Group.__init__(self, *sprites)
 
     def add(
         self,
-        *sprites: "RSprite | RGroup",
+        *sprites: "_RSprite | RGroup",
         **kwargs: typing.Any
     ) -> None:
         return pygame.sprite.Group.add(self, *sprites, **kwargs)
@@ -151,7 +151,7 @@ class RGroup(pygame.sprite.Group[_RSprite]):
         for sprite in self.sprites():
             sprite.update(dt)
 
-    def sprites(self) -> list[RSprite]:
+    def sprites(self) -> list[_RSprite]:
         return pygame.sprite.Group.sprites(self)
 
     def move_ip(self, pos: pygame.typing.Point) -> None:
