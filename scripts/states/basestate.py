@@ -66,7 +66,7 @@ class State:
         raise NotImplementedError
 
     def prepare_next_states(self) -> None:
-        raise NotImplementedError
+        ...
 
     def load(
         self,
@@ -80,7 +80,10 @@ class State:
         self.draw_screen = draw_screen
 
         for name, path in self.sounds.items():
-            sound_manager.add_sound(name, utils.newPath(path))
+            if "music" in path:
+                sound_manager.bgm.add_music(name, utils.newPath(path))
+            else:
+                sound_manager.sfx.add_sfx(name, utils.newPath(path))
         self.sound_manager = sound_manager
 
         self.switch_state = switch_state
@@ -113,7 +116,7 @@ class State:
 
         self.screen.blit(self.draw_screen)
 
-        self.sound_manager.update()
+        self.sound_manager.sfx.update()
 
     def update_stuff(self):
         self.event = pygame.event.get()
@@ -125,5 +128,7 @@ class State:
 
     def unload(self) -> None:
         self.parent_sprites.remove(self.sprites)
-        self.sound_manager.stop_all()
+        self.sound_manager.bgm.stop()
+        self.sound_manager.bgm.unload()
+        self.sound_manager.sfx.stop_all()
         self.sounds.clear()

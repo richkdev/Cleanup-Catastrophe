@@ -45,7 +45,7 @@ class Splash(State):
         ]
 
     def load_sounds(self):
-        self.sound_manager.play("cleanup-time", loop=-1)
+        self.sound_manager.bgm.play("cleanup-time", -1)
 
     def logic(self):
         if self.key[K_RETURN] or self.key[K_SPACE]:
@@ -91,7 +91,7 @@ class Catastrophe(State):
         self.trashSprites: RGroup[Trash] = RGroup()
 
         trash_id_map = filehandling.makeMap((4, 8))
-        self.start_pos = (globals.xBorder*20, globals.WATER_HEIGHT + 30)
+        self.start_pos = (globals.SCREEN_WIDTH - globals.xBorder*50, globals.WATER_HEIGHT + 30)
         self.distance_between_trash = (
             globals.SCREEN_WIDTH * len(trash_id_map[0]) / 30,
             globals.SCREEN_HEIGHT * len(trash_id_map) / 150
@@ -139,7 +139,7 @@ class Catastrophe(State):
         ]
 
     def load_sounds(self):
-        self.sound_manager.play("waiting")
+        self.sound_manager.bgm.play("waiting", -1)
 
     def logic(self):
         if self.score <= 0:
@@ -153,16 +153,15 @@ class Catastrophe(State):
         if not any(isinstance(t, Trash) and (not t.is_explosive) for t in self.trashSprites) or self.score < 0:
             self.switch_state(self.next_states[1])
 
-        last_trash = list(self.trashSprites)[-1]
-        if last_trash.rect.right <= 0:
-            # checks if the last trash is at the rightmost of the spawn map, if so, will automatically end the game
-            self.switch_state(self.next_states[1])
-
         for t in self.trashSprites:
             if t.is_explosive:
                 t.velocity.x = -3
             else:
                 t.velocity.x = -random.randint(4, 12)
+
+            if t.rect.right <= 0:
+                t.kill()
+                del t
 
         match self.rod.is_fishing:
             case False:
@@ -189,10 +188,10 @@ class Catastrophe(State):
                         match collided.is_explosive:
                             case True:
                                 self.score -= 1
-                                self.sound_manager.play("explode")
+                                self.sound_manager.sfx.play("explode")
                             case False:
                                 self.score += 1
-                                self.sound_manager.play("getTrash")
+                                self.sound_manager.sfx.play("getTrash")
                         print(f"Session score: {self.score}, durability: {self.rod.durability}")
                         collided.kill()
                         self.rod.is_fishing = False
@@ -200,7 +199,7 @@ class Catastrophe(State):
 
                 if self.rod.rect.y >= (globals.SCREEN_HEIGHT - self.rod.rect.height - globals.yBorder):
                     self.rod.is_fishing = False
-                    self.sound_manager.play("noTrash")
+                    self.sound_manager.sfx.play("noTrash")
                 else:
                     pygame.draw.line(self.draw_screen, globals.DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
@@ -327,7 +326,7 @@ class Lobby(State):
         )
 
     def load_sounds(self):
-        self.sound_manager.play("supadood", loop=-1)
+        self.sound_manager.bgm.play("supadood", -1)
 
     def logic(self):
         self.player.rect.clamp_ip(self.screen.get_rect())
@@ -352,7 +351,7 @@ class Lobby(State):
 
             # in each of these checks we could do something special like play a sound effect.
             # it's kinda hardcoded rn but i'll change it later
-            self.sound_manager.play(self.interactables_map[collided_sprite.desc][3])
+            self.sound_manager.sfx.play(self.interactables_map[collided_sprite.desc][3])
 
             self.switch_state(self.interactables_map[collided_sprite.desc][1])
 
@@ -390,7 +389,7 @@ class Scoreboard(State):
         ]
 
     def load_sounds(self):
-        self.sound_manager.play("wake-up-call", loop=-1)
+        self.sound_manager.bgm.play("wake-up-call")
 
     def logic(self):
         if self.key[K_ESCAPE]:
@@ -414,7 +413,7 @@ class Shop(State):
         }
 
     def load_sounds(self):
-        self.sound_manager.play("straight-fundamentals", loop=-1)
+        self.sound_manager.bgm.play("straight-fundamentals", loop=-1)
 
     def prepare_next_states(self):
         self.is_reloadable = True

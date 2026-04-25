@@ -16,6 +16,7 @@
 - [x] turn discord presence into async
 - [x] make loading screen and async loading functions (loads state, assets, etc) **(WIP)**
 - [ ] use uv build system
+- [x] make `BGMManager` (for background music, use pygame.mixer.music) and `SFXManager` (for realtime sound playback, use pygame.mixer.Sound) since they handle songs n stuff differently and use less memory [reference](https://discord.com/channels/772505616680878080/971360806287577098/1488538747094958261)
 
 ## art
 

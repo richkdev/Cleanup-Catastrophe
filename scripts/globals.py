@@ -24,14 +24,14 @@ WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
 xBorder: int = int(SCREEN_WIDTH ** 0.05)
 yBorder: int = int(SCREEN_HEIGHT ** 0.05)
 
-FLAG_OPENGL: bool = SETTINGS['opengl'] and bool(pygame.OPENGL)
+FLAG_OPENGL: bool = SETTINGS['opengl'] and bool(pygame.OPENGL) and not IS_WEB
 FLAG_DEBUG: bool = SETTINGS['debug']
 
 FPS: int = SETTINGS['maxFPS']
 MIN_DT: float = FPS/100000
 MAX_DT: float = FPS/100
 
-volume: float = SETTINGS['volume'] / 100
+VOLUME: float = SETTINGS['volume'] / 100
 
 retroMode: bool = SETTINGS['retroMode']
 fragShader_path  = newPath(f"assets/shaders/fragment_shaders/{'crt' if retroMode else 'normal'}.glsl")

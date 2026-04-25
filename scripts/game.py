@@ -20,7 +20,16 @@ class Game:
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
         pygame.display.gl_set_attribute(pygame.GL_ACCELERATED_VISUAL, 1)
 
-        pygame.font.init()
+        if not pygame.font.get_init():
+            pygame.font.init()
+
+        if not pygame.mixer.get_init():
+            pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=512)
+            pygame.mixer.init()
+            pygame.mixer.set_num_channels(64)
+
+        if globals.IS_PYGBAG:
+            pygame.mixer.SoundPatch()  # type: ignore -> for web
 
     def run(self) -> None:
         self.window_flags = pygame.SCALED | pygame.RESIZABLE
@@ -50,7 +59,6 @@ class Game:
         self.sprites = RGroup()
 
         self.sound_manager = SoundManager()
-        self.sound_manager.global_volume = globals.volume
 
         self.states: dict[StateID, State] = {
             StateID.SPLASH: Splash(False, "At the splash screen..."),
@@ -149,7 +157,7 @@ class Game:
             pygame.display.flip()
             self.ctx.end_frame()
         else:
-            pygame.display.flip()
+            pygame.display.update()
 
         self.screen.fill(globals.BLACK)
         self.draw_screen.fill(globals.TRANSPARENT)
