@@ -71,11 +71,8 @@ class Catastrophe(State):
             tile_size=(1, 1),
             target_size=(globals.SCREEN_WIDTH, 1)
         )
-        self.temp_ground.image_rect = self.temp_ground.image.get_rect()
-        self.temp_ground.image_size = self.temp_ground.image_rect.size
-        self.temp_ground.rect = self.temp_ground.image.get_frect()
-        self.temp_ground.rect.x, self.temp_ground.rect.y = 0, globals.WATER_HEIGHT
-        # TODO: make a new class for a resizable sprite
+        self.temp_ground.pos.x, self.temp_ground.pos.y = 0, globals.WATER_HEIGHT
+        self.temp_ground.callibrate()
 
         self.collidables = RGroup(self.temp_ground)
 
@@ -252,8 +249,8 @@ class Lobby(State):
             ),
             (globals.SCREEN_WIDTH, int(globals.SCREEN_HEIGHT+1-globals.GROUND_HEIGHT)),
         )
-        self.temp_ground.rect = self.temp_ground.image.get_frect()
-        self.temp_ground.rect.x, self.temp_ground.rect.y = 0, globals.GROUND_HEIGHT
+        self.temp_ground.move_to((0, globals.GROUND_HEIGHT))
+        self.temp_ground.callibrate()
 
         self.temp_platform = WorldObject(
             image_path=utils.newPath(f"assets/img/bg/grass.png"),
@@ -268,8 +265,8 @@ class Lobby(State):
             tile_size=(3, 20),
             target_size=(50, 50)
         )
-        self.temp_platform.rect = self.temp_platform.image.get_frect()
-        self.temp_platform.rect.x, self.temp_platform.rect.y = 150, 50
+        self.temp_platform.move_to((150, 50))
+        self.temp_platform.callibrate()
 
         self.collidables = RGroup()
         self.collidables.add(
@@ -405,6 +402,20 @@ class Shop(State):
             color=globals.WHITE,
             font=globals.smallFont
         )
+
+        self.buttons = ButtonGroup()
+        for i in range(5):
+            b = Button(pos=(i*50, 100))
+            b.set_text(
+                text=f"btn#{i}",
+                font=globals.smallFont,
+                bg_color=globals.YELLOW,
+            )
+            b.set_button()
+            self.buttons.add(b)
+
+        self.sprites.add(self.buttons)
+
         self.sprites.add(text_sprite)
 
     def prepare_sounds(self):
@@ -422,5 +433,13 @@ class Shop(State):
         ]
 
     def logic(self):
+        self.buttons.move_cursor_ip(self.key_jp[K_RIGHT] - self.key_jp[K_LEFT])
+
+        for sprite in self.buttons.sprites():
+            sprite.is_hovered = self.buttons.get_button_at_cursor() == sprite
+
+        if self.key_jp[K_RETURN]:
+            self.buttons.click_button_at_cursor()
+
         if self.key[K_ESCAPE]:
             self.switch_state(self.next_states[0])

@@ -139,10 +139,12 @@ class Trash(RSprite):
         # self.image = globals.smallFont.render(f"{self.trash_type}", False, globals.BLACK, None) # for debug purposes
         self.image = self.sheet.states["idle"][trash_type-1]
 
-        self.rect.move_ip(
+        self.move_ip((
             random.randint(-offset, offset),
             random.randint(-offset, offset)
-        )
+        ))
+
+        self.callibrate()
 
     def animate(self):
         pass

@@ -27,6 +27,7 @@ class State:
     """
     event: list[pygame.Event]
     key: pygame.key.ScancodeWrapper
+    key_jp: pygame.key.ScancodeWrapper
     mouse: pygame.Vector2 = pygame.Vector2()
     dt: float = 0.0
 
@@ -118,9 +119,10 @@ class State:
 
         self.sound_manager.sfx.update()
 
-    def update_stuff(self):
+    def update_stuff(self) -> None:
         self.event = pygame.event.get()
         self.key = pygame.key.get_pressed()
+        self.key_jp = pygame.key.get_just_pressed()
         self.dt = max(globals.MIN_DT, min(globals.clock.tick(globals.FPS if not globals.IS_WEB else 0)/1000, globals.MAX_DT))
 
     def logic(self) -> None:

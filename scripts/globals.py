@@ -58,7 +58,7 @@ if not pygame.font.get_init():
     pygame.font.init()
 
 bigFont = pygame.Font(newPath("assets/fonts/genesis.ttf"), 16)
-smallFont = pygame.Font(newPath("assets/fonts/UnifontExMono.ttf"), 14)
+smallFont = pygame.Font(newPath("assets/fonts/UnifontExMono.ttf"), 16)
 
 GRAVITY: float = 2
 GROUND_HEIGHT: float = SCREEN_HEIGHT/1.5

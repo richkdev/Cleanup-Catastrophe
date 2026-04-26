@@ -72,11 +72,12 @@ class BaseSprite(pygame.sprite.DirtySprite):
         self.velocity += self.acceleration
 
     def move_to(self, pos: pygame.typing.Point):
-        self.rect.x, self.rect.y = pos[0], pos[1]
+        self.pos.x, self.pos.y = self.rect.x, self.rect.y = pos[0], pos[1]
 
     def move_ip(self, pos: pygame.typing.Point):
         self.rect.x += pos[0]
         self.rect.y += pos[1]
+        self.pos.x, self.pos.y = self.rect.x, self.rect.y
 
     def shake(self, seed: pygame.typing.IntPoint):
         self.rect.x, self.rect.y = self.old_pos.x + randint(0, seed[0]), self.old_pos.y + randint(0, seed[1])
@@ -113,7 +114,7 @@ class RSprite(BaseSprite):
             case False:
                 self.image = pygame.image.load(utils.newPath(str(image_path))).convert_alpha()
 
-        self.old_image = self.image
+        self.old_image = self.image.copy()
 
         self.image_rect: pygame.Rect = self.image.get_rect()
         self.image_size = self.image.get_size()
@@ -122,12 +123,23 @@ class RSprite(BaseSprite):
 
         # self.mask = pygame.mask.from_surface(self.image) # maybe??
 
-        self.old_pos = self.pos
+        self.old_pos = self.pos.copy()
+
+        self.callibrate()
 
         print(f"Loaded {type(self).__name__} sprite, at ({pos})")
 
     def add(self, *groups: pygame.sprite.Group["RSprite"]) -> None:
         return super().add(*groups)
+
+    def callibrate(self):
+        """callibrate the sprite for every time image data is modified"""
+
+        self.old_image = self.image.copy()
+        self.rect = self.old_image.get_frect()
+        self.pos = self.rect.x, self.rect.y = self.old_pos
+        self.image_rect = self.old_image.get_rect()
+        self.image_size = self.image_rect.size
 
 _RSprite = typing.TypeVar("_RSprite", bound=RSprite) # solution: https://sorokin.engineer/posts/en/python_type_aliasing.html
 
