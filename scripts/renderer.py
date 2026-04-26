@@ -25,8 +25,8 @@ match not globals.retroMode:
                     'image': screen_texture,
                     'wrap_x': 'clamp_to_edge',
                     'wrap_y': 'clamp_to_edge',
-                    'min_filter': 'linear',
-                    'mag_filter': 'linear',
+                    'min_filter': 'nearest',
+                    'mag_filter': 'nearest',
                 }
             ],
             framebuffer=None,
@@ -55,8 +55,8 @@ match not globals.retroMode:
                     'image': screen_texture,
                     'wrap_x': 'clamp_to_edge',
                     'wrap_y': 'clamp_to_edge',
-                    'min_filter': 'nearest',
-                    'mag_filter': 'nearest',
+                    'min_filter': 'linear',
+                    'mag_filter': 'linear',
                 }
             ],
             framebuffer=None,

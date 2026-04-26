@@ -24,7 +24,7 @@ def cut_sheet_fixed_size(
 class Sheet:
     def __init__(self) -> None:
         self.states: dict[str, list[pygame.surface.Surface]] = {}
-        self.current_stat: str
+        self.current_state: str
         self.current_idx = 0.0
 
     def add_animation(self, name: str, sprites: list[pygame.surface.Surface]) -> None:
