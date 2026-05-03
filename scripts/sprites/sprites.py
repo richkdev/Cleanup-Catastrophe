@@ -8,6 +8,37 @@ from scripts.sprites.utils import *
 from scripts.sprites.gui import *
 
 
+class WorldObject(RSprite):
+    """
+    Sprite class for interactable and/or collidable objects
+    """
+
+    def __init__(
+        self,
+        sheetEnabled: bool = False,
+        sheetStatic: bool = False,
+        image_path: pygame.typing._PathLike = globals.TEMPLATE_IMAGE_PATH,
+        # image_src: pygame.Surface = globals.TEMPLATE_IMAGE_SURF,
+        size: pygame.typing.IntPoint = (1, 1),
+        pos: pygame.typing.Point = (0, 0), # TODO: make this do something later!
+        *groups: RGroup
+    ):
+        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
+
+        self.image_rect.size = size
+        self.rect = pygame.FRect(*self.image_rect.topleft, *size)
+        self.rect.x, self.rect.y = pos
+
+        self.desc: str = "lipsum"
+        self.interactable: bool = False
+        self.collidable: bool
+
+    def set_worldobj(self, desc: str, interactable: bool, collidable: bool):
+        self.interactable = interactable
+        self.collidable = collidable
+        self.desc = desc
+
+
 class Player(RSprite):
     def __init__(
         self,
