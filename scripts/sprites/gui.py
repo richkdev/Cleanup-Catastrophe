@@ -28,7 +28,7 @@ class Text(GUISprite):
     def set_text(
         self,
         text: str = "lorem ipsum dolor sit amet",
-        font: pygame.Font | None = globals.bigFont,
+        font: pygame.Font = globals.bigFont,
         color: pygame.typing.ColorLike = globals.BLACK,
         antialiased: bool = True,
         bg_color: pygame.typing.ColorLike | None = None,
@@ -70,7 +70,8 @@ class Button(Text):
         if self.is_hovered:
             self.image.fill(globals.BLUE, special_flags=pygame.BLEND_ADD)
         else:
-            self.image = self.old_image.copy()
+            if self.image.get_buffer() != self.old_image.get_buffer():
+                self.image = self.old_image.copy()
 
 
 class ButtonGroup(GUIGroup[Button]):

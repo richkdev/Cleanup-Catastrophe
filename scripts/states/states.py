@@ -149,6 +149,8 @@ class Catastrophe(State):
 
         if not any(isinstance(t, Trash) and (not t.is_explosive) for t in self.trashSprites) or self.score < 0:
             self.switch_state(self.next_states[1])
+            for i in self.trashSprites.sprites():
+                del i
 
         for t in self.trashSprites:
             if t.is_explosive:
@@ -404,15 +406,16 @@ class Shop(State):
         )
 
         self.buttons = ButtonGroup()
-        for i in range(5):
-            b = Button(pos=(i*50, 100))
-            b.set_text(
-                text=f"btn#{i}",
-                font=globals.smallFont,
-                bg_color=globals.YELLOW,
-            )
-            b.set_button()
-            self.buttons.add(b)
+        for y in range(3):
+            for x in range(5):
+                b = Button(pos=(20 + x*50, 50 + y*50))
+                b.set_text(
+                    text=f"btn",
+                    font=globals.smallFont,
+                    bg_color=globals.YELLOW,
+                )
+                b.set_button()
+                self.buttons.add(b)
 
         self.sprites.add(self.buttons)
 
@@ -434,6 +437,7 @@ class Shop(State):
 
     def logic(self):
         self.buttons.move_cursor_ip(self.key_jp[K_RIGHT] - self.key_jp[K_LEFT])
+        self.buttons.move_cursor_ip(5 * (self.key_jp[K_DOWN] - self.key_jp[K_UP]))
 
         for sprite in self.buttons.sprites():
             sprite.is_hovered = self.buttons.get_button_at_cursor() == sprite
