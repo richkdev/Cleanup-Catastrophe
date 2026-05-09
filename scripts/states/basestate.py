@@ -31,7 +31,10 @@ class State:
     mouse: pygame.Vector2 = pygame.Vector2()
     dt: float = 0.0
 
-    def __init__(self, is_gamemode: bool, desc: str = "lipsum") -> None:
+    is_gamemode: bool = False
+    desc: str = "lipsum"
+
+    def __init__(self) -> None:
         self.screen: pygame.Surface
         self.draw_screen: pygame.Surface
 
@@ -48,8 +51,7 @@ class State:
         self.is_loaded: bool = False
         self.is_reloadable: bool = False
 
-        self.is_gamemode: bool = is_gamemode
-        self.desc: str = f"In a heck of a {desc.upper()}" if self.is_gamemode else desc
+        self.desc: str = f"In a heck of a {self.desc.upper()}" if self.is_gamemode else self.desc
 
     def prepare(self) -> None:
         if not self.is_prepared or self.is_reloadable:

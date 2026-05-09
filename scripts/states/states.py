@@ -11,6 +11,9 @@ from scripts.sprites.sprites import *
 
 
 class Splash(State):
+    is_gamemode = False
+    desc = "At the splash screen..."
+
     def prepare_sprites(self):
         self.introText = Text()
         self.introText.set_text(
@@ -53,6 +56,9 @@ class Splash(State):
 
 
 class Catastrophe(State):
+    is_gamemode = True
+    desc = "catastrophe"
+
     def prepare_sprites(self):
         self.score = 0
 
@@ -209,6 +215,9 @@ class Catastrophe(State):
 
 
 class Lobby(State):
+    is_gamemode = False
+    desc = "At the lobby..."
+
     def prepare_sounds(self):
         self.sounds = {
             "supadood": "assets/music/supadood.wav",
@@ -356,6 +365,9 @@ class Lobby(State):
 
 
 class Scoreboard(State):
+    is_gamemode = False
+    desc = "Lookin\' at the scoreboard."
+
     def prepare_sprites(self):
         filehandling.saveLocal("the person that played this game", 10)
         highscores = filehandling.getLocal()
@@ -396,6 +408,9 @@ class Scoreboard(State):
 
 
 class Shop(State):
+    is_gamemode = False
+    desc = "Lookin\' for things to buy... or not."
+
     def prepare_sprites(self):
         text = "This is the shop, in future iterations of this project even this page will be completed!\nHang tight as we develop this project."
         text_sprite = Text()

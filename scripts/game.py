@@ -61,11 +61,11 @@ class Game:
         self.sound_manager = SoundManager()
 
         self.states: dict[StateID, State] = {
-            StateID.SPLASH: Splash(False, "At the splash screen..."),
-            StateID.LOBBY: Lobby(False, "At the lobby..."),
-            StateID.CATASTROPHE: Catastrophe(True),
-            StateID.SHOP: Shop(False, "Lookin\' for things to buy... or not."),
-            StateID.SCOREBOARD: Scoreboard(False, "Lookin\' at the scoreboard"),
+            StateID.SPLASH: Splash(),
+            StateID.LOBBY: Lobby(),
+            StateID.CATASTROPHE: Catastrophe(),
+            StateID.SHOP: Shop(),
+            StateID.SCOREBOARD: Scoreboard(),
         }
         self.current_state: State
         self.states_accessed: list[StateID] = []
@@ -122,14 +122,10 @@ class Game:
         self.discord = DiscordPresence()
 
         while globals.IS_RUNNING:
-            try:
-                if not self.discord.connected:
-                    await self.discord.prepare()
-                else:
-                    await self.discord.update(self.current_state.desc)
-
-            except Exception as e:
-                print(type(e).__name__, e)
+            if not self.discord.connected:
+                await self.discord.prepare()
+            else:
+                await self.discord.update(self.current_state.desc)
 
             await asyncio.sleep(5)
 
