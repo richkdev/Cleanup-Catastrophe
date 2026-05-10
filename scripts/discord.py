@@ -2,7 +2,7 @@ import os
 import pypresence as dc
 
 from time import time
-from scripts.globals import VERSION
+from scripts.common import VERSION
 
 
 class DiscordPresence:

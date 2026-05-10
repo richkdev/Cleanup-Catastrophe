@@ -3,7 +3,7 @@ import typing
 
 from random import randint
 
-from scripts import globals, utils
+from scripts import common, utils
 from scripts.sprites.sheet import Sheet, cut_sheet_fixed_size
 
 
@@ -92,7 +92,7 @@ class RSprite(BaseSprite):
         self,
         sheetEnabled: bool = False,
         sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = globals.TEMPLATE_IMAGE_PATH,
+        image_path: pygame.typing._PathLike = common.TEMPLATE_IMAGE_PATH,
         # image_src: pygame.Surface = globals.TEMPLATE_IMAGE_SURF, # TODO: make this work so that we dont have to load it images every single time and it can receive json spritesheet stuff as well
         size: pygame.typing.IntPoint = (1, 1),
         pos: pygame.typing.Point = (0, 0),

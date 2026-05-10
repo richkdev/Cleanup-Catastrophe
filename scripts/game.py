@@ -1,12 +1,12 @@
 import pygame
 import asyncio
-from scripts import globals, utils
+from scripts import common, utils
 from scripts.settings import *
 from scripts.sprites.basesprite import RGroup
 from scripts.states.states import *
 from scripts.sound import SoundManager
 
-if not globals.IS_WEB and not globals.IS_PYGBAG:
+if not common.IS_WEB and not common.IS_PYGBAG:
     from scripts.discord import DiscordPresence
 
 
@@ -28,30 +28,30 @@ class Game:
             pygame.mixer.init()
             pygame.mixer.set_num_channels(64)
 
-        if globals.IS_PYGBAG:
+        if common.IS_PYGBAG:
             pygame.mixer.SoundPatch()  # type: ignore -> for web
 
     def run(self) -> None:
         self.window_flags = pygame.SCALED | pygame.RESIZABLE
-        self.window_flags |= (pygame.OPENGL | pygame.DOUBLEBUF) if globals.FLAG_OPENGL else 0
-        self.screen = pygame.display.set_mode(globals.SCREEN_SIZE, self.window_flags, vsync=1)
+        self.window_flags |= (pygame.OPENGL | pygame.DOUBLEBUF) if common.FLAG_OPENGL else 0
+        self.screen = pygame.display.set_mode(common.SCREEN_SIZE, self.window_flags, vsync=1)
         self.draw_screen = pygame.Surface(self.screen.size, pygame.SRCALPHA)
 
-        if globals.FLAG_OPENGL:
+        if common.FLAG_OPENGL:
             # TODO: turn renderer into a manager
             from scripts.renderer import ctx, pipeline, screen_texture
             self.ctx = ctx
             self.pipeline = pipeline
             self.screen_texture = screen_texture
 
-        globals.INITIAL_WINDOW_SIZE = pygame.display.get_window_size()
-        globals.FPS = max(globals.FPS, *pygame.display.get_desktop_refresh_rates())
+        common.INITIAL_WINDOW_SIZE = pygame.display.get_window_size()
+        common.FPS = max(common.FPS, *pygame.display.get_desktop_refresh_rates())
 
-        if globals.FLAG_DEBUG:
-            print(get_game_data(), pygame.display.Info(), globals.INITIAL_WINDOW_SIZE, globals.SCREEN_SIZE)
+        if common.FLAG_DEBUG:
+            print(get_game_data(), pygame.display.Info(), common.INITIAL_WINDOW_SIZE, common.SCREEN_SIZE)
 
-        pygame.display.set_caption(f"Cleanup Catastrophe! ({globals.VERSION})")
-        pygame.display.set_icon(globals.TEMPLATE_IMAGE_SURF)
+        pygame.display.set_caption(f"Cleanup Catastrophe! ({common.VERSION})")
+        pygame.display.set_icon(common.TEMPLATE_IMAGE_SURF)
 
         pygame.mouse.set_relative_mode(True) # fixes mouse scaling issue but it makes the mouse invisible
         pygame.mouse.set_visible(True) # so we set the mouse to visible using this func
@@ -70,7 +70,7 @@ class Game:
         self.current_state: State
         self.states_accessed: list[StateID] = []
 
-        if not globals.IS_WEB:
+        if not common.IS_WEB:
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
             try:
@@ -110,18 +110,18 @@ class Game:
     async def game(self) -> None:
         self.switch_state(StateID.SPLASH)
 
-        while globals.IS_RUNNING:
+        while common.IS_RUNNING:
             self.current_state.update()
             self.render()
 
-            await asyncio.sleep(0 if not globals.IS_PYODIDE else 1/globals.FPS)
+            await asyncio.sleep(0 if not common.IS_PYODIDE else 1/common.FPS)
 
         pygame.quit()
 
     async def discord_stuff(self) -> None:
         self.discord = DiscordPresence()
 
-        while globals.IS_RUNNING:
+        while common.IS_RUNNING:
             if not self.discord.connected:
                 await self.discord.prepare()
             else:
@@ -132,21 +132,21 @@ class Game:
         await self.discord.quit()
 
     def render(self) -> None:
-        globals.WINDOW_SIZE = pygame.display.get_window_size()
+        common.WINDOW_SIZE = pygame.display.get_window_size()
 
-        globals.FINAL_SCREEN_SIZE = utils.aspectScale(*globals.SCREEN_SIZE, *globals.WINDOW_SIZE)
+        common.FINAL_SCREEN_SIZE = utils.aspectScale(*common.SCREEN_SIZE, *common.WINDOW_SIZE)
 
-        if globals.FLAG_OPENGL:
+        if common.FLAG_OPENGL:
             self.pipeline.viewport = (
-                (globals.WINDOW_SIZE[0]-globals.FINAL_SCREEN_SIZE[0])//2,
-                (globals.WINDOW_SIZE[1]-globals.FINAL_SCREEN_SIZE[1])//2,
-                *globals.FINAL_SCREEN_SIZE
+                (common.WINDOW_SIZE[0]-common.FINAL_SCREEN_SIZE[0])//2,
+                (common.WINDOW_SIZE[1]-common.FINAL_SCREEN_SIZE[1])//2,
+                *common.FINAL_SCREEN_SIZE
             )
 
             self.ctx.new_frame()
 
             self.screen_texture.clear()
-            self.screen_texture.write(data=pygame.image.tobytes(self.screen, 'RGBA', flipped=(not globals.retroMode)), size=globals.SCREEN_SIZE)
+            self.screen_texture.write(data=pygame.image.tobytes(self.screen, 'RGBA', flipped=(not common.retroMode)), size=common.SCREEN_SIZE)
 
             self.pipeline.render()
 
@@ -155,5 +155,5 @@ class Game:
         else:
             pygame.display.update()
 
-        self.screen.fill(globals.BLACK)
-        self.draw_screen.fill(globals.TRANSPARENT)
+        self.screen.fill(common.BLACK)
+        self.draw_screen.fill(common.TRANSPARENT)

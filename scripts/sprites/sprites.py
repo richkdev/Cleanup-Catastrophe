@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from scripts import globals, utils
+from scripts import common, utils
 from scripts.sprites.basesprite import *
 from scripts.sprites.sheet import *
 from scripts.sprites.utils import *
@@ -17,7 +17,7 @@ class WorldObject(RSprite):
         self,
         sheetEnabled: bool = False,
         sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = globals.TEMPLATE_IMAGE_PATH,
+        image_path: pygame.typing._PathLike = common.TEMPLATE_IMAGE_PATH,
         # image_src: pygame.Surface = globals.TEMPLATE_IMAGE_SURF,
         size: pygame.typing.IntPoint = (1, 1),
         pos: pygame.typing.Point = (0, 0), # TODO: make this do something later!
@@ -61,8 +61,8 @@ class Player(RSprite):
         self.sheet.add_animation("fish", cut_sheet_fixed_size(utils.newPath("assets/img/sprites/paul_boat.png"),
                                  (40, 42)))
 
-        self.jump_strength = globals.GRAVITY*30
-        self.acceleration.x, self.acceleration.y = 5, globals.GRAVITY
+        self.jump_strength = common.GRAVITY*30
+        self.acceleration.x, self.acceleration.y = 5, common.GRAVITY
         self.max_velocity.x = 100
 
         self.is_colliding: bool = False
@@ -73,7 +73,7 @@ class Player(RSprite):
 
     def animate(self):
         self.image = self.sheet.draw(flip_x=bool(self.velocity.x < 0), flip_y=False)
-        self.sheet.update(self.dt*5 if self.grounded else self.velocity.length()/1000)
+        self.sheet.update(self.dt*5 if self.grounded else self.velocity.length()/5000)
 
         if self.velocity.x != 0:
             self.sheet.set_animation("run")
@@ -211,13 +211,13 @@ class Background(RSprite):
         sheetEnabled: bool = False,
         sheetStatic: bool = False,
         image_path: pygame.typing._PathLike = utils.newPath("assets/img/bg/sky.png"),
-        size: pygame.typing.IntPoint = (int(globals.SCREEN_WIDTH*1.5), 300),
+        size: pygame.typing.IntPoint = (int(common.SCREEN_WIDTH*1.5), 300),
         pos: pygame.typing.Point = (0, 0),
         *groups: RGroup
     ):
         super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
 
-        self.old_image = self.image = multiply_image(self.image, (2, 300), (globals.SCREEN_WIDTH*2, 300))
+        self.old_image = self.image = multiply_image(self.image, (2, 300), (common.SCREEN_WIDTH*2, 300))
 
         self.rect = self.image.get_frect()
         self.image_rect = self.image.get_rect()

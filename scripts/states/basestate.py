@@ -4,7 +4,7 @@ from pygame.locals import *  # type: ignore
 import enum
 import typing
 
-from scripts import globals, utils
+from scripts import common, utils
 from scripts.sprites.basesprite import RGroup
 from scripts.sound import SoundManager
 
@@ -110,7 +110,7 @@ class State:
 
         for event in self.event:
             if event.type == pygame.QUIT:
-                globals.IS_RUNNING = False
+                common.IS_RUNNING = False
 
         self.logic()
 
@@ -125,7 +125,7 @@ class State:
         self.event = pygame.event.get()
         self.key = pygame.key.get_pressed()
         self.key_jp = pygame.key.get_just_pressed()
-        self.dt = max(globals.MIN_DT, min(globals.clock.tick(globals.FPS if not globals.IS_WEB else 0)/1000, globals.MAX_DT))
+        self.dt = max(common.MIN_DT, min(common.clock.tick(common.FPS if not common.IS_WEB else 0)/1000, common.MAX_DT))
 
     def logic(self) -> None:
         ...

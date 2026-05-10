@@ -18,7 +18,7 @@ except ImportError:
     pygbag = None
 
 import platform
-from scripts import globals
+from scripts import common
 
 if not hasattr(pygame, "IS_CE"):
     raise ImportError("This game requires pygame-ce to function.")
@@ -40,24 +40,24 @@ Dependency info
 
 Platform info
     Platform name                   {platform.platform()}
-    Running on Emscripten?          {globals.IS_WEB}
-    Running on pygbag?              {globals.IS_PYGBAG}
-    Running on Pyodide?             {globals.IS_PYODIDE}
+    Running on Emscripten?          {common.IS_WEB}
+    Running on pygbag?              {common.IS_PYGBAG}
+    Running on Pyodide?             {common.IS_PYODIDE}
     Supports OpenGL?                {bool(pygame.OPENGL)}
-    Running on OpenGL?              {globals.FLAG_OPENGL}
+    Running on OpenGL?              {common.FLAG_OPENGL}
 
 Game info
-    Game version                    {globals.VERSION}
-    Maximum FPS                     {globals.FPS}
-    CRT shader enabled?             {globals.retroMode}
-    Vertex shader path              {globals.vertShader_path}
-    Fragment shader path            {globals.fragShader_path}
-    Discord Presence allowed?       {not globals.IS_WEB}
+    Game version                    {common.VERSION}
+    Maximum FPS                     {common.FPS}
+    CRT shader enabled?             {common.retroMode}
+    Vertex shader path              {common.vertShader_path}
+    Fragment shader path            {common.fragShader_path}
+    Discord Presence allowed?       {not common.IS_WEB}
 
 =====================================================
 """
 
-if globals.IS_PYGBAG:
+if common.IS_PYGBAG:
     platform.window.canvas.style.imageRendering = "pixelated" # type: ignore -> no more blurriness yay
 
 os.environ['SDL_VIDEO_ALLOW_SCREENSAVER'] = '1'

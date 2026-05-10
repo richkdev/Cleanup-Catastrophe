@@ -1,4 +1,4 @@
-from scripts.globals import VOLUME, IS_PYGBAG
+from scripts.common import VOLUME, IS_PYGBAG
 import pygame
 import pathlib
 

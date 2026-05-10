@@ -4,7 +4,7 @@ import os
 
 from json import load, dump
 
-from scripts.globals import saveFiles_path
+from scripts.common import saveFiles_path
 
 if not saveFiles_path.exists():
     try:

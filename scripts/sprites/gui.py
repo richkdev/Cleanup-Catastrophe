@@ -1,7 +1,7 @@
 import pygame
 import typing
 
-from scripts import globals
+from scripts import common
 from scripts.sprites.basesprite import *
 from scripts.sprites.basesprite import RGroup, RSprite
 
@@ -14,10 +14,7 @@ class GUISprite(RSprite):
 _GUISprite = typing.TypeVar("_GUISprite", bound=GUISprite)
 
 
-class GUIGroup(RGroup[_GUISprite]):
-    """
-    Base class for GUI sprite groups
-    """
+GUIGroup = RGroup[_GUISprite]
 
 
 class Text(GUISprite):
@@ -28,8 +25,8 @@ class Text(GUISprite):
     def set_text(
         self,
         text: str = "lorem ipsum dolor sit amet",
-        font: pygame.Font = globals.bigFont,
-        color: pygame.typing.ColorLike = globals.BLACK,
+        font: pygame.Font = common.bigFont,
+        color: pygame.typing.ColorLike = common.BLACK,
         antialiased: bool = True,
         bg_color: pygame.typing.ColorLike | None = None,
         wrap_length: int = 0,
@@ -68,7 +65,7 @@ class Button(Text):
 
     def animate(self):
         if self.is_hovered:
-            self.image.fill(globals.BLUE, special_flags=pygame.BLEND_ADD)
+            self.image.fill(common.BLUE, special_flags=pygame.BLEND_ADD)
         else:
             if self.image.get_buffer() != self.old_image.get_buffer():
                 self.image = self.old_image.copy()

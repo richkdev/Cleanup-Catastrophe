@@ -4,7 +4,7 @@ import numpy
 
 from pygame.locals import *  # type: ignore
 
-from scripts import globals, utils, filehandling
+from scripts import common, utils, filehandling
 
 from scripts.states.basestate import State, StateID
 from scripts.sprites.sprites import *
@@ -18,17 +18,17 @@ class Splash(State):
         self.introText = Text()
         self.introText.set_text(
             text=f"press [ENTER] to begin",
-            color=globals.WHITE,
-            font=globals.smallFont,
+            color=common.WHITE,
+            font=common.smallFont,
             antialiased=False,
             align=pygame.FONT_CENTER
         )
-        self.introText.rect.center = (globals.SCREEN_WIDTH/2, globals.SCREEN_HEIGHT/1.25)
+        self.introText.rect.center = (common.SCREEN_WIDTH/2, common.SCREEN_HEIGHT/1.25)
 
         self.logo = MenuLogo()
         self.logo.rect.center = (
-            globals.SCREEN_WIDTH / 2,
-            globals.SCREEN_HEIGHT / 2
+            common.SCREEN_WIDTH / 2,
+            common.SCREEN_HEIGHT / 2
         )
 
         self.sprites.add(
@@ -75,29 +75,29 @@ class Catastrophe(State):
         self.temp_ground.image = multiply_image(
             input_image=self.temp_ground.image,
             tile_size=(1, 1),
-            target_size=(globals.SCREEN_WIDTH, 1)
+            target_size=(common.SCREEN_WIDTH, 1)
         )
-        self.temp_ground.pos.x, self.temp_ground.pos.y = 0, globals.WATER_HEIGHT
+        self.temp_ground.pos.x, self.temp_ground.pos.y = 0, common.WATER_HEIGHT
         self.temp_ground.callibrate()
 
         self.collidables = RGroup(self.temp_ground)
 
         self.player = Player(
-            pos=(0, globals.WATER_HEIGHT - 50),
+            pos=(0, common.WATER_HEIGHT - 50),
         )
         self.player.set_collidables(self.collidables)
 
         self.rod = Rod(pos=(-100, -100))
         self.textDisplay = Text(pos=(10, 10))
-        self.textDisplay.set_text(text="", font=globals.bigFont, color=globals.WHITE)
+        self.textDisplay.set_text(text="", font=common.bigFont, color=common.WHITE)
 
         self.trashSprites: RGroup[Trash] = RGroup()
 
         trash_id_map = filehandling.makeMap((4, 8))
-        self.start_pos = (globals.SCREEN_WIDTH - globals.xBorder*50, globals.WATER_HEIGHT + 30)
+        self.start_pos = (common.SCREEN_WIDTH - common.xBorder*50, common.WATER_HEIGHT + 30)
         self.distance_between_trash = (
-            globals.SCREEN_WIDTH * len(trash_id_map[0]) / 30,
-            globals.SCREEN_HEIGHT * len(trash_id_map) / 150
+            common.SCREEN_WIDTH * len(trash_id_map[0]) / 30,
+            common.SCREEN_HEIGHT * len(trash_id_map) / 150
         )
 
         for row in range(len(trash_id_map)):
@@ -146,12 +146,12 @@ class Catastrophe(State):
 
     def logic(self):
         if self.score <= 0:
-            self.textDisplay.color = globals.DARKRED
+            self.textDisplay.color = common.DARKRED
             self.textDisplay.shake((1, 0))
         else:
-            self.textDisplay.color = globals.BLACK
+            self.textDisplay.color = common.BLACK
 
-        self.textDisplay.set_text(f"FPS: {round(globals.clock.get_fps())}\nSCORE: {self.score}\nDURABILITY: {self.rod.durability}")
+        self.textDisplay.set_text(f"FPS: {round(common.clock.get_fps())}\nSCORE: {self.score}\nDURABILITY: {self.rod.durability}")
 
         if not any(isinstance(t, Trash) and (not t.is_explosive) for t in self.trashSprites) or self.score < 0:
             self.switch_state(self.next_states[1])
@@ -170,9 +170,9 @@ class Catastrophe(State):
 
         match self.rod.is_fishing:
             case False:
-                if self.key[K_LEFT] and self.player.rect.x >= globals.xBorder:
+                if self.key[K_LEFT] and self.player.rect.x >= common.xBorder:
                     self.player.velocity.x = -50
-                elif self.key[K_RIGHT] and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder):
+                elif self.key[K_RIGHT] and self.player.rect.x <= (common.SCREEN_WIDTH - self.player.rect.width - common.xBorder):
                     self.player.velocity.x = +50
                 else:
                     self.player.velocity.x = 0
@@ -202,11 +202,11 @@ class Catastrophe(State):
                         self.rod.is_fishing = False
                         self.rod.velocity.y = 0
 
-                if self.rod.rect.y >= (globals.SCREEN_HEIGHT - self.rod.rect.height - globals.yBorder):
+                if self.rod.rect.y >= (common.SCREEN_HEIGHT - self.rod.rect.height - common.yBorder):
                     self.rod.is_fishing = False
                     self.sound_manager.sfx.play("noTrash")
                 else:
-                    pygame.draw.line(self.draw_screen, globals.DARKRED,
+                    pygame.draw.line(self.draw_screen, common.DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
@@ -248,19 +248,19 @@ class Lobby(State):
         self.temp_ground.image = multiply_image(
             input_image=self.temp_ground.image,
             tile_size=(3, 20),
-            target_size=(globals.SCREEN_WIDTH, 50)
+            target_size=(common.SCREEN_WIDTH, 50)
         )
 
         noise = numpy.random.uniform(0.8, 1.0, (25, 25))
-        img = noise[..., None] * [*globals.SAND[:3]]
+        img = noise[..., None] * [*common.SAND[:3]]
 
         self.temp_ground.image = mode7(
             pygame.surfarray.make_surface(
                 img.swapaxes(0, 1)
             ),
-            (globals.SCREEN_WIDTH, int(globals.SCREEN_HEIGHT+1-globals.GROUND_HEIGHT)),
+            (common.SCREEN_WIDTH, int(common.SCREEN_HEIGHT+1-common.GROUND_HEIGHT)),
         )
-        self.temp_ground.move_to((0, globals.GROUND_HEIGHT))
+        self.temp_ground.move_to((0, common.GROUND_HEIGHT))
         self.temp_ground.callibrate()
 
         self.temp_platform = WorldObject(
@@ -286,7 +286,7 @@ class Lobby(State):
         )
 
         self.player = Player(
-            pos=(globals.SCREEN_HEIGHT/3, globals.GROUND_HEIGHT-50),
+            pos=(common.SCREEN_HEIGHT/3, common.GROUND_HEIGHT-50),
         )
         self.player.set_collidables(self.collidables)
 
@@ -299,7 +299,7 @@ class Lobby(State):
         for name, stuff in self.interactables_map.items():
             d = WorldObject(
                 image_path=utils.newPath(f"assets/img/ui/{name}.png"),
-                pos=(stuff[0], (globals.GROUND_HEIGHT - stuff[2][1])),
+                pos=(stuff[0], (common.GROUND_HEIGHT - stuff[2][1])),
                 size=stuff[2],
             )
             d.set_worldobj(
@@ -309,7 +309,7 @@ class Lobby(State):
             )
             self.interactables.add(d)
 
-        self.backgroundStuff_map = [(random.randint(1, 11)*20, (globals.GROUND_HEIGHT-61)) for _ in range(15)]
+        self.backgroundStuff_map = [(random.randint(1, 11)*20, (common.GROUND_HEIGHT-61)) for _ in range(15)]
         self.backgroundStuff = RGroup()
         for pos in self.backgroundStuff_map:
             d = WorldObject(
@@ -339,9 +339,9 @@ class Lobby(State):
     def logic(self):
         self.player.rect.clamp_ip(self.screen.get_rect())
 
-        if (self.key[K_LEFT] or self.key[K_a]) and self.player.rect.x >= globals.xBorder:
+        if (self.key[K_LEFT] or self.key[K_a]) and self.player.rect.x >= common.xBorder:
             self.player.velocity.x -= self.player.acceleration.x if abs(self.player.velocity.x) < self.player.max_velocity.x else 0
-        elif (self.key[K_RIGHT] or self.key[K_d]) and self.player.rect.x <= (globals.SCREEN_WIDTH - self.player.rect.width - globals.xBorder):
+        elif (self.key[K_RIGHT] or self.key[K_d]) and self.player.rect.x <= (common.SCREEN_WIDTH - self.player.rect.width - common.xBorder):
             self.player.velocity.x += self.player.acceleration.x if abs(self.player.velocity.x) < self.player.max_velocity.x else 0
         else:
             self.player.velocity.x = 0
@@ -381,8 +381,8 @@ class Scoreboard(State):
         self.text = Text()
         self.text.set_text(
             text=text,
-            color=globals.WHITE,
-            font=globals.smallFont
+            color=common.WHITE,
+            font=common.smallFont
         )
 
     def load_sprites(self):
@@ -416,8 +416,8 @@ class Shop(State):
         text_sprite = Text()
         text_sprite.set_text(
             text=text,
-            color=globals.WHITE,
-            font=globals.smallFont
+            color=common.WHITE,
+            font=common.smallFont
         )
 
         self.buttons = ButtonGroup()
@@ -426,8 +426,8 @@ class Shop(State):
                 b = Button(pos=(20 + x*50, 50 + y*50))
                 b.set_text(
                     text=f"btn",
-                    font=globals.smallFont,
-                    bg_color=globals.YELLOW,
+                    font=common.smallFont,
+                    bg_color=common.YELLOW,
                 )
                 b.set_button()
                 self.buttons.add(b)

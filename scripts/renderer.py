@@ -1,17 +1,17 @@
 import zengl
 import struct
-from scripts import globals
+from scripts import common
 
 ctx = zengl.context()
 
-screen_texture = ctx.image(size=globals.SCREEN_SIZE, format='rgba8unorm')
+screen_texture = ctx.image(size=common.SCREEN_SIZE, format='rgba8unorm')
 
 
-match not globals.retroMode:
+match not common.retroMode:
     case True:
         pipeline = ctx.pipeline(
-            vertex_shader=open(globals.vertShader_path).read(),
-            fragment_shader=open(globals.fragShader_path).read(),
+            vertex_shader=open(common.vertShader_path).read(),
+            fragment_shader=open(common.fragShader_path).read(),
             layout=[
                 {
                     'name': 'MainTexture',
@@ -30,7 +30,7 @@ match not globals.retroMode:
                 }
             ],
             framebuffer=None,
-            viewport=(0, 0, *globals.SCREEN_SIZE),
+            viewport=(0, 0, *common.SCREEN_SIZE),
             topology='triangles',
             vertex_count=3,
         )
@@ -40,8 +40,8 @@ match not globals.retroMode:
         ibo = ctx.buffer(data=struct.pack('6I', *[0, 1, 2, 1, 2, 3]), index=True)
 
         pipeline = ctx.pipeline(
-            vertex_shader=open(globals.vertShader_path, 'r').read(),
-            fragment_shader=open(globals.fragShader_path, 'r').read(),
+            vertex_shader=open(common.vertShader_path, 'r').read(),
+            fragment_shader=open(common.fragShader_path, 'r').read(),
             layout=[
                 {
                     'name': 'MainTexture',
@@ -60,7 +60,7 @@ match not globals.retroMode:
                 }
             ],
             framebuffer=None,
-            viewport=(0, 0, *globals.SCREEN_SIZE),
+            viewport=(0, 0, *common.SCREEN_SIZE),
             topology='triangles',
             vertex_buffers=(
                 *zengl.bind(vbo, '2f', 0),
