@@ -4,11 +4,11 @@ from scripts import common, utils
 from scripts.settings import *
 from scripts.sprites.basesprite import RGroup
 from scripts.states.states import *
-from scripts.sound import SoundManager
+from scripts.managers.sound import SoundManager
+from scripts.managers.asset import AssetManager
 
-if not common.IS_WEB and not common.IS_PYGBAG:
-    from scripts.discord import DiscordPresence
-
+if common.IS_DISCORD_ALLOWED:
+    from scripts.managers.discord import DiscordRPCManager
 
 class Game:
     def __init__(self) -> None:
@@ -30,6 +30,15 @@ class Game:
 
         if common.IS_PYGBAG:
             pygame.mixer.SoundPatch()  # type: ignore -> for web
+
+        try:
+            self.loop = asyncio.get_event_loop()
+        except:
+            self.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self.loop)
+
+        common.ASSET_MANAGER = AssetManager(self.loop)
+        common.SOUND_MANAGER = SoundManager()
 
     def run(self) -> None:
         self.window_flags = pygame.SCALED | pygame.RESIZABLE
@@ -58,8 +67,6 @@ class Game:
 
         self.sprites = RGroup()
 
-        self.sound_manager = SoundManager()
-
         self.states: dict[StateID, State] = {
             StateID.SPLASH: Splash(),
             StateID.LOBBY: Lobby(),
@@ -70,9 +77,7 @@ class Game:
         self.current_state: State
         self.states_accessed: list[StateID] = []
 
-        if not common.IS_WEB:
-            self.loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(self.loop)
+        if common.IS_DISCORD_ALLOWED:
             try:
                 self.loop.run_until_complete(
                     asyncio.wait(
@@ -86,50 +91,54 @@ class Game:
         else:
             asyncio.run(self.game())
 
-    def switch_state(self, state_id: StateID) -> None:
+    async def switch_state(self, state_id: StateID) -> None:
         if len(self.states_accessed) != 0:
             self.current_state.unload()
 
-        self.prepare_state(state_id)
-
         self.current_state = self.states[state_id]
+
+        await self.current_state.prepare()
 
         self.states_accessed.append(state_id)
 
-        self.current_state.load(self.screen, self.draw_screen, self.sprites, self.sound_manager, self.switch_state)
+        await self.current_state.load(self.screen, self.draw_screen, self.sprites)
 
         print(f"Switched to {type(self.current_state).__name__} state, list of states accessed: {self.states_accessed}")
 
         # temporarily disabled until i figure out how to make it run alongside the main game and non-blocking
-        # for state in self.current_state.next_states:
-        #     self.prepare_state(state)
-
-    def prepare_state(self, state_id: StateID) -> None:
-        self.states[state_id].prepare()
+        for state in self.current_state.next_states:
+            await self.states[state].prepare()
 
     async def game(self) -> None:
-        self.switch_state(StateID.SPLASH)
+        await self.switch_state(StateID.SPLASH)
 
         while common.IS_RUNNING:
-            self.current_state.update()
-            self.render()
+            try:
+                common.ASSET_MANAGER.update()
+                self.current_state.update()
+                self.render()
+            except StateSwitch as e:
+                await self.switch_state(e.state_id)
 
             await asyncio.sleep(0 if not common.IS_PYODIDE else 1/common.FPS)
 
         pygame.quit()
 
     async def discord_stuff(self) -> None:
-        self.discord = DiscordPresence()
+        common.DISCORD_MANAGER = DiscordRPCManager(self.loop)
 
         while common.IS_RUNNING:
-            if not self.discord.connected:
-                await self.discord.prepare()
+            if not common.DISCORD_MANAGER.connected:
+                await common.DISCORD_MANAGER.prepare()
             else:
-                await self.discord.update(self.current_state.desc)
+                await common.DISCORD_MANAGER.update(self.current_state.desc)
 
             await asyncio.sleep(5)
 
-        await self.discord.quit()
+        try:
+            await common.DISCORD_MANAGER.quit()
+        except RuntimeError:
+            pass
 
     def render(self) -> None:
         common.WINDOW_SIZE = pygame.display.get_window_size()

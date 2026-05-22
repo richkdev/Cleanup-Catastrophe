@@ -15,8 +15,9 @@
 - [ ] detect cmdline args when run thru cmd line, using `argparse` (e.g. `--debug` to log everything into the file), when using pygbag: _<https://discord.com/channels/772505616680878080/971360806287577098/1292327416957636671>_
 - [x] turn discord presence into async
 - [x] make loading screen and async loading functions (loads state, assets, etc) **(WIP)**
-- [ ] use uv build system
+- [ ] use gh ci cd for building the game
 - [x] make `BGMManager` (for background music, use pygame.mixer.music) and `SFXManager` (for realtime sound playback, use pygame.mixer.Sound) since they handle songs n stuff differently and use less memory [reference](https://discord.com/channels/772505616680878080/971360806287577098/1488538747094958261)
+- [x] make `AssetManager` for handling loading of all assets (sounds, surfaces, etc.)
 
 ## art
 

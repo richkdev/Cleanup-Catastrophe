@@ -167,7 +167,6 @@ class Trash(RSprite):
         self.trash_type = trash_type
         self.is_explosive = self.trash_type == 4
 
-        # self.image = globals.smallFont.render(f"{self.trash_type}", False, globals.BLACK, None) # for debug purposes
         self.image = self.sheet.states["idle"][trash_type-1]
 
         self.move_ip((

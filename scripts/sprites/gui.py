@@ -24,8 +24,8 @@ class Text(GUISprite):
 
     def set_text(
         self,
-        text: str = "lorem ipsum dolor sit amet",
-        font: pygame.Font = common.bigFont,
+        text: str,
+        font: pygame.Font | None = None,
         color: pygame.typing.ColorLike = common.BLACK,
         antialiased: bool = True,
         bg_color: pygame.typing.ColorLike | None = None,

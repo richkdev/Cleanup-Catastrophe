@@ -1,17 +1,21 @@
 import pygame
 import os
 import sys
+import pathlib
 from json import loads
 from datetime import datetime
 from scripts.utils import newPath
+from scripts.managers.asset import AssetManager, Asset
 
 IS_RUNNING: bool = True
+
 VERSION = open(newPath("VERSION"), "r").read()
 SETTINGS: dict = loads(open(newPath("settings.json")).read())
 
 IS_WEB: bool = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
 IS_PYGBAG: bool = bool(int(os.getenv('PYGBAG', default=0)))
 IS_PYODIDE: bool = "pyodide" in sys.modules
+IS_DISCORD_ALLOWED = not IS_WEB and not IS_PYGBAG
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 224
@@ -57,8 +61,8 @@ TRANSPARENT = pygame.Color(0, 0, 0, 0)
 if not pygame.font.get_init():
     pygame.font.init()
 
-bigFont = pygame.Font(newPath("assets/fonts/genesis.ttf"), 16)
-smallFont = pygame.Font(newPath("assets/fonts/UnifontExMono.ttf"), 16)
+BIG_FONT = pygame.Font(newPath("assets/fonts/genesis.ttf"), 16)
+SMALL_FONT = pygame.Font(newPath("assets/fonts/UnifontExMono.ttf"), 16)
 
 GRAVITY: float = 2
 GROUND_HEIGHT: float = SCREEN_HEIGHT/1.5
@@ -66,3 +70,20 @@ WATER_HEIGHT: float = SCREEN_HEIGHT*0.6
 
 TEMPLATE_IMAGE_PATH = newPath("icon.ico")
 TEMPLATE_IMAGE_SURF = pygame.image.load(TEMPLATE_IMAGE_PATH)
+
+
+ASSET_MANAGER: AssetManager
+
+ASSET_DICT: dict[str | pathlib.Path, Asset] = {
+    TEMPLATE_IMAGE_PATH: TEMPLATE_IMAGE_SURF,
+    BIG_FONT.name: BIG_FONT,
+    SMALL_FONT.name: SMALL_FONT,
+}
+
+from scripts.managers.sound import SoundManager
+
+SOUND_MANAGER: SoundManager
+
+if IS_DISCORD_ALLOWED:
+    from scripts.managers.discord import DiscordRPCManager
+    DISCORD_MANAGER: DiscordRPCManager

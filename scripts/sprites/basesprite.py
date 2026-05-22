@@ -24,7 +24,7 @@ class BaseSprite(pygame.sprite.DirtySprite):
 
         self.sheetEnabled: bool
         self.sheetStatic: bool = False
-        self.image_path: str
+        self.image_path: pygame.typing._PathLike
         self.image: pygame.Surface
         self.old_image: pygame.Surface
 
@@ -103,16 +103,22 @@ class RSprite(BaseSprite):
         self.sheetEnabled = sheetEnabled
         self.sheetStatic = sheetStatic
         self.pos = pygame.Vector2(pos)
+        self.image_path = utils.newPath(str(image_path))
 
         match self.sheetEnabled:
             case True:
                 self.sheet = Sheet()
                 self.action = "idle"
-                self.sheet.add_animation(self.action, cut_sheet_fixed_size(image_path, size))
+                self.sheet.add_animation(self.action, cut_sheet_fixed_size(self.image_path, size))
                 self.sheet.set_animation(self.action)
                 self.image = self.sheet.states[self.action][0]
             case False:
-                self.image = pygame.image.load(utils.newPath(str(image_path))).convert_alpha()
+                temp = common.ASSET_DICT.get(self.image_path, None)
+                if temp == None:
+                    # eager loading
+                    self.image = pygame.image.load(self.image_path).convert_alpha()
+                else:
+                    self.image = temp
 
         self.old_image = self.image.copy()
 

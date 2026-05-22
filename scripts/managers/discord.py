@@ -1,16 +1,18 @@
 import os
 import pypresence as dc
+import asyncio
 
 from time import time
 from scripts.common import VERSION
 
 
-class DiscordPresence:
-    def __init__(self) -> None:
+class DiscordRPCManager:
+    def __init__(self, loop: asyncio.AbstractEventLoop) -> None:
+        self.loop = loop
         self.client_id: str = "1125682987552481311"
         self.connected: bool = False
         self.startTime = int(time())
-        self.RPC = dc.presence.AioPresence(client_id=self.client_id)
+        self.RPC = dc.presence.AioPresence(client_id=self.client_id, loop=self.loop)
 
     async def prepare(self) -> None:
         try:
@@ -27,7 +29,6 @@ class DiscordPresence:
         try:
             await self.RPC.update(
                 pid=os.getpid(),
-                activity_type=dc.types.ActivityType.PLAYING,
                 state=state,
                 details=VERSION,
                 start=self.startTime,
@@ -53,9 +54,11 @@ class DiscordPresence:
     async def reconnect(self) -> None:
         self.connected = False
         del self.RPC
-        self.RPC = dc.presence.AioPresence(client_id=self.client_id)
+        self.RPC = dc.presence.AioPresence(client_id=self.client_id, loop=self.loop)
         await self.RPC.connect()
+        self.connected = True
 
     async def quit(self) -> None:
         self.connected = False
+        await self.RPC.clear()
         self.RPC.close()

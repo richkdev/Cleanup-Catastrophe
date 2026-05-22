@@ -1,4 +1,4 @@
-from scripts.common import VOLUME, IS_PYGBAG
+from scripts.common import VOLUME, IS_PYGBAG, ASSET_DICT
 import pygame
 import pathlib
 
@@ -104,7 +104,7 @@ class SFXManager:
             print(f"SFX {name} already exists")
         else:
             if path != None:
-                self._sfx_cache[name] = pygame.mixer.Sound(path)
+                self._sfx_cache[name] = ASSET_DICT.get(path, pygame.mixer.Sound(path))
                 print(f"Added SFX {name} at {path}")
             else:
                 raise FileNotFoundError(path)

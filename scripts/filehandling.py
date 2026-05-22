@@ -1,10 +1,10 @@
 import pygame
 import random
 import os
+from json import loads, dump
 
-from json import load, dump
+from scripts.common import saveFiles_path, ASSET_DICT
 
-from scripts.common import saveFiles_path
 
 if not saveFiles_path.exists():
     try:
@@ -28,7 +28,7 @@ def makeMap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[int]]:
 
 def getLocal() -> list[dict[str, str|int]]:
     try:
-        highscores = load(open(saveFiles_path))
+        highscores: list[dict[str, str|int]] = ASSET_DICT.get(saveFiles_path, loads(open(saveFiles_path).read()))
     except FileNotFoundError:
         highscores = []
     return highscores

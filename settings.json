@@ -1,8 +1,8 @@
 {
-    "debug": false,
+    "debug": true,
     "opengl": true,
     "maxFPS": 60,
-    "volume": 20,
+    "volume": 50,
     "retroMode": true,
     "savefiles": "savefiles/local.json",
     "logs": "logs/"

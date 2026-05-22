@@ -35,7 +35,7 @@ Dependency info
     pygame-ce version               {pygame.version.vernum}
     SDL version                     {pygame.version.SDL}
     ZenGL version                   {zengl.__dict__['__version__'] if zengl else "UNKNOWN"}
-    pygbag version                  {pygbag.VERSION if pygbag else "UNKNOWN"}
+    pygbag version                  {"0.9.3" if pygbag else "UNKNOWN"}
     PyInstaller version             {pyi.__version__ if pyi else "UNKNOWN"}
 
 Platform info

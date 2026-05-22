@@ -6,7 +6,7 @@ from pygame.locals import *  # type: ignore
 
 from scripts import common, utils, filehandling
 
-from scripts.states.basestate import State, StateID
+from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 
 
@@ -14,12 +14,21 @@ class Splash(State):
     is_gamemode = False
     desc = "At the splash screen..."
 
+    def prepare_assets(self):
+        self.assets_raw = [
+            "assets/img/ui/logo.png",
+        ]
+
+        self.sounds_raw = {
+            "cleanup-time": "assets/music/cleanup-time.wav",
+        }
+
     def prepare_sprites(self):
         self.introText = Text()
         self.introText.set_text(
             text=f"press [ENTER] to begin",
             color=common.WHITE,
-            font=common.smallFont,
+            font=common.SMALL_FONT,
             antialiased=False,
             align=pygame.FONT_CENTER
         )
@@ -36,28 +45,36 @@ class Splash(State):
             self.introText
         )
 
-    def prepare_sounds(self):
-        self.sounds = {
-            "cleanup-time": "assets/music/cleanup-time.wav",
-        }
-
     def prepare_next_states(self):
         self.is_reloadable = True
         self.next_states = [
             StateID.LOBBY
         ]
 
-    def load_sounds(self):
-        self.sound_manager.bgm.play("cleanup-time", -1)
+    def load_assets(self):
+        common.SOUND_MANAGER.bgm.play("cleanup-time", -1)
 
     def logic(self):
         if self.key[K_RETURN] or self.key[K_SPACE]:
-            self.switch_state(self.next_states[0])
+            raise StateSwitch(self.next_states[0])
 
 
 class Catastrophe(State):
     is_gamemode = True
     desc = "catastrophe"
+
+    def prepare_assets(self):
+        self.assets_raw = [
+            "assets/img/bg/",
+            "assets/img/sprites/",
+        ]
+
+        self.sounds_raw = {
+            "waiting": "assets/music/waiting.wav",
+            "explode": "assets/sfx/explode.wav",
+            "getTrash": "assets/sfx/getTrash.wav",
+            "noTrash": "assets/sfx/noTrash.wav",
+        }
 
     def prepare_sprites(self):
         self.score = 0
@@ -89,7 +106,7 @@ class Catastrophe(State):
 
         self.rod = Rod(pos=(-100, -100))
         self.textDisplay = Text(pos=(10, 10))
-        self.textDisplay.set_text(text="", font=common.bigFont, color=common.WHITE)
+        self.textDisplay.set_text(text="", font=common.BIG_FONT, color=common.WHITE)
 
         self.trashSprites: RGroup[Trash] = RGroup()
 
@@ -126,14 +143,6 @@ class Catastrophe(State):
             self.rod
         )
 
-    def prepare_sounds(self):
-        self.sounds = {
-            "waiting": "assets/music/waiting.wav",
-            "explode": "assets/sfx/explode.wav",
-            "getTrash": "assets/sfx/getTrash.wav",
-            "noTrash": "assets/sfx/noTrash.wav",
-        }
-
     def prepare_next_states(self):
         self.is_reloadable = True
         self.next_states = [
@@ -141,8 +150,8 @@ class Catastrophe(State):
             StateID.SCOREBOARD,
         ]
 
-    def load_sounds(self):
-        self.sound_manager.bgm.play("waiting", -1)
+    def load_assets(self):
+        common.SOUND_MANAGER.bgm.play("waiting", -1)
 
     def logic(self):
         if self.score <= 0:
@@ -154,9 +163,9 @@ class Catastrophe(State):
         self.textDisplay.set_text(f"FPS: {round(common.clock.get_fps())}\nSCORE: {self.score}\nDURABILITY: {self.rod.durability}")
 
         if not any(isinstance(t, Trash) and (not t.is_explosive) for t in self.trashSprites) or self.score < 0:
-            self.switch_state(self.next_states[1])
             for i in self.trashSprites.sprites():
                 del i
+            raise StateSwitch(self.next_states[1])
 
         for t in self.trashSprites:
             if t.is_explosive:
@@ -193,10 +202,10 @@ class Catastrophe(State):
                         match collided.is_explosive:
                             case True:
                                 self.score -= 1
-                                self.sound_manager.sfx.play("explode")
+                                common.SOUND_MANAGER.sfx.play("explode")
                             case False:
                                 self.score += 1
-                                self.sound_manager.sfx.play("getTrash")
+                                common.SOUND_MANAGER.sfx.play("getTrash")
                         print(f"Session score: {self.score}, durability: {self.rod.durability}")
                         collided.kill()
                         self.rod.is_fishing = False
@@ -204,22 +213,27 @@ class Catastrophe(State):
 
                 if self.rod.rect.y >= (common.SCREEN_HEIGHT - self.rod.rect.height - common.yBorder):
                     self.rod.is_fishing = False
-                    self.sound_manager.sfx.play("noTrash")
+                    common.SOUND_MANAGER.sfx.play("noTrash")
                 else:
                     pygame.draw.line(self.draw_screen, common.DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
         if self.key[K_ESCAPE]:
-            self.switch_state(self.next_states[1])
+            raise StateSwitch(self.next_states[1])
 
 
 class Lobby(State):
     is_gamemode = False
     desc = "At the lobby..."
 
-    def prepare_sounds(self):
-        self.sounds = {
+    def prepare_assets(self):
+        self.assets_raw = [
+            "assets/img/bg/",
+            "assets/img/sprites/",
+        ]
+
+        self.sounds_raw = {
             "supadood": "assets/music/supadood.wav",
             "explode": "assets/sfx/explode.wav",
             "getTrash": "assets/sfx/getTrash.wav",
@@ -333,8 +347,8 @@ class Lobby(State):
             self.player,
         )
 
-    def load_sounds(self):
-        self.sound_manager.bgm.play("supadood", -1)
+    def load_assets(self):
+        common.SOUND_MANAGER.bgm.play("supadood", -1)
 
     def logic(self):
         self.player.rect.clamp_ip(self.screen.get_rect())
@@ -359,9 +373,9 @@ class Lobby(State):
 
             # in each of these checks we could do something special like play a sound effect.
             # it's kinda hardcoded rn but i'll change it later
-            self.sound_manager.sfx.play(self.interactables_map[collided_sprite.desc][3])
+            common.SOUND_MANAGER.sfx.play(self.interactables_map[collided_sprite.desc][3])
 
-            self.switch_state(self.interactables_map[collided_sprite.desc][1])
+            raise StateSwitch(self.interactables_map[collided_sprite.desc][1])
 
 
 class Scoreboard(State):
@@ -382,14 +396,18 @@ class Scoreboard(State):
         self.text.set_text(
             text=text,
             color=common.WHITE,
-            font=common.smallFont
+            font=common.SMALL_FONT
         )
 
     def load_sprites(self):
         self.sprites.add(self.text)
 
-    def prepare_sounds(self):
-        self.sounds = {
+    def prepare_assets(self):
+        self.assets_raw = [
+            "savefiles/"
+        ]
+
+        self.sounds_raw = {
             "wake-up-call": "assets/music/pause.wav"
         }
 
@@ -399,17 +417,24 @@ class Scoreboard(State):
             StateID.LOBBY
         ]
 
-    def load_sounds(self):
-        self.sound_manager.bgm.play("wake-up-call")
+    def load_assets(self):
+        common.SOUND_MANAGER.bgm.play("wake-up-call")
 
     def logic(self):
         if self.key[K_ESCAPE]:
-            self.switch_state(StateID.LOBBY)
+            raise StateSwitch(StateID.LOBBY)
 
 
 class Shop(State):
     is_gamemode = False
     desc = "Lookin\' for things to buy... or not."
+
+    def prepare_assets(self):
+        self.assets_raw = []
+
+        self.sounds_raw = {
+            "straight-fundamentals": "assets/music/straight-fundamentals.wav"
+        }
 
     def prepare_sprites(self):
         text = "This is the shop, in future iterations of this project even this page will be completed!\nHang tight as we develop this project."
@@ -417,7 +442,7 @@ class Shop(State):
         text_sprite.set_text(
             text=text,
             color=common.WHITE,
-            font=common.smallFont
+            font=common.SMALL_FONT
         )
 
         self.buttons = ButtonGroup()
@@ -426,7 +451,7 @@ class Shop(State):
                 b = Button(pos=(20 + x*50, 50 + y*50))
                 b.set_text(
                     text=f"btn",
-                    font=common.smallFont,
+                    font=common.SMALL_FONT,
                     bg_color=common.YELLOW,
                 )
                 b.set_button()
@@ -436,13 +461,8 @@ class Shop(State):
 
         self.sprites.add(text_sprite)
 
-    def prepare_sounds(self):
-        self.sounds = {
-            "straight-fundamentals": "assets/music/straight-fundamentals.wav"
-        }
-
-    def load_sounds(self):
-        self.sound_manager.bgm.play("straight-fundamentals", loop=-1)
+    def load_assets(self):
+        common.SOUND_MANAGER.bgm.play("straight-fundamentals", loop=-1)
 
     def prepare_next_states(self):
         self.is_reloadable = True
@@ -461,4 +481,4 @@ class Shop(State):
             self.buttons.click_button_at_cursor()
 
         if self.key[K_ESCAPE]:
-            self.switch_state(self.next_states[0])
+            raise StateSwitch(self.next_states[0])

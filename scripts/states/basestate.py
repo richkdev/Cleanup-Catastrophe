@@ -2,11 +2,10 @@ import pygame
 from pygame.locals import *  # type: ignore
 
 import enum
-import typing
+import pathlib
 
 from scripts import common, utils
 from scripts.sprites.basesprite import RGroup
-from scripts.sound import SoundManager
 
 
 class StateID(enum.IntEnum):
@@ -19,6 +18,12 @@ class StateID(enum.IntEnum):
     SHOP = enum.auto()
     SCOREBOARD = enum.auto()
     RADIO = enum.auto()
+
+
+class StateSwitch(BaseException):
+    def __init__(self, state_id: StateID, *args) -> None:
+        super().__init__(*args)
+        self.state_id = state_id
 
 
 class State:
@@ -41,10 +46,13 @@ class State:
         self.parent_sprites: RGroup
         self.sprites = RGroup()
 
-        self.sound_manager: SoundManager
-        self.sounds: dict[str, str] = {}
+        self.assets_raw: list[str] = []
+        self.sounds_raw: dict[str, str] = {}
 
-        self.switch_state: typing.Callable[[StateID], None]
+        self.assets: list[pathlib.Path] = []
+
+        # self.sound_manager: SoundManager
+
         self.next_states: list[StateID] = []
 
         self.is_prepared: bool = False
@@ -53,46 +61,71 @@ class State:
 
         self.desc: str = f"In a heck of a {self.desc.upper()}" if self.is_gamemode else self.desc
 
-    def prepare(self) -> None:
+    async def prepare(self) -> None:
         if not self.is_prepared or self.is_reloadable:
-            self.prepare_sounds()
+            self.prepare_assets()
+
+            for asset_raw in self.assets_raw:
+                asset = utils.newPath(asset_raw)
+
+                if asset.is_dir():
+                    files = asset.iterdir()
+                    for file in files:
+                        filepath = asset.joinpath(file)
+                        self.assets.append(filepath)
+                        common.ASSET_MANAGER.add_asset(filepath)
+                        common.ASSET_MANAGER.update()
+
+                if asset.is_file():
+                    self.assets.append(asset)
+                    common.ASSET_MANAGER.add_asset(asset)
+                    common.ASSET_MANAGER.update()
+
+            for name, path in self.sounds_raw.items():
+                asset = utils.newPath(path)
+
+                if "sfx" in path:
+                    self.assets.append(asset)
+                    common.ASSET_MANAGER.add_asset(asset)
+                    common.ASSET_MANAGER.update()
+
+            for asset in self.assets:
+                common.ASSET_DICT.update(
+                    {asset: await common.ASSET_MANAGER.get_asset(asset).get_data()}
+                )
+
             self.prepare_sprites()
             self.prepare_next_states()
             self.is_prepared = True
 
             print(f"Prepared {type(self).__name__} state")
 
-    def prepare_sprites(self) -> None:
+    def prepare_assets(self) -> None:
         raise NotImplementedError
 
-    def prepare_sounds(self) -> None:
+    def prepare_sprites(self) -> None:
         raise NotImplementedError
 
     def prepare_next_states(self) -> None:
         ...
 
-    def load(
+    async def load(
         self,
         screen: pygame.Surface,
         draw_screen: pygame.Surface,
-        sprites: RGroup,
-        sound_manager: SoundManager,
-        switch_state: typing.Callable[[StateID], None],
+        sprites: RGroup
     ) -> None:
         self.screen = screen
         self.draw_screen = draw_screen
 
-        for name, path in self.sounds.items():
+        for name, path in self.sounds_raw.items():
             if "music" in path:
-                sound_manager.bgm.add_music(name, utils.newPath(path))
+                common.SOUND_MANAGER.bgm.add_music(name, utils.newPath(path))
             else:
-                sound_manager.sfx.add_sfx(name, utils.newPath(path))
-        self.sound_manager = sound_manager
+                common.SOUND_MANAGER.sfx.add_sfx(name, utils.newPath(path))
 
-        self.switch_state = switch_state
-
+        self.load_assets()
         self.load_sprites()
-        self.load_sounds()
 
         self.parent_sprites = sprites
         self.parent_sprites.add(self.sprites)
@@ -102,7 +135,7 @@ class State:
     def load_sprites(self) -> None:
         ...
 
-    def load_sounds(self) -> None:
+    def load_assets(self) -> None:
         ...
 
     def update(self) -> None:
@@ -119,7 +152,7 @@ class State:
 
         self.screen.blit(self.draw_screen)
 
-        self.sound_manager.sfx.update()
+        common.SOUND_MANAGER.sfx.update()
 
     def update_stuff(self) -> None:
         self.event = pygame.event.get()
@@ -132,7 +165,6 @@ class State:
 
     def unload(self) -> None:
         self.parent_sprites.remove(self.sprites)
-        self.sound_manager.bgm.stop()
-        self.sound_manager.bgm.unload()
-        self.sound_manager.sfx.stop_all()
-        self.sounds.clear()
+        common.SOUND_MANAGER.bgm.stop()
+        common.SOUND_MANAGER.bgm.unload()
+        common.SOUND_MANAGER.sfx.stop_all()
