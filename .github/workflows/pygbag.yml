@@ -9,13 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      # - uses: actions/checkout@v2
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5
       - name: Checkout
         run: |
           python -m pip install pygbag
           python -m pygbag --no_opt --disable-sound-format-error --build ${{ github.workspace }}/main.py
-      - name: Upload to GitHub pages branch gh-pages
-        uses: JamesIves/github-pages-deploy-action@4.1.7
+      - name: Upload to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@6ce741f5d4e01e15f9ea5ec96df1a43f522c330f
+        # uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           branch: gh-pages
           folder: build/web
