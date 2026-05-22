@@ -1,17 +1,21 @@
 import pygame
 import os
 import sys
+import pathlib
 from json import loads
 from datetime import datetime
 from scripts.utils import newPath
+from scripts.managers.asset import AssetManager, Asset
 
 IS_RUNNING: bool = True
+
 VERSION = open(newPath("VERSION"), "r").read()
 SETTINGS: dict = loads(open(newPath("settings.json")).read())
 
 IS_WEB: bool = sys.platform in ('emscripten', 'wasi')  # detect if wasm/emscripten context
 IS_PYGBAG: bool = bool(int(os.getenv('PYGBAG', default=0)))
 IS_PYODIDE: bool = "pyodide" in sys.modules
+IS_DISCORD_ALLOWED = not IS_WEB and not IS_PYGBAG
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 224
@@ -24,24 +28,23 @@ WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
 xBorder: int = int(SCREEN_WIDTH ** 0.05)
 yBorder: int = int(SCREEN_HEIGHT ** 0.05)
 
-FLAG_OPENGL: bool = SETTINGS['opengl'] and bool(pygame.OPENGL)
+FLAG_OPENGL: bool = SETTINGS['opengl'] and bool(pygame.OPENGL) and not IS_WEB
 FLAG_DEBUG: bool = SETTINGS['debug']
 
 FPS: int = SETTINGS['maxFPS']
 MIN_DT: float = FPS/100000
 MAX_DT: float = FPS/100
 
-volume: float = SETTINGS['volume'] / 100
+VOLUME: float = SETTINGS['volume'] / 100
 
 retroMode: bool = SETTINGS['retroMode']
 fragShader_path  = newPath(f"assets/shaders/fragment_shaders/{'crt' if retroMode else 'normal'}.glsl")
 vertShader_path = newPath(f"assets/shaders/vertex_shaders/{'crt' if retroMode else 'normal'}.glsl")
 
-mapDirectory = newPath(SETTINGS['mapDirectory'])
-saveFileDirectory = newPath(SETTINGS['saveFileDirectory'])
+saveFiles_path = newPath(SETTINGS['savefiles'])
 
 startGame_time = str(datetime.now().replace(microsecond=0)).replace(":", "-")
-logDirectory = newPath(SETTINGS['logDirectory'])
+logDirectory = newPath(SETTINGS['logs'])
 
 clock = pygame.time.Clock()
 
@@ -53,12 +56,13 @@ GREEN = pygame.Color(0, 255, 0, 255)
 BLUE = pygame.Color(0, 0, 255, 255)
 WHITE = pygame.Color(255, 255, 255, 255)
 BLACK = pygame.Color(0, 0, 0, 255)
+TRANSPARENT = pygame.Color(0, 0, 0, 0)
 
 if not pygame.font.get_init():
     pygame.font.init()
 
-bigFont = pygame.Font(newPath("assets/fonts/genesis.ttf"), 16)
-smallFont = pygame.Font(newPath("assets/fonts/UnifontExMono.ttf"), 14)
+BIG_FONT = pygame.Font(newPath("assets/fonts/genesis.ttf"), 16)
+SMALL_FONT = pygame.Font(newPath("assets/fonts/UnifontExMono.ttf"), 16)
 
 GRAVITY: float = 2
 GROUND_HEIGHT: float = SCREEN_HEIGHT/1.5
@@ -66,3 +70,20 @@ WATER_HEIGHT: float = SCREEN_HEIGHT*0.6
 
 TEMPLATE_IMAGE_PATH = newPath("icon.ico")
 TEMPLATE_IMAGE_SURF = pygame.image.load(TEMPLATE_IMAGE_PATH)
+
+
+ASSET_MANAGER: AssetManager
+
+ASSET_DICT: dict[str | pathlib.Path, Asset] = {
+    TEMPLATE_IMAGE_PATH: TEMPLATE_IMAGE_SURF,
+    BIG_FONT.name: BIG_FONT,
+    SMALL_FONT.name: SMALL_FONT,
+}
+
+from scripts.managers.sound import SoundManager
+
+SOUND_MANAGER: SoundManager
+
+if IS_DISCORD_ALLOWED:
+    from scripts.managers.discord import DiscordRPCManager
+    DISCORD_MANAGER: DiscordRPCManager

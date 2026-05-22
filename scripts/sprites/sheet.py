@@ -1,10 +1,10 @@
 import pygame
-import types
 import json
-
+import pathlib
+from scripts.common import ASSET_DICT
 
 def cut_sheet_fixed_size(
-    path: pygame.typing._PathLike,
+    path: pathlib.Path,
     size: pygame.typing.IntPoint
 ) -> list[pygame.Surface]:
     """
@@ -12,7 +12,7 @@ def cut_sheet_fixed_size(
     """
 
     frames = []
-    sheet_img = pygame.image.load(path).convert_alpha()
+    sheet_img: pygame.Surface = ASSET_DICT.get(path, pygame.image.load(path).convert_alpha())
 
     for i in range(int(sheet_img.get_width() / size[0])):
         frames.append(sheet_img.subsurface(pygame.Rect(i * size[0], 0, size[0], size[1])))
@@ -20,36 +20,11 @@ def cut_sheet_fixed_size(
     print(f"Loaded and split fixed size spritesheet at {path}")
     return frames
 
-def cut_sheet(
-    image_path: pygame.typing._PathLike,
-    data: pygame.typing._PathLike
-) -> Sheet:
-    raw_data: list[SheetData] = json.loads(open(data).read(), object_hook=SheetData)
-    sheet = Sheet()
-
-    sheet_img = pygame.image.load(image_path).convert_alpha()
-
-    for d in raw_data:
-        anim: list[pygame.Surface] = []
-        for f in d.frames:
-            anim.append(sheet_img.subsurface(f.bounds.x, f.bounds.y, f.bounds.w, f.bounds.h))
-
-        sheet.add_animation(
-            d.action,
-            anim
-        )
-
-    print(f"Loaded and split dynamic size spritesheet at {image_path} with data from {data}")
-
-    sheet.current_state = raw_data[0].action # default setting
-
-    return sheet
-
 
 class Sheet:
     def __init__(self) -> None:
         self.states: dict[str, list[pygame.surface.Surface]] = {}
-        self.current_stat: str
+        self.current_state: str
         self.current_idx = 0.0
 
     def add_animation(self, name: str, sprites: list[pygame.surface.Surface]) -> None:
@@ -69,16 +44,26 @@ class Sheet:
         return surf
 
 
-class SheetData(types.SimpleNamespace):
-    action: str
-    frames: list[SheetFrame]
+def cut_sheet(
+    image_path: pygame.typing._PathLike,
+    json_path: pygame.typing._PathLike
+) -> Sheet:
+    raw_data: list = ASSET_DICT.get(json_path, json.loads(open(json_path).read()))
+    sheet = Sheet()
+    sheet_img: pygame.Surface = ASSET_DICT.get(image_path, pygame.image.load(image_path).convert_alpha())
 
-class SheetFrame(types.SimpleNamespace):
-    frame: int
-    bounds: SheetBounds
+    for d in raw_data:
+        anim: list[pygame.Surface] = []
+        for f in d['frames']:
+            anim.append(sheet_img.subsurface(f['bounds']['x'], f['bounds']['y'], f['bounds']['w'], f['bounds']['h']))
 
-class SheetBounds(types.SimpleNamespace):
-    x: int
-    y: int
-    w: int
-    h: int
+        sheet.add_animation(
+            d['action'],
+            anim
+        )
+
+    print(f"Loaded and split dynamic size spritesheet at {image_path} with data from {json_path}")
+
+    sheet.set_animation(raw_data[0].action) # default setting
+
+    return sheet

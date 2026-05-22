@@ -1,10 +1,9 @@
 {
-    "debug": false,
+    "debug": true,
     "opengl": true,
     "maxFPS": 60,
-    "volume": 20,
+    "volume": 50,
     "retroMode": true,
-    "mapDirectory": "savefiles/map.json",
-    "saveFileDirectory": "savefiles/local.json",
-    "logDirectory": "logs/"
+    "savefiles": "savefiles/local.json",
+    "logs": "logs/"
 }

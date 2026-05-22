@@ -1,24 +1,37 @@
 import pygame
+import typing
 
-from scripts import globals
-
+from scripts import common
 from scripts.sprites.basesprite import *
+from scripts.sprites.basesprite import RGroup, RSprite
 
-class Text(RSprite):
+
+class GUISprite(RSprite):
+    """
+    Base class for GUI sprites.
+    """
+
+_GUISprite = typing.TypeVar("_GUISprite", bound=GUISprite)
+
+
+GUIGroup = RGroup[_GUISprite]
+
+
+class Text(GUISprite):
     """
     Sprite class for displaying text on screen.
     """
 
     def set_text(
         self,
-        text: str = "lorem ipsum dolor sit amet",
-        font: pygame.Font = globals.bigFont,
-        color: pygame.typing.ColorLike = globals.BLACK,
+        text: str,
+        font: pygame.Font | None = None,
+        color: pygame.typing.ColorLike = common.BLACK,
         antialiased: bool = True,
         bg_color: pygame.typing.ColorLike | None = None,
         wrap_length: int = 0,
         # linesize: int = 18,
-        align: int = pygame.FONT_CENTER
+        align: int = pygame.FONT_LEFT
     ):
         if font != None:
             self.font = font
@@ -32,9 +45,46 @@ class Text(RSprite):
         # self.font.set_linesize(linesize)
         self.font.align = align
 
-        self.image = self.font.render(self.text, antialiased, self.color, self.bg_color, self.wrap_length)
-        self.image_rect = self.image.get_rect()
-        self.rect = self.image.get_frect()
+        self.image = self.font.render(self.text, self.antialiased, self.color, self.bg_color, self.wrap_length).convert_alpha()
+
+        self.callibrate()
+
+
+class Button(Text):
+    def set_button(
+        self,
+        command: typing.Callable[[], None] = lambda: print("click!")
+    ):
+        self.command = command
+        self.is_hovered: bool = False
+
+        self.callibrate()
+
+    def click(self):
+        self.command()
 
     def animate(self):
-        pass
+        if self.is_hovered:
+            self.image.fill(common.BLUE, special_flags=pygame.BLEND_ADD)
+        else:
+            if self.image.get_buffer() != self.old_image.get_buffer():
+                self.image = self.old_image.copy()
+
+
+class ButtonGroup(GUIGroup[Button]):
+    def __init__(self, *sprites: Button | RGroup[Button]):
+        super().__init__(*sprites)
+
+        self.cursor: int = 0
+
+    def move_cursor(self, val: int):
+        self.cursor = val % len(self.sprites())
+
+    def move_cursor_ip(self, val: int):
+        self.move_cursor(self.cursor + val)
+
+    def get_button_at_cursor(self) -> Button:
+        return self.sprites()[self.cursor]
+
+    def click_button_at_cursor(self):
+        self.get_button_at_cursor().click()

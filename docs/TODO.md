@@ -3,7 +3,7 @@
 ## code
 
 - [ ] use requests module to check latest game version on gh repo via githack _<https://raw.githack.com/richkdev/Cleanup-Catastrophe/main/VERSION>_
-- [ ] custom sizes for the spritesheet splitter, but same hitbox rect & diff image rects, with subsurface frame pos & size stored in json
+- [x] custom sizes for the spritesheet splitter, but same hitbox rect & diff image rects, with subsurface frame pos & size stored in json
 - [ ] seperate state manager from discord presence manager, for cleaner codebase
 - [ ] make dialogue engine, with dialogue stored in json
 - [ ] turn lobby state data into json
@@ -15,7 +15,9 @@
 - [ ] detect cmdline args when run thru cmd line, using `argparse` (e.g. `--debug` to log everything into the file), when using pygbag: _<https://discord.com/channels/772505616680878080/971360806287577098/1292327416957636671>_
 - [x] turn discord presence into async
 - [x] make loading screen and async loading functions (loads state, assets, etc) **(WIP)**
-- [ ] use uv build system
+- [ ] use gh ci cd for building the game
+- [x] make `BGMManager` (for background music, use pygame.mixer.music) and `SFXManager` (for realtime sound playback, use pygame.mixer.Sound) since they handle songs n stuff differently and use less memory [reference](https://discord.com/channels/772505616680878080/971360806287577098/1488538747094958261)
+- [x] make `AssetManager` for handling loading of all assets (sounds, surfaces, etc.)
 
 ## art
 
