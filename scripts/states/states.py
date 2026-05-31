@@ -4,8 +4,7 @@ import numpy
 
 from pygame.locals import *  # type: ignore
 
-from scripts import common, utils, filehandling
-
+from scripts import common, utils, filehandling, color
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 
@@ -27,7 +26,7 @@ class Splash(State):
         self.introText = Text()
         self.introText.set_text(
             text=f"press [ENTER] to begin",
-            color=common.WHITE,
+            color=color.WHITE,
             font=common.SMALL_FONT,
             antialiased=False,
             align=pygame.FONT_CENTER
@@ -89,7 +88,7 @@ class Catastrophe(State):
             interactable=False,
             collidable=True
         )
-        self.temp_ground.image = multiply_image(
+        self.temp_ground.image = utils.multiply_image(
             input_image=self.temp_ground.image,
             tile_size=(1, 1),
             target_size=(common.SCREEN_WIDTH, 1)
@@ -106,7 +105,7 @@ class Catastrophe(State):
 
         self.rod = Rod(pos=(-100, -100))
         self.textDisplay = Text(pos=(10, 10))
-        self.textDisplay.set_text(text="", font=common.BIG_FONT, color=common.WHITE)
+        self.textDisplay.set_text(text="", font=common.BIG_FONT, color=color.WHITE)
 
         self.trashSprites: RGroup[Trash] = RGroup()
 
@@ -155,12 +154,12 @@ class Catastrophe(State):
 
     def logic(self):
         if self.score <= 0:
-            self.textDisplay.color = common.DARKRED
+            self.textDisplay.color = color.DARKRED
             self.textDisplay.shake((1, 0))
         else:
-            self.textDisplay.color = common.BLACK
+            self.textDisplay.color = color.BLACK
 
-        self.textDisplay.set_text(f"FPS: {round(common.clock.get_fps())}\nSCORE: {self.score}\nDURABILITY: {self.rod.durability}")
+        self.textDisplay.set_text(f"FPS: {round(common.CLOCK.get_fps())}\nSCORE: {self.score}\nDURABILITY: {self.rod.durability}")
 
         if not any(isinstance(t, Trash) and (not t.is_explosive) for t in self.trashSprites) or self.score < 0:
             for i in self.trashSprites.sprites():
@@ -215,7 +214,7 @@ class Catastrophe(State):
                     self.rod.is_fishing = False
                     common.SOUND_MANAGER.sfx.play("noTrash")
                 else:
-                    pygame.draw.line(self.draw_screen, common.DARKRED,
+                    pygame.draw.line(self.draw_screen, color.DARKRED,
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
@@ -259,16 +258,16 @@ class Lobby(State):
             interactable=False,
             collidable=True
         )
-        self.temp_ground.image = multiply_image(
+        self.temp_ground.image = utils.multiply_image(
             input_image=self.temp_ground.image,
             tile_size=(3, 20),
             target_size=(common.SCREEN_WIDTH, 50)
         )
 
         noise = numpy.random.uniform(0.8, 1.0, (25, 25))
-        img = noise[..., None] * [*common.SAND[:3]]
+        img = noise[..., None] * [*color.SAND[:3]]
 
-        self.temp_ground.image = mode7(
+        self.temp_ground.image = utils.mode7(
             pygame.surfarray.make_surface(
                 img.swapaxes(0, 1)
             ),
@@ -285,7 +284,7 @@ class Lobby(State):
             interactable=False,
             collidable=True
         )
-        self.temp_platform.image = multiply_image(
+        self.temp_platform.image = utils.multiply_image(
             input_image=self.temp_platform.image,
             tile_size=(3, 20),
             target_size=(50, 50)
@@ -395,7 +394,7 @@ class Scoreboard(State):
         self.text = Text()
         self.text.set_text(
             text=text,
-            color=common.WHITE,
+            color=color.WHITE,
             font=common.SMALL_FONT
         )
 
@@ -441,7 +440,7 @@ class Shop(State):
         text_sprite = Text()
         text_sprite.set_text(
             text=text,
-            color=common.WHITE,
+            color=color.WHITE,
             font=common.SMALL_FONT
         )
 
@@ -452,7 +451,7 @@ class Shop(State):
                 b.set_text(
                     text=f"btn",
                     font=common.SMALL_FONT,
-                    bg_color=common.YELLOW,
+                    bg_color=color.YELLOW,
                 )
                 b.set_button()
                 self.buttons.add(b)

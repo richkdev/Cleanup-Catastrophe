@@ -158,7 +158,7 @@ class State:
         self.event = pygame.event.get()
         self.key = pygame.key.get_pressed()
         self.key_jp = pygame.key.get_just_pressed()
-        self.dt = max(common.MIN_DT, min(common.clock.tick(common.FPS if not common.IS_WEB else 0)/1000, common.MAX_DT))
+        self.dt = max(common.MIN_DT, min(common.CLOCK.tick(common.FPS if not common.IS_WEB else 0)/1000, common.MAX_DT))
 
     def logic(self) -> None:
         ...

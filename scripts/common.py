@@ -46,17 +46,7 @@ saveFiles_path = newPath(SETTINGS['savefiles'])
 startGame_time = str(datetime.now().replace(microsecond=0)).replace(":", "-")
 logDirectory = newPath(SETTINGS['logs'])
 
-clock = pygame.time.Clock()
-
-DARKRED = pygame.Color(100, 0, 0, 255)
-RED = pygame.Color(255, 0, 0, 255)
-YELLOW = pygame.Color(255, 255, 0, 255)
-SAND = pygame.Color(255, 235, 100)
-GREEN = pygame.Color(0, 255, 0, 255)
-BLUE = pygame.Color(0, 0, 255, 255)
-WHITE = pygame.Color(255, 255, 255, 255)
-BLACK = pygame.Color(0, 0, 0, 255)
-TRANSPARENT = pygame.Color(0, 0, 0, 0)
+CLOCK = pygame.time.Clock()
 
 if not pygame.font.get_init():
     pygame.font.init()

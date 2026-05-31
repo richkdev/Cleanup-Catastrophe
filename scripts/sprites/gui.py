@@ -1,7 +1,7 @@
 import pygame
 import typing
 
-from scripts import common
+from scripts import color
 from scripts.sprites.basesprite import *
 from scripts.sprites.basesprite import RGroup, RSprite
 
@@ -26,7 +26,7 @@ class Text(GUISprite):
         self,
         text: str,
         font: pygame.Font | None = None,
-        color: pygame.typing.ColorLike = common.BLACK,
+        color: pygame.typing.ColorLike = color.BLACK,
         antialiased: bool = True,
         bg_color: pygame.typing.ColorLike | None = None,
         wrap_length: int = 0,
@@ -65,7 +65,7 @@ class Button(Text):
 
     def animate(self):
         if self.is_hovered:
-            self.image.fill(common.BLUE, special_flags=pygame.BLEND_ADD)
+            self.image.fill(color.BLUE, special_flags=pygame.BLEND_ADD)
         else:
             if self.image.get_buffer() != self.old_image.get_buffer():
                 self.image = self.old_image.copy()

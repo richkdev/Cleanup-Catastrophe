@@ -1,7 +1,9 @@
 import pygame
 import asyncio
+import os
+import platform
+
 from scripts import common, utils
-from scripts.settings import *
 from scripts.sprites.basesprite import RGroup
 from scripts.states.states import *
 from scripts.managers.sound import SoundManager
@@ -30,6 +32,10 @@ class Game:
 
         if common.IS_PYGBAG:
             pygame.mixer.SoundPatch()  # type: ignore -> for web
+            platform.window.canvas.style.imageRendering = "pixelated" # type: ignore -> no more blurriness yay
+
+        if os.getenv('XDG_SESSION_TYPE') == 'wayland':
+            os.environ['SDL_VIDEODRIVER'] = 'wayland'
 
         try:
             self.loop = asyncio.get_event_loop()
@@ -57,7 +63,7 @@ class Game:
         common.FPS = max(common.FPS, *pygame.display.get_desktop_refresh_rates())
 
         if common.FLAG_DEBUG:
-            print(get_game_data(), pygame.display.Info(), common.INITIAL_WINDOW_SIZE, common.SCREEN_SIZE)
+            print(utils.get_game_data(), pygame.display.Info(), common.INITIAL_WINDOW_SIZE, common.SCREEN_SIZE)
 
         pygame.display.set_caption(f"Cleanup Catastrophe! ({common.VERSION})")
         pygame.display.set_icon(common.TEMPLATE_IMAGE_SURF)
@@ -106,8 +112,8 @@ class Game:
         print(f"Switched to {type(self.current_state).__name__} state, list of states accessed: {self.states_accessed}")
 
         # temporarily disabled until i figure out how to make it run alongside the main game and non-blocking
-        for state in self.current_state.next_states:
-            await self.states[state].prepare()
+        # for state in self.current_state.next_states:
+        #     await self.states[state].prepare()
 
     async def game(self) -> None:
         await self.switch_state(StateID.SPLASH)
@@ -164,5 +170,5 @@ class Game:
         else:
             pygame.display.update()
 
-        self.screen.fill(common.BLACK)
-        self.draw_screen.fill(common.TRANSPARENT)
+        self.screen.fill(color.BLACK)
+        self.draw_screen.fill(color.TRANSPARENT)

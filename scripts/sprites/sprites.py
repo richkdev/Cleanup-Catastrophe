@@ -1,10 +1,10 @@
 import pygame
+import numpy
 import random
 
 from scripts import common, utils
 from scripts.sprites.basesprite import *
 from scripts.sprites.sheet import *
-from scripts.sprites.utils import *
 from scripts.sprites.gui import *
 
 
@@ -216,7 +216,7 @@ class Background(RSprite):
     ):
         super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
 
-        self.old_image = self.image = multiply_image(self.image, (2, 300), (common.SCREEN_WIDTH*2, 300))
+        self.image = utils.multiply_image(self.image, (2, 300), (common.SCREEN_WIDTH, 300))
 
         self.rect = self.image.get_frect()
         self.image_rect = self.image.get_rect()
