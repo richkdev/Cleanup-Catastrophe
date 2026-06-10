@@ -1,5 +1,4 @@
 import pygame
-import typing
 
 from random import randint
 
@@ -31,21 +30,20 @@ class BaseSprite(pygame.sprite.DirtySprite):
         self.sheet: Sheet
         self.action: str = "idle"
 
-        self.image_rect: pygame.Rect
-        self.image_size: pygame.typing.IntPoint
+        self.rect: pygame.FRect
+        self.source_rect: pygame.Rect
 
         self.size: pygame.typing.IntPoint = (1, 1)
-        self.rect: pygame.FRect
 
-        self.pos: pygame.Vector2 = pygame.Vector2(0, 0)
-        self.old_pos: pygame.Vector2
+        self.pos: pygame.Vector2 = pygame.Vector2()
+        self.old_pos: pygame.Vector2 = pygame.Vector2()
 
-        self.velocity = pygame.Vector2()
-        self.acceleration = pygame.Vector2()
-        self.max_velocity = pygame.Vector2()
+        self.velocity: pygame.Vector2 = pygame.Vector2()
+        self.acceleration: pygame.Vector2 = pygame.Vector2()
+        self.max_velocity: pygame.Vector2 = pygame.Vector2()
 
     def update(self, dt: float):
-        pygame.sprite.DirtySprite.update(self)
+        super().update(self)
 
         self.dt = dt
 
@@ -72,12 +70,16 @@ class BaseSprite(pygame.sprite.DirtySprite):
         self.velocity += self.acceleration
 
     def move_to(self, pos: pygame.typing.Point):
-        self.pos.x, self.pos.y = self.rect.x, self.rect.y = pos[0], pos[1]
+        self.pos.x, self.pos.y = pos[0], pos[1]
+        self.rect.x, self.rect.y = self.pos
+
+        print(f"Moved {type(self).__name__} to {pos}")
 
     def move_ip(self, pos: pygame.typing.Point):
-        self.rect.x += pos[0]
-        self.rect.y += pos[1]
-        self.pos.x, self.pos.y = self.rect.x, self.rect.y
+        self.pos += pos
+        self.rect.x, self.rect.y = self.pos
+
+        print(f"Moved {type(self).__name__} in place by {pos}")
 
     def shake(self, seed: pygame.typing.IntPoint):
         self.rect.x, self.rect.y = self.old_pos.x + randint(0, seed[0]), self.old_pos.y + randint(0, seed[1])
@@ -103,75 +105,80 @@ class RSprite(BaseSprite):
         self.sheetEnabled = sheetEnabled
         self.sheetStatic = sheetStatic
         self.pos = pygame.Vector2(pos)
+        self.old_pos = self.pos.copy()
+        self.size = size
         self.image_path = utils.newPath(str(image_path))
 
         match self.sheetEnabled:
             case True:
                 self.sheet = Sheet()
                 self.action = "idle"
-                self.sheet.add_animation(self.action, cut_sheet_fixed_size(self.image_path, size))
+                self.sheet.add_animation(self.action, cut_sheet_fixed_size(self.image_path, self.size))
                 self.sheet.set_animation(self.action)
                 self.image = self.sheet.states[self.action][0]
             case False:
-                temp = common.ASSET_DICT.get(self.image_path, None)
-                if temp == None:
-                    # eager loading
-                    self.image = pygame.image.load(self.image_path).convert_alpha()
-                else:
-                    self.image = temp
+                self.set_image(self.image_path)
 
         self.old_image = self.image.copy()
 
-        self.image_rect: pygame.Rect = self.image.get_rect()
-        self.image_size = self.image.get_size()
+        self.rect: pygame.FRect = pygame.FRect(self.pos, self.size)
 
-        self.rect: pygame.FRect = pygame.FRect(pos, size) # TODO: set frect size to a custom hitbox size later, needs major refactor so that each child takes a pos param with pygame.typing.Point type
+        self.source_rect: pygame.Rect = self.image.get_rect()
 
         # self.mask = pygame.mask.from_surface(self.image) # maybe??
 
-        self.old_pos = self.pos.copy()
-
         self.callibrate()
+        self.move_to(self.pos)
 
-        print(f"Loaded {type(self).__name__} sprite, at ({pos})")
-
-    def add(self, *groups: pygame.sprite.Group["RSprite"]) -> None:
-        return super().add(*groups)
+        print(f"Loaded {type(self).__name__} sprite, at {self.pos}, with size {self.size}")
 
     def callibrate(self):
-        """callibrate the sprite for every time image data is modified"""
+        """
+        callibrate the sprite for every time the `image` is modified.
+        changes `old_image` &`source_rect`.
+        does not change `pos`.
+        """
 
         self.old_image = self.image.copy()
-        self.rect = self.old_image.get_frect()
-        self.pos = self.rect.x, self.rect.y = self.old_pos
-        self.image_rect = self.old_image.get_rect()
-        self.image_size = self.image_rect.size
+        self.source_rect = self.old_image.get_rect()
 
-_RSprite = typing.TypeVar("_RSprite", bound=RSprite) # solution: https://sorokin.engineer/posts/en/python_type_aliasing.html
+    def set_image(self, image_path: pygame.typing._PathLike = common.TEMPLATE_IMAGE_PATH) -> None:
+        """
+        set the image to a static surf.
+        changes `image_path`, `image`.
+        does not change `old_image`.
+        does not callibrate the sprite.
+        """
+
+        self.image_path = utils.newPath(str(image_path))
+        self.image = common.ASSET_DICT.get(self.image_path, pygame.image.load(self.image_path).convert_alpha())
 
 
-class RGroup(pygame.sprite.Group[_RSprite]):
+class RGroup[_RSprite: RSprite](pygame.sprite.Group[_RSprite]):
     """
     Custom sprite group with added utilities.
     """
 
-    def __init__(self, *sprites: "_RSprite | RGroup[_RSprite]") -> None:
-        pygame.sprite.Group.__init__(self, *sprites)
+    def __init__(self, *sprites: "_RSprite | RGroup[_RSprite]", pos: pygame.typing.Point | None = None):
+        super().__init__(*sprites)
 
-    def add(
-        self,
-        *sprites: "_RSprite | RGroup",
-        **kwargs: typing.Any
-    ) -> None:
-        return pygame.sprite.Group.add(self, *sprites, **kwargs)
+        self.pos = pygame.Vector2(pos if pos != None else (0, 0))
 
-    def update(self, dt: float) -> None:
+        if pos != None:
+            self.move_to(self.pos)
+
+        print(f"Loaded {type(self).__name__} sprite group, at {self.pos}, with {len(self.sprites())} starting sprites")
+
+    def update(self, dt: float):
         for sprite in self.sprites():
             sprite.update(dt)
 
-    def sprites(self) -> list[_RSprite]:
-        return pygame.sprite.Group.sprites(self)
-
-    def move_ip(self, pos: pygame.typing.Point) -> None:
+    def move_to(self, pos: pygame.typing.Point):
+        self.pos.x, self.pos.y = pos
         for sprite in self.sprites():
-            sprite.move_ip(pos)
+            sprite.move_to(pos)
+
+    def move_ip(self, pos_ip: pygame.typing.Point):
+        self.pos += pos_ip
+        for sprite in self.sprites():
+            sprite.move_ip(pos_ip)

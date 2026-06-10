@@ -1,7 +1,7 @@
 import pygame
 import typing
 
-from scripts import color
+from scripts import common, color
 from scripts.sprites.basesprite import *
 from scripts.sprites.basesprite import RGroup, RSprite
 
@@ -11,31 +11,30 @@ class GUISprite(RSprite):
     Base class for GUI sprites.
     """
 
-_GUISprite = typing.TypeVar("_GUISprite", bound=GUISprite)
 
-
-GUIGroup = RGroup[_GUISprite]
+class GUIGroup[_GUISprite: GUISprite](RGroup[_GUISprite]):
+    """
+    Base class for GUI sprite groups.
+    """
 
 
 class Text(GUISprite):
     """
-    Sprite class for displaying text on screen.
+    Sprite class for displaying text.
     """
 
     def set_text(
         self,
-        text: str,
-        font: pygame.Font | None = None,
+        text: str = "lipsum",
+        font: pygame.Font = common.SMALL_FONT,
         color: pygame.typing.ColorLike = color.BLACK,
-        antialiased: bool = True,
         bg_color: pygame.typing.ColorLike | None = None,
+        antialiased: bool = False,
         wrap_length: int = 0,
         # linesize: int = 18,
         align: int = pygame.FONT_LEFT
     ):
-        if font != None:
-            self.font = font
-
+        self.font = font
         self.text = text
         self.antialiased = antialiased
         self.color = color
@@ -48,17 +47,20 @@ class Text(GUISprite):
         self.image = self.font.render(self.text, self.antialiased, self.color, self.bg_color, self.wrap_length).convert_alpha()
 
         self.callibrate()
+        self.size = self.image.size
 
 
 class Button(Text):
+    """
+    Sprite class for displaying a clickable button.
+    """
+
     def set_button(
         self,
         command: typing.Callable[[], None] = lambda: print("click!")
     ):
         self.command = command
         self.is_hovered: bool = False
-
-        self.callibrate()
 
     def click(self):
         self.command()
@@ -67,13 +69,17 @@ class Button(Text):
         if self.is_hovered:
             self.image.fill(color.BLUE, special_flags=pygame.BLEND_ADD)
         else:
-            if self.image.get_buffer() != self.old_image.get_buffer():
+            if self.image._pixels_address != self.old_image._pixels_address:
                 self.image = self.old_image.copy()
 
 
 class ButtonGroup(GUIGroup[Button]):
-    def __init__(self, *sprites: Button | RGroup[Button]):
-        super().__init__(*sprites)
+    """
+    Sprite group for `Button` sprites.
+    """
+
+    def __init__(self, *sprites: Button | RGroup[Button], pos: pygame.typing.Point | None = None):
+        super().__init__(*sprites, pos=pos)
 
         self.cursor: int = 0
 
@@ -88,3 +94,66 @@ class ButtonGroup(GUIGroup[Button]):
 
     def click_button_at_cursor(self):
         self.get_button_at_cursor().click()
+
+
+class ProgressBar(GUISprite):
+    """
+    Sprite class for displaying a progress bar.
+    NOTE: progress bar size is set in init
+    """
+
+    def set_progress(
+        self,
+        progress: float = 50,
+        max_progress: float = 100,
+        color: pygame.typing.ColorLike = color.GREEN,
+        bg_color: pygame.typing.ColorLike = color.WHITE
+    ):
+        self.image = pygame.Surface(self.size)
+
+        self.callibrate()
+
+        self.progress = progress
+        self.max_progress = max_progress
+        self.color = color
+        self.bg_color = bg_color
+
+        self.image.fill(bg_color)
+        self.image.fill(
+            self.color,
+            (0, 0, (self.progress / self.max_progress) * self.size[0], self.size[1]),
+        )
+
+
+class Statistic(GUIGroup[Text | GUISprite]):
+    """
+    Sprite group for displaying text with an icon next to it, consists of a `GUISprite` & `Text`.
+    inspired by `pygame.sprite.GroupSingle`.
+    """
+
+    def __init__(self, *sprites, pos: pygame.typing.Point | None = None):
+        self.icon_sprite = GUISprite()
+        self.text_sprite = Text()
+        self.text_sprite.set_text()
+
+        super().__init__(self.icon_sprite, self.text_sprite, pos=pos)
+
+    def set_icon(
+        self,
+        image_path: pygame.typing._PathLike = common.TEMPLATE_IMAGE_PATH,
+        pos_ip: pygame.typing.Point = (0, 0)
+    ):
+        if self.icon_sprite.image_path != image_path:
+            self.icon_sprite.set_image(image_path)
+        if pos_ip != (0, 0):
+            self.icon_sprite.move_ip(pos_ip)
+
+    def set_text(
+        self,
+        text: str = "lipsum",
+        pos_ip: pygame.typing.Point = (0, 0)
+    ):
+        if self.text_sprite.text != text:
+            self.text_sprite.set_text(text)
+        if pos_ip != (0, 0):
+            self.text_sprite.move_ip(pos_ip)

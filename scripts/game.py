@@ -97,7 +97,7 @@ class Game:
         else:
             asyncio.run(self.game())
 
-    async def switch_state(self, state_id: StateID) -> None:
+    async def switch_state(self, state_id: StateID, shared_state_data: dict[str, typing.Any]) -> None:
         if len(self.states_accessed) != 0:
             self.current_state.unload()
 
@@ -107,7 +107,7 @@ class Game:
 
         self.states_accessed.append(state_id)
 
-        await self.current_state.load(self.screen, self.draw_screen, self.sprites)
+        await self.current_state.load(self.screen, self.draw_screen, self.sprites, shared_state_data)
 
         print(f"Switched to {type(self.current_state).__name__} state, list of states accessed: {self.states_accessed}")
 
@@ -116,7 +116,7 @@ class Game:
         #     await self.states[state].prepare()
 
     async def game(self) -> None:
-        await self.switch_state(StateID.SPLASH)
+        await self.switch_state(StateID.SPLASH, {})
 
         while common.IS_RUNNING:
             try:
@@ -124,7 +124,7 @@ class Game:
                 self.current_state.update()
                 self.render()
             except StateSwitch as e:
-                await self.switch_state(e.state_id)
+                await self.switch_state(e.state_id, e.shared_state_data)
 
             await asyncio.sleep(0 if not common.IS_PYODIDE else 1/common.FPS)
 

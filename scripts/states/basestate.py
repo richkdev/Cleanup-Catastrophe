@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *  # type: ignore
 
 import enum
+import typing
 import pathlib
 
 from scripts import common, utils
@@ -21,9 +22,10 @@ class StateID(enum.IntEnum):
 
 
 class StateSwitch(BaseException):
-    def __init__(self, state_id: StateID, *args) -> None:
-        super().__init__(*args)
+    def __init__(self, state_id: StateID, shared_state_data: dict[str, typing.Any] = {}) -> None:
+        super().__init__()
         self.state_id = state_id
+        self.shared_state_data = shared_state_data
 
 
 class State:
@@ -51,8 +53,7 @@ class State:
 
         self.assets: list[pathlib.Path] = []
 
-        # self.sound_manager: SoundManager
-
+        self.shared_state_data: dict[str, typing.Any] = {}
         self.next_states: list[StateID] = []
 
         self.is_prepared: bool = False
@@ -113,10 +114,13 @@ class State:
         self,
         screen: pygame.Surface,
         draw_screen: pygame.Surface,
-        sprites: RGroup
+        sprites: RGroup,
+        shared_state_data: dict[str, typing.Any]
     ) -> None:
         self.screen = screen
         self.draw_screen = draw_screen
+
+        self.shared_state_data.update(shared_state_data)
 
         for name, path in self.sounds_raw.items():
             if "music" in path:

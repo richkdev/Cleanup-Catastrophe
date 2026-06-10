@@ -13,27 +13,7 @@ class WorldObject(RSprite):
     Sprite class for interactable and/or collidable objects
     """
 
-    def __init__(
-        self,
-        sheetEnabled: bool = False,
-        sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = common.TEMPLATE_IMAGE_PATH,
-        # image_src: pygame.Surface = globals.TEMPLATE_IMAGE_SURF,
-        size: pygame.typing.IntPoint = (1, 1),
-        pos: pygame.typing.Point = (0, 0), # TODO: make this do something later!
-        *groups: RGroup
-    ):
-        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
-
-        self.image_rect.size = size
-        self.rect = pygame.FRect(*self.image_rect.topleft, *size)
-        self.rect.x, self.rect.y = pos
-
-        self.desc: str = "lipsum"
-        self.interactable: bool = False
-        self.collidable: bool
-
-    def set_worldobj(self, desc: str, interactable: bool, collidable: bool):
+    def set_worldobj(self, desc: str = "lipsum", interactable: bool = False, collidable: bool = False):
         self.interactable = interactable
         self.collidable = collidable
         self.desc = desc
@@ -62,13 +42,13 @@ class Player(RSprite):
                                  (40, 42)))
 
         self.jump_strength = common.GRAVITY*30
-        self.acceleration.x, self.acceleration.y = 5, common.GRAVITY
+        self.acceleration.x, self.acceleration.y = 2.5, common.GRAVITY
         self.max_velocity.x = 100
 
         self.is_colliding: bool = False
         self.grounded: bool = False
 
-    def set_collidables(self, collideables: RGroup):
+    def set_collidables(self, collideables: RGroup[WorldObject]):
         self.collideables = collideables
 
     def animate(self):
@@ -158,9 +138,7 @@ class Trash(RSprite):
     ):
         super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
 
-        self.trash_id: pygame.typing.IntPoint
-        self.trash_type: int
-        self.is_explosive: bool
+        self.set_trash()
 
     def set_trash(self, trash_type: int = 1, trash_id: pygame.typing.IntPoint = (0, 0), offset: int = 5) -> None:
         self.trash_id = trash_id
@@ -193,10 +171,8 @@ class MenuLogo(RSprite):
         super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
 
         self.image = pygame.transform.smoothscale_by(self.image, 0.3)
-        self.image_rect = self.image.get_rect()
-        self.rect = self.image.get_frect()
 
-        self.rect.x, self.rect.y = self.pos
+        self.callibrate()
 
     def move(self):
         super().move()
@@ -210,13 +186,12 @@ class Background(RSprite):
         sheetEnabled: bool = False,
         sheetStatic: bool = False,
         image_path: pygame.typing._PathLike = utils.newPath("assets/img/bg/sky.png"),
-        size: pygame.typing.IntPoint = (int(common.SCREEN_WIDTH*1.5), 300),
+        size: pygame.typing.IntPoint = (common.SCREEN_WIDTH, common.SCREEN_HEIGHT),
         pos: pygame.typing.Point = (0, 0),
         *groups: RGroup
     ):
         super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
 
-        self.image = utils.multiply_image(self.image, (2, 300), (common.SCREEN_WIDTH, 300))
+        self.image = utils.multiply_image(self.old_image, (2, 224), self.size)
 
-        self.rect = self.image.get_frect()
-        self.image_rect = self.image.get_rect()
+        self.callibrate()

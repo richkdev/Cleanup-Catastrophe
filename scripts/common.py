@@ -25,8 +25,8 @@ FINAL_SCREEN_SIZE: tuple[int, int] = SCREEN_SIZE
 INITIAL_WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
 WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
 
-xBorder: int = int(SCREEN_WIDTH ** 0.05)
-yBorder: int = int(SCREEN_HEIGHT ** 0.05)
+X_BORDER = 16
+Y_BORDER = 16
 
 FLAG_OPENGL: bool = SETTINGS['opengl'] and bool(pygame.OPENGL) and not IS_WEB
 FLAG_DEBUG: bool = SETTINGS['debug']
@@ -51,8 +51,12 @@ CLOCK = pygame.time.Clock()
 if not pygame.font.get_init():
     pygame.font.init()
 
-BIG_FONT = pygame.Font(newPath("assets/fonts/genesis.ttf"), 16)
-SMALL_FONT = pygame.Font(newPath("assets/fonts/UnifontExMono.ttf"), 16)
+
+BIG_FONT_PATH = newPath("assets/fonts/genesis.ttf")
+SMALL_FONT_PATH = newPath("assets/fonts/UnifontExMono.ttf")
+
+BIG_FONT = pygame.Font(BIG_FONT_PATH, 16)
+SMALL_FONT = pygame.Font(SMALL_FONT_PATH, 16)
 
 GRAVITY: float = 2
 GROUND_HEIGHT: float = SCREEN_HEIGHT/1.5
@@ -66,8 +70,8 @@ ASSET_MANAGER: AssetManager
 
 ASSET_DICT: dict[str | pathlib.Path, Asset] = {
     TEMPLATE_IMAGE_PATH: TEMPLATE_IMAGE_SURF,
-    BIG_FONT.name: BIG_FONT,
-    SMALL_FONT.name: SMALL_FONT,
+    BIG_FONT_PATH: BIG_FONT,
+    SMALL_FONT_PATH: SMALL_FONT,
 }
 
 from scripts.managers.sound import SoundManager

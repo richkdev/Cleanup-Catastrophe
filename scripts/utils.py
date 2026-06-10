@@ -5,6 +5,7 @@ import sys
 import os
 import sys
 import platform
+import functools
 
 from scripts import common
 
@@ -30,6 +31,7 @@ if sys.version_info < (3, 12):
     raise DeprecationWarning("This game requires Python versions 3.12+ to function.")
 
 
+@functools.lru_cache
 def get_game_data() -> str:
     return f"""
 ===================== GAME DATA =====================
@@ -62,6 +64,7 @@ Game info
 """
 
 
+@functools.lru_cache
 def newPath(relPath: str) -> pathlib.Path:
     relPath = relPath.replace(("/" if len(relPath.split("/"))>1 else "\\"), os.sep)
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -71,6 +74,7 @@ def newPath(relPath: str) -> pathlib.Path:
     return pathlib.Path(os.path.join(basePath, relPath))
 
 
+@functools.lru_cache
 def aspectScale(image_x: int, image_y: int, target_x: int, target_y: int) -> tuple[int, int]:
     """
     for zengl scaling.
@@ -106,6 +110,7 @@ def aspectScale(image_x: int, image_y: int, target_x: int, target_y: int) -> tup
     return scaled_x, scaled_y
 
 
+@functools.lru_cache
 def multiply_image(
     input_image: pygame.Surface,
     tile_size: pygame.typing.IntPoint,
@@ -124,10 +129,11 @@ def multiply_image(
     return output_image
 
 
+@functools.lru_cache
 def mode7(
     image: pygame.Surface,
     target_size: pygame.typing.IntPoint,
-    cam: pygame.Vector3 = pygame.Vector3(0, 0, 10),
+    cam: pygame.typing.Point = (0, 0, 10),
     angle: int = 0,
     fov: int = 250,
     scale: int = 10
@@ -139,22 +145,26 @@ def mode7(
     """
 
     new_image = pygame.Surface(target_size)
+    new_image_arr = pygame.surfarray.pixels3d(new_image)
 
     for y in range(target_size[1]):
-        pz = y + cam.z
+        pz = y + cam[2]
         sy = fov / pz
 
         for x in range(target_size[0]):
             px = x - image.size[0] / 2
             sx = px / pz
 
-            rotated_sx = sx * numpy.cos(angle) - sy * numpy.sin(angle)
-            rotated_sy = sx * numpy.sin(angle) + sy * numpy.cos(angle)
+            sin = numpy.sin(angle)
+            cos = numpy.cos(angle)
 
-            texture_x = (rotated_sx * scale + cam.x) % image.size[0]
-            texture_y = (rotated_sy * scale + cam.y) % image.size[1]
+            rotated_sx = sx * cos - sy * sin
+            rotated_sy = sx * sin + sy * cos
+
+            texture_x = (rotated_sx * scale + cam[0]) % image.size[0]
+            texture_y = (rotated_sy * scale + cam[1]) % image.size[1]
 
             color = image.get_at((int(texture_x), int(texture_y)))
-            new_image.set_at((x, y), color)
+            new_image_arr[x][y] = color[:3]
 
     return new_image
