@@ -26,7 +26,7 @@ class LazyAsset:
     IMAGE_EXTENSIONS = ('bmp', 'gif', 'jpeg', 'jpg', 'lbm', 'png', 'pcx', 'pnm', 'pbm', 'pgm', 'ppm', 'qoi', 'tga', 'tiff', 'webp', 'xpm', 'xcf')
     SOUND_EXTENSIONS = ('wav', 'mp3', 'ogg', 'flac', 'opus', 'wv', 'mod', 'midi')
     FONT_EXTENSIONS = ('ttf')
-    JSON_EXTENSIONS = ('json', 'txt')
+    JSON_EXTENSIONS = ('json')
 
     def __init__(self, loop: asyncio.AbstractEventLoop, path: pathlib.Path) -> None:
         self.loop = loop

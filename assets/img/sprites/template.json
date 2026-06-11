@@ -1,0 +1,17 @@
+[
+    {
+        "action": "idle",
+        "file": "template.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 25,
+                    "h": 25
+                }
+            }
+        ]
+    }
+]

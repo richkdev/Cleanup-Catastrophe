@@ -78,7 +78,7 @@ class Catastrophe(State):
         self.background = Background()
 
         self.temp_ground = WorldObject(
-            image_path=utils.newPath(f"assets/img/bg/sand.png"),
+            static_image_path=utils.newPath(f"assets/img/bg/sand.png"),
             pos=(0, common.WATER_HEIGHT),
             size=(common.SCREEN_WIDTH, 1),
         )
@@ -218,7 +218,7 @@ class Catastrophe(State):
                                      (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
 
         if self.key[K_ESCAPE]:
-            # self.rod.kill()
+            self.rod.kill()
             raise StateSwitch(StateID.LOBBY)
 
 
@@ -255,7 +255,7 @@ class Lobby(State):
         self.stat_score.set_text(str(self.shared_state_data.get('score', 0)), (20, 0))
 
         self.temp_ground = WorldObject(
-            image_path=utils.newPath(f"assets/img/bg/sand.png"),
+            static_image_path=utils.newPath(f"assets/img/bg/sand.png"),
             size=(common.SCREEN_WIDTH, int(common.SCREEN_HEIGHT+1-common.GROUND_HEIGHT)),
             pos=(0, common.GROUND_HEIGHT)
         )
@@ -265,14 +265,14 @@ class Lobby(State):
             collidable=True
         )
         self.temp_ground.image = utils.multiply_image(
-            ASSET_DICT.get(utils.newPath("assets/img/bg/sand.png")),
+            common.ASSET_DICT.get(utils.newPath("assets/img/bg/sand.png")),
             self.temp_ground.image.size,
             self.temp_ground.size
         )
         self.temp_ground.callibrate()
 
         self.temp_platform = WorldObject(
-            image_path=utils.newPath(f"assets/img/bg/grass.png"),
+            static_image_path=utils.newPath(f"assets/img/bg/grass.png"),
             size=(50, 50),
             pos=(150, 50)
         )
@@ -288,7 +288,7 @@ class Lobby(State):
         )
         self.temp_platform.callibrate()
 
-        self.collidables = RGroup()
+        self.collidables: RGroup[WorldObject] = RGroup()
         self.collidables.add(
             self.temp_ground,
             self.temp_platform
@@ -307,7 +307,7 @@ class Lobby(State):
         self.interactables: RGroup[WorldObject] = RGroup()
         for name, stuff in self.interactables_map.items():
             d = WorldObject(
-                image_path=utils.newPath(f"assets/img/ui/{name}.png"),
+                static_image_path=utils.newPath(f"assets/img/ui/{name}.png"),
                 pos=(stuff[0], (common.GROUND_HEIGHT - stuff[2][1])),
                 size=stuff[2],
             )
@@ -322,7 +322,7 @@ class Lobby(State):
         self.backgroundStuff = RGroup()
         for pos in self.backgroundStuff_map:
             d = WorldObject(
-                image_path=utils.newPath(f"assets/img/bg/tree.png"),
+                static_image_path=utils.newPath(f"assets/img/bg/tree.png"),
                 pos=pos,
                 size=(23, 61),
             )

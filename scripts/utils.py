@@ -1,6 +1,7 @@
 import pygame
 import numpy
 import pathlib
+import json
 import sys
 import os
 import sys
@@ -8,6 +9,7 @@ import platform
 import functools
 
 from scripts import common
+from scripts.sprites.sheet import Sheet
 
 try:
     import zengl
@@ -72,6 +74,53 @@ def newPath(relPath: str) -> pathlib.Path:
     else:
         basePath = os.path.abspath('.')
     return pathlib.Path(os.path.join(basePath, relPath))
+
+
+@functools.lru_cache
+def cut_sheet_fixed_size(
+    path: pathlib.Path,
+    size: pygame.typing.IntPoint
+) -> list[pygame.Surface]:
+    """
+    utility to cut a spritesheet with fixed size into a list of pygame surfs
+    """
+
+    frames = []
+    sheet_img: pygame.Surface = common.ASSET_DICT.get(path, pygame.image.load(path).convert_alpha())
+
+    for i in range(int(sheet_img.get_width() / size[0])):
+        frames.append(sheet_img.subsurface(pygame.Rect(i * size[0], 0, size[0], size[1])))
+
+    print(f"Loaded and split fixed size spritesheet at {path}")
+    return frames
+
+
+@functools.lru_cache
+def cut_sheet(path: pygame.typing._PathLike) -> Sheet:
+    json_path = newPath(str(path))
+    raw_data: list = common.ASSET_DICT.get(json_path, json.loads(open(json_path).read()))
+    spritesheet = Sheet()
+
+    for data in raw_data:
+        spritesheet_path = json_path.parent / data['file'] # image needs to be in the same folder as json
+        spritesheet_img: pygame.Surface = common.ASSET_DICT.get(spritesheet_path, pygame.image.load(spritesheet_path).convert_alpha())
+
+        anim: list[pygame.Surface] = []
+        for frame in data['frames']:
+            size = frame['bounds']['x'], frame['bounds']['y'], frame['bounds']['w'], frame['bounds']['h']
+            print(size)
+            anim.insert(frame['frame'], spritesheet_img.subsurface(size))
+
+        spritesheet.add_animation(
+            data['action'],
+            anim
+        )
+
+    print(f"Loaded and split dynamic size spritesheet at {spritesheet_path}")
+
+    spritesheet.set_animation(raw_data[0]['action']) # default setting
+
+    return spritesheet
 
 
 @functools.lru_cache

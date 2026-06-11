@@ -1,9 +1,10 @@
 import pygame
-
-from random import randint
+import pathlib
+import warnings
+import random
 
 from scripts import common, utils
-from scripts.sprites.sheet import Sheet, cut_sheet_fixed_size
+from scripts.sprites.sheet import Sheet
 
 
 class BaseSprite(pygame.sprite.DirtySprite):
@@ -21,14 +22,11 @@ class BaseSprite(pygame.sprite.DirtySprite):
         self.blendmode = pygame.BLENDMODE_NONE # check https://pyga.me/docs/ref/special_flags_list.html
         self.visible = 1
 
-        self.sheetEnabled: bool
-        self.sheetStatic: bool = False
-        self.image_path: pygame.typing._PathLike
         self.image: pygame.Surface
         self.old_image: pygame.Surface
 
         self.sheet: Sheet
-        self.action: str = "idle"
+        self.has_sheet: bool
 
         self.rect: pygame.FRect
         self.source_rect: pygame.Rect
@@ -58,11 +56,9 @@ class BaseSprite(pygame.sprite.DirtySprite):
     def animate(self):
         """modifiable"""
 
-        if self.sheetEnabled:
+        if self.has_sheet:
             self.image = self.sheet.draw(flip_x=False, flip_y=False)
-
-            if not self.sheetStatic:
-                self.sheet.update()
+            self.sheet.update()
 
     def move(self):
         """modifiable"""
@@ -81,8 +77,8 @@ class BaseSprite(pygame.sprite.DirtySprite):
 
         print(f"Moved {type(self).__name__} in place by {pos}")
 
-    def shake(self, seed: pygame.typing.IntPoint):
-        self.rect.x, self.rect.y = self.old_pos.x + randint(0, seed[0]), self.old_pos.y + randint(0, seed[1])
+    def shake(self, seed: pygame.typing.Point):
+        self.rect.x, self.rect.y = self.old_pos.x + random.uniform(0, seed[0]), self.old_pos.y + random.uniform(0, seed[1])
 
 
 class RSprite(BaseSprite):
@@ -92,32 +88,24 @@ class RSprite(BaseSprite):
 
     def __init__(
         self,
-        sheetEnabled: bool = False,
-        sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = common.TEMPLATE_IMAGE_PATH,
-        # image_src: pygame.Surface = globals.TEMPLATE_IMAGE_SURF, # TODO: make this work so that we dont have to load it images every single time and it can receive json spritesheet stuff as well
+        static_image_path: pygame.typing._PathLike | None = common.TEMPLATE_IMAGE_PATH,
+        sheet_path: pygame.typing._PathLike | None = None,
         size: pygame.typing.IntPoint = (1, 1),
         pos: pygame.typing.Point = (0, 0),
         *groups: pygame.sprite.Group["RSprite"]
-    ) -> None:
+    ):
         super().__init__(*groups)
 
-        self.sheetEnabled = sheetEnabled
-        self.sheetStatic = sheetStatic
         self.pos = pygame.Vector2(pos)
         self.old_pos = self.pos.copy()
         self.size = size
-        self.image_path = utils.newPath(str(image_path))
+        self.has_sheet = sheet_path != None
 
-        match self.sheetEnabled:
-            case True:
-                self.sheet = Sheet()
-                self.action = "idle"
-                self.sheet.add_animation(self.action, cut_sheet_fixed_size(self.image_path, self.size))
-                self.sheet.set_animation(self.action)
-                self.image = self.sheet.states[self.action][0]
-            case False:
-                self.set_image(self.image_path)
+        if self.has_sheet:
+            self.set_spritesheet(utils.newPath(str(sheet_path)))
+        else:
+            if static_image_path != None:
+                self.set_image_path(utils.newPath(str(static_image_path)))
 
         self.old_image = self.image.copy()
 
@@ -142,16 +130,29 @@ class RSprite(BaseSprite):
         self.old_image = self.image.copy()
         self.source_rect = self.old_image.get_rect()
 
-    def set_image(self, image_path: pygame.typing._PathLike = common.TEMPLATE_IMAGE_PATH) -> None:
+    def set_image_surf(self, image: pygame.Surface):
         """
-        set the image to a static surf.
-        changes `image_path`, `image`.
-        does not change `old_image`.
-        does not callibrate the sprite.
+        set the image to a static surface.
+        """
+
+        self.image_path = None
+        self.image = image.copy()
+
+    def set_image_path(self, image_path: pygame.typing._PathLike):
+        """
+        set the image to a static image from a path.
         """
 
         self.image_path = utils.newPath(str(image_path))
         self.image = common.ASSET_DICT.get(self.image_path, pygame.image.load(self.image_path).convert_alpha())
+
+    def set_spritesheet(self, path: pygame.typing._PathLike) -> None:
+        """
+        set the sprite's spritesheet to one from a path.
+        """
+
+        self.sheet = utils.cut_sheet(path)
+        self.set_image_surf(self.sheet.states[self.sheet.current_state][0])
 
 
 class RGroup[_RSprite: RSprite](pygame.sprite.Group[_RSprite]):
@@ -182,3 +183,7 @@ class RGroup[_RSprite: RSprite](pygame.sprite.Group[_RSprite]):
         self.pos += pos_ip
         for sprite in self.sprites():
             sprite.move_ip(pos_ip)
+
+    def shake(self, seed: pygame.typing.Point):
+        for sprite in self.sprites():
+            sprite.shake(seed)

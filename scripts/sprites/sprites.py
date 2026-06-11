@@ -22,24 +22,13 @@ class WorldObject(RSprite):
 class Player(RSprite):
     def __init__(
         self,
-        sheetEnabled: bool = True,
-        sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = utils.newPath("assets/img/sprites/paul_idle.png"),
-        size: pygame.typing.IntPoint = (24, 44),
+        image_path: pygame.typing._PathLike | None = None,
+        sheet_path: pygame.typing._PathLike | None = None,
+        size: pygame.typing.IntPoint = (1,1),
         pos: pygame.typing.Point = (0, 0),
-        *groups: RGroup,
+        *groups
     ):
-        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
-
-        # self.sheet = cut_sheet(
-        #     utils.newPath("assets/img/sprites/jake.png"),
-        #     utils.newPath("assets/img/sprites/jake.json")
-        # )
-
-        self.sheet.add_animation("run", cut_sheet_fixed_size(utils.newPath("assets/img/sprites/paul_run.png"),
-                                 (31, 44)))
-        self.sheet.add_animation("fish", cut_sheet_fixed_size(utils.newPath("assets/img/sprites/paul_boat.png"),
-                                 (40, 42)))
+        super().__init__(None, utils.newPath("assets/img/sprites/paul.json"), (24, 44), pos, *groups)
 
         self.jump_strength = common.GRAVITY*30
         self.acceleration.x, self.acceleration.y = 2.5, common.GRAVITY
@@ -113,14 +102,13 @@ class Player(RSprite):
 class Rod(RSprite):
     def __init__(
         self,
-        sheetEnabled: bool = True,
-        sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = utils.newPath("assets/img/sprites/fishrod.png"),
-        size: pygame.typing.IntPoint = (9, 16),
+        image_path: pygame.typing._PathLike | None = None,
+        sheet_path: pygame.typing._PathLike | None = None,
+        size: pygame.typing.IntPoint = (1,1),
         pos: pygame.typing.Point = (0, 0),
-        *groups: RGroup,
+        *groups
     ):
-        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
+        super().__init__(utils.newPath("assets/img/sprites/fishrod.png"), None, (9, 16), pos, *groups)
 
         self.is_fishing: bool = False
         self.durability: int = 20
@@ -129,14 +117,13 @@ class Rod(RSprite):
 class Trash(RSprite):
     def __init__(
         self,
-        sheetEnabled: bool = True,
-        sheetStatic: bool = True,
-        image_path: pygame.typing._PathLike = utils.newPath(f"assets/img/sprites/trash.png"),
-        size: pygame.typing.IntPoint = (12, 13),
+        image_path: pygame.typing._PathLike | None = None,
+        sheet_path: pygame.typing._PathLike | None = None,
+        size: pygame.typing.IntPoint = (1,1),
         pos: pygame.typing.Point = (0, 0),
-        *groups: RGroup
+        *groups
     ):
-        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
+        super().__init__(None, utils.newPath("assets/img/sprites/trash.json"), (12, 13), pos, *groups)
 
         self.set_trash()
 
@@ -148,8 +135,8 @@ class Trash(RSprite):
         self.image = self.sheet.states["idle"][trash_type-1]
 
         self.move_ip((
-            random.randint(-offset, offset),
-            random.randint(-offset, offset)
+            random.uniform(-offset, offset),
+            random.uniform(-offset, offset)
         ))
 
         self.callibrate()
@@ -161,14 +148,13 @@ class Trash(RSprite):
 class MenuLogo(RSprite):
     def __init__(
         self,
-        sheetEnabled: bool = False,
-        sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = utils.newPath(f"assets/img/ui/logo.png"),
-        size: pygame.typing.IntPoint = (234, 73),
+        image_path: pygame.typing._PathLike | None = None,
+        sheet_path: pygame.typing._PathLike | None = None,
+        size: pygame.typing.IntPoint = (1,1),
         pos: pygame.typing.Point = (0, 0),
-        *groups: RGroup
+        *groups
     ):
-        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
+        super().__init__(utils.newPath("assets/img/ui/logo.png"), None, (234, 73), pos, *groups)
 
         self.image = pygame.transform.smoothscale_by(self.image, 0.3)
 
@@ -183,15 +169,14 @@ class MenuLogo(RSprite):
 class Background(RSprite):
     def __init__(
         self,
-        sheetEnabled: bool = False,
-        sheetStatic: bool = False,
-        image_path: pygame.typing._PathLike = utils.newPath("assets/img/bg/sky.png"),
-        size: pygame.typing.IntPoint = (common.SCREEN_WIDTH, common.SCREEN_HEIGHT),
+        image_path: pygame.typing._PathLike | None = None,
+        sheet_path: pygame.typing._PathLike | None = None,
+        size: pygame.typing.IntPoint = (1,1),
         pos: pygame.typing.Point = (0, 0),
-        *groups: RGroup
+        *groups
     ):
-        super().__init__(sheetEnabled, sheetStatic, image_path, size, pos, *groups)
+        super().__init__(utils.newPath("assets/img/bg/sky.png"), None, (common.SCREEN_WIDTH, common.SCREEN_HEIGHT), pos, *groups)
 
-        self.image = utils.multiply_image(self.old_image, (2, 224), self.size)
+        self.set_image_surf(utils.multiply_image(self.old_image, (2, 224), self.size))
 
         self.callibrate()

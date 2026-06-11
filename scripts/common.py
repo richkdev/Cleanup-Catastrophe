@@ -65,6 +65,7 @@ WATER_HEIGHT: float = SCREEN_HEIGHT*0.6
 TEMPLATE_IMAGE_PATH = newPath("icon.ico")
 TEMPLATE_IMAGE_SURF = pygame.image.load(TEMPLATE_IMAGE_PATH)
 
+TEMPLATE_JSON_PATH = newPath("assets/img/sprites/template.json")
 
 ASSET_MANAGER: AssetManager
 

@@ -144,7 +144,7 @@ class Statistic(GUIGroup[Text | GUISprite]):
         pos_ip: pygame.typing.Point = (0, 0)
     ):
         if self.icon_sprite.image_path != image_path:
-            self.icon_sprite.set_image(image_path)
+            self.icon_sprite.set_image_path(image_path)
         if pos_ip != (0, 0):
             self.icon_sprite.move_ip(pos_ip)
 
