@@ -75,33 +75,9 @@ class Catastrophe(State):
     def prepare_sprites(self):
         self.score = 0
 
-        self.background = Background()
+        self.background = BackgroundLayer()
 
-        self.temp_ground = WorldObject(
-            static_image_path=utils.newPath(f"assets/img/bg/sand.png"),
-            pos=(0, common.WATER_HEIGHT),
-            size=(common.SCREEN_WIDTH, 1),
-        )
-        self.temp_ground.set_worldobj(
-            desc="ground",
-            interactable=False,
-            collidable=True
-        )
-        self.temp_ground.image = utils.multiply_image(
-            input_image=self.temp_ground.image,
-            tile_size=(1, 1),
-            target_size=(common.SCREEN_WIDTH, 1)
-        )
-        self.temp_ground.callibrate()
-
-        self.collidables = RGroup(self.temp_ground)
-
-        self.player = Player(
-            pos=(0, common.WATER_HEIGHT - 50),
-        )
-        self.player.set_collidables(self.collidables)
-
-        self.rod = Rod(pos=(-100, -100))
+        self.rod = Rod(pos=(common.SCREEN_WIDTH/2, common.Y_BORDER))
 
         self.textDisplay = Statistic(pos=(5, 10))
         self.textDisplay.set_icon(image_path=utils.newPath("assets/img/ui/clock.png"), pos_ip=(0, 0))
@@ -110,10 +86,10 @@ class Catastrophe(State):
         self.trashSprites: RGroup[Trash] = RGroup()
 
         trash_id_map = filehandling.makeMap((4, 8))
-        self.start_pos = (common.SCREEN_WIDTH + common.X_BORDER, common.WATER_HEIGHT + common.Y_BORDER)
+        self.start_pos = (common.SCREEN_WIDTH + common.X_BORDER, common.WATER_HEIGHT)
         self.distance_between_trash = (
-            common.SCREEN_WIDTH * len(trash_id_map[0]) / 30,
-            common.SCREEN_HEIGHT * len(trash_id_map) / 150
+            common.SCREEN_WIDTH / 10,
+            common.SCREEN_HEIGHT / 10
         )
 
         for row in range(len(trash_id_map)):
@@ -128,7 +104,7 @@ class Catastrophe(State):
                     t.set_trash(
                         trash_type=trash_id_map[row][col],
                         trash_id=(row, col),
-                        offset=10
+                        offset=16
                     )
                     self.trashSprites.add(t)
 
@@ -139,7 +115,6 @@ class Catastrophe(State):
             self.background,
             self.trashSprites,
             # self.collidables, # only show for debug purposes i guess
-            self.player,
             self.textDisplay,
             self.rod
         )
@@ -155,9 +130,9 @@ class Catastrophe(State):
         common.SOUND_MANAGER.bgm.play("waiting", -1)
 
     def logic(self):
-        self.textDisplay.set_text(f"{round((pygame.time.get_ticks() - self.game_start_time)/1000)}, {len(self.trashSprites)}")
+        self.textDisplay.set_text(f"{round((pygame.time.get_ticks() - self.game_start_time)/1000)}, {self.score}")
 
-        if not any(t.is_explosive for t in self.trashSprites) or self.score < 0:
+        if not any(not t.is_explosive for t in self.trashSprites) or self.score < 0:
             for i in self.trashSprites:
                 i.kill()
                 del i
@@ -169,7 +144,7 @@ class Catastrophe(State):
             else:
                 t.velocity.x = -numpy.random.uniform(4, 12)
 
-            t.velocity.y = numpy.cos(pygame.time.get_ticks() / 100) * numpy.random.uniform(-5, 5)
+            t.velocity.y = numpy.cos(pygame.time.get_ticks() / 100) * 5
 
             if t.rect.right <= 0:
                 t.kill()
@@ -177,15 +152,15 @@ class Catastrophe(State):
 
         match self.rod.is_fishing:
             case False:
-                if self.key[K_LEFT] and self.player.rect.x >= common.X_BORDER:
-                    self.player.velocity.x = -50
-                elif self.key[K_RIGHT] and self.player.rect.x <= (common.SCREEN_WIDTH - self.player.rect.width - common.X_BORDER):
-                    self.player.velocity.x = +50
+                if self.key[K_LEFT] and self.rod.rect.left >= common.X_BORDER:
+                    self.rod.velocity.x = -50
+                elif self.key[K_RIGHT] and self.rod.rect.right <= common.SCREEN_WIDTH:
+                    self.rod.velocity.x = +50
                 else:
-                    self.player.velocity.x = 0
+                    self.rod.velocity.x = 0
 
                 if self.key[K_DOWN]:
-                    self.rod.move_to((self.player.rect.right - 8, self.player.rect.top + 5))
+                    self.rod.move_to((self.rod.pos.x, self.rod.old_pos.y))
                     print("fishing!")
                     self.rod.is_fishing = True
                     self.rod.velocity.y = 50
@@ -199,23 +174,30 @@ class Catastrophe(State):
                         self.rod.durability -= 1
                         match collided.is_explosive:
                             case True:
-                                self.score -= 1
+                                self.score -= int(self.score*0.05)
                                 common.SOUND_MANAGER.sfx.play("explode")
                             case False:
                                 self.score += 1
                                 common.SOUND_MANAGER.sfx.play("getTrash")
                         print(f"Session score: {self.score}, durability: {self.rod.durability}")
                         collided.kill()
+                        del collided
                         self.rod.is_fishing = False
                         self.rod.velocity.y = 0
+                        self.rod.move_to((self.rod.pos.x, self.rod.old_pos.y))
 
-                if self.rod.rect.y >= (common.SCREEN_HEIGHT - self.rod.rect.height - common.Y_BORDER):
+                if self.rod.rect.centery >= common.SCREEN_HEIGHT:
                     self.rod.is_fishing = False
+                    self.rod.velocity.y = 0
+                    self.rod.move_to((self.rod.pos.x, self.rod.old_pos.y))
                     common.SOUND_MANAGER.sfx.play("noTrash")
-                else:
-                    pygame.draw.line(self.draw_screen, color.DARKRED,
-                                     (self.rod.rect.x + self.rod.rect.width / 2, self.player.rect.y),
-                                     (self.rod.rect.x + self.rod.rect.width / 2, self.rod.rect.y), 1)
+
+        pygame.draw.line(
+            self.draw_screen, color.DARKRED,
+            (self.rod.rect.centerx, 0),
+            (self.rod.rect.centerx, self.rod.pos.y),
+            1
+        )
 
         if self.key[K_ESCAPE]:
             self.rod.kill()
@@ -248,7 +230,11 @@ class Lobby(State):
         ]
 
     def prepare_sprites(self):
-        self.background = Background()
+        lay1 = BackgroundLayer(static_image_path=utils.newPath("assets/img/bg/sky1.png"))
+        lay2 = BackgroundLayer(static_image_path=utils.newPath("assets/img/bg/sky2.png"))
+        lay3 = BackgroundLayer(static_image_path=utils.newPath("assets/img/bg/sky3.png"))
+
+        self.background = ParallaxBackground(lay3, lay2, lay1)
 
         self.stat_score = Statistic(pos=(5, 10))
         self.stat_score.set_icon(utils.newPath("assets/img/ui/coin.png"), (0, 0))
@@ -256,8 +242,8 @@ class Lobby(State):
 
         self.temp_ground = WorldObject(
             static_image_path=utils.newPath(f"assets/img/bg/sand.png"),
-            size=(common.SCREEN_WIDTH, int(common.SCREEN_HEIGHT+1-common.GROUND_HEIGHT)),
-            pos=(0, common.GROUND_HEIGHT)
+            size=(common.SCREEN_WIDTH*3, int(common.SCREEN_HEIGHT-common.GROUND_HEIGHT)),
+            pos=(-common.SCREEN_WIDTH, common.GROUND_HEIGHT)
         )
         self.temp_ground.set_worldobj(
             desc="ground",
@@ -274,7 +260,7 @@ class Lobby(State):
         self.temp_platform = WorldObject(
             static_image_path=utils.newPath(f"assets/img/bg/grass.png"),
             size=(50, 50),
-            pos=(150, 50)
+            pos=(common.GROUND_HEIGHT-50, 50)
         )
         self.temp_platform.set_worldobj(
             desc="platform",
@@ -283,26 +269,25 @@ class Lobby(State):
         )
         self.temp_platform.image = utils.multiply_image(
             input_image=self.temp_platform.image,
-            tile_size=(3, 20),
+            tile_size=(6, 20),
             target_size=self.temp_platform.size
         )
         self.temp_platform.callibrate()
 
-        self.collidables: RGroup[WorldObject] = RGroup()
-        self.collidables.add(
+        self.collidables: RGroup[WorldObject] = RGroup(
             self.temp_ground,
             self.temp_platform
         )
 
         self.player = Player(
-            pos=(common.SCREEN_HEIGHT/3, common.GROUND_HEIGHT-50),
+            pos=((common.SCREEN_WIDTH-24)/2, common.GROUND_HEIGHT-50),
         )
         self.player.set_collidables(self.collidables)
 
         self.interactables_map: dict[str, list] = {
             "Shop": [20, StateID.SHOP, (55, 58), "explode"],
-            "Play": [120, StateID.CATASTROPHE, (35, 33), "getTrash"],
-            "Score": [220, StateID.SCOREBOARD, (50, 25), "noTrash"]
+            "Score": [120, StateID.SCOREBOARD, (47, 43), "noTrash"],
+            "Play": [220, StateID.CATASTROPHE, (35, 33), "getTrash"]
         }
         self.interactables: RGroup[WorldObject] = RGroup()
         for name, stuff in self.interactables_map.items():
@@ -318,9 +303,27 @@ class Lobby(State):
             )
             self.interactables.add(d)
 
-        self.backgroundStuff_map = [(random.randint(1, 11)*20, (common.GROUND_HEIGHT-61)) for _ in range(15)]
-        self.backgroundStuff = RGroup()
-        for pos in self.backgroundStuff_map:
+        self.clouds_group = RGroup()
+        self.trees_group = RGroup()
+
+        self.clouds_map = [(random.uniform(-0.5, 0.5)*self.temp_ground.size[0], random.uniform(-10, 10) + common.CLOUD_HEIGHT) for _ in range(25)]
+        for pos in self.clouds_map:
+            d = WorldObject(
+                sheet_path=utils.newPath(f"assets/img/bg/clouds.json"),
+                pos=pos,
+                size=(15, 15),
+            )
+            d.set_worldobj(
+                desc="cloud",
+                interactable=False,
+                collidable=False
+            )
+            d.image = d.sheet.states[d.sheet.current_state][random.randint(0, 2)]
+            d.image.set_alpha(random.randint(200, 225))
+            self.clouds_group.add(d)
+
+        self.trees_map = [(random.uniform(0, 1)*self.temp_ground.size[0], (common.GROUND_HEIGHT-random.uniform(51, 61))) for _ in range(15)]
+        for pos in self.trees_map:
             d = WorldObject(
                 static_image_path=utils.newPath(f"assets/img/bg/tree.png"),
                 pos=pos,
@@ -331,14 +334,15 @@ class Lobby(State):
                 interactable=False,
                 collidable=False
             )
-            self.backgroundStuff.add(d)
+            self.trees_group.add(d)
+
+        self.map_group = RGroup(self.clouds_group, self.trees_group, self.interactables, self.collidables)
+        self.map_vel = pygame.Vector2()
 
     def load_sprites(self):
         self.sprites.add(
             self.background,
-            self.backgroundStuff,
-            self.interactables,
-            self.collidables,
+            self.map_group,
             self.player,
             self.stat_score,
         )
@@ -349,18 +353,28 @@ class Lobby(State):
     def logic(self):
         self.stat_score.set_text(str(self.shared_state_data.get('score', 0)))
 
-        if (self.key[K_LEFT] or self.key[K_a]) and self.player.rect.x >= common.X_BORDER:
-            self.player.velocity.x -= self.player.acceleration.x if abs(self.player.velocity.x) < self.player.max_velocity.x else 0
-        elif (self.key[K_RIGHT] or self.key[K_d]) and self.player.rect.x <= (common.SCREEN_WIDTH - self.player.rect.width - common.X_BORDER):
-            self.player.velocity.x += self.player.acceleration.x if abs(self.player.velocity.x) < self.player.max_velocity.x else 0
+        for cloud in self.clouds_group:
+            if cloud.pos.x >= self.temp_ground.rect.right:
+                cloud.move_to((self.temp_ground.rect.left, cloud.pos.y))
+            cloud.velocity.x = random.uniform(0, 10)
+
+        if (self.key[K_LEFT] or self.key[K_a]):
+            self.map_vel.x -= self.player.acceleration.x if abs(self.map_vel.x) < self.player.max_velocity.x else 0
+        elif (self.key[K_RIGHT] or self.key[K_d]):
+            self.map_vel.x += self.player.acceleration.x if abs(self.map_vel.x) < self.player.max_velocity.x else 0
         else:
-            self.player.velocity.x = 0
+            self.map_vel.x = 0
 
         if (self.key[K_UP] or self.key[K_w]):
             self.player.jump()
 
-        # TODO: implement camera system later as a class/functions
-        self.camera_offset = pygame.Vector2()
+        # crude cam implementation, will change later
+        self.map_vel.y = pygame.math.lerp(self.map_vel.y, self.player.velocity.y, 0.5)
+
+        if not self.player.is_colliding:
+            self.player.move_to((self.player.old_pos.x, self.player.pos.y))
+            self.map_group.move_ip(-self.map_vel*self.dt)
+            self.background.move_parallax(self.map_vel*self.dt, 10)
 
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
 

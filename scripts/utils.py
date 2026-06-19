@@ -108,7 +108,6 @@ def cut_sheet(path: pygame.typing._PathLike) -> Sheet:
         anim: list[pygame.Surface] = []
         for frame in data['frames']:
             size = frame['bounds']['x'], frame['bounds']['y'], frame['bounds']['w'], frame['bounds']['h']
-            print(size)
             anim.insert(frame['frame'], spritesheet_img.subsurface(size))
 
         spritesheet.add_animation(

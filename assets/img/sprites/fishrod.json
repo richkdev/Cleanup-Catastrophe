@@ -1,0 +1,41 @@
+[
+    {
+        "action": "normal",
+        "file": "fishrod.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 11,
+                    "h": 14
+                }
+            }
+        ]
+    },
+    {
+        "action": "magnet",
+        "file": "fishrod.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 11,
+                    "y": 0,
+                    "w": 11,
+                    "h": 11
+                }
+            },
+            {
+                "frame": 1,
+                "bounds": {
+                    "x": 11,
+                    "y": 0,
+                    "w": 11,
+                    "h": 14
+                }
+            }
+        ]
+    }
+]

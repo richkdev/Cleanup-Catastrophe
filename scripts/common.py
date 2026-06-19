@@ -25,15 +25,15 @@ FINAL_SCREEN_SIZE: tuple[int, int] = SCREEN_SIZE
 INITIAL_WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
 WINDOW_SIZE: tuple[int, int] = SCREEN_SIZE
 
-X_BORDER = 16
-Y_BORDER = 16
+X_BORDER = 8
+Y_BORDER = 8
 
 FLAG_OPENGL: bool = SETTINGS['opengl'] and bool(pygame.OPENGL) and not IS_WEB
 FLAG_DEBUG: bool = SETTINGS['debug']
 
-FPS: int = SETTINGS['maxFPS']
-MIN_DT: float = FPS/100000
-MAX_DT: float = FPS/100
+FPS: float = SETTINGS['maxFPS']
+MIN_DT: float = (1/FPS)/1000
+MAX_DT: float = 1
 
 VOLUME: float = SETTINGS['volume'] / 100
 
@@ -58,9 +58,11 @@ SMALL_FONT_PATH = newPath("assets/fonts/UnifontExMono.ttf")
 BIG_FONT = pygame.Font(BIG_FONT_PATH, 16)
 SMALL_FONT = pygame.Font(SMALL_FONT_PATH, 16)
 
-GRAVITY: float = 2
-GROUND_HEIGHT: float = SCREEN_HEIGHT/1.5
-WATER_HEIGHT: float = SCREEN_HEIGHT*0.6
+GRAVITY: float = 2.5
+
+CLOUD_HEIGHT: float = SCREEN_HEIGHT*0.1
+GROUND_HEIGHT: float = SCREEN_HEIGHT*0.65
+WATER_HEIGHT: float = SCREEN_HEIGHT*0.35
 
 TEMPLATE_IMAGE_PATH = newPath("icon.ico")
 TEMPLATE_IMAGE_SURF = pygame.image.load(TEMPLATE_IMAGE_PATH)

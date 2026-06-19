@@ -1,0 +1,35 @@
+[
+    {
+        "action": "normal",
+        "file": "clouds.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 105,
+                    "h": 29
+                }
+            },
+            {
+                "frame": 1,
+                "bounds": {
+                    "x": 0,
+                    "y": 34,
+                    "w": 66,
+                    "h": 27
+                }
+            },
+            {
+                "frame": 2,
+                "bounds": {
+                    "x": 0,
+                    "y": 65,
+                    "w": 39,
+                    "h": 12
+                }
+            }
+        ]
+    }
+]

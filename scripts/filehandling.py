@@ -1,9 +1,19 @@
 import pygame
 import random
 import os
+
+from enum import IntEnum, auto
 from json import loads, dump
 
 from scripts.common import saveFiles_path
+
+
+class TrashType(IntEnum):
+    EMPTY = 0
+    TRASH_BAG = 1
+    SNACK_BAG = 2
+    PLASTIC_BAG = 3
+    BOMB = auto()
 
 
 if not saveFiles_path.exists():
@@ -15,14 +25,8 @@ if not saveFiles_path.exists():
         pass
 
 
-def makeMap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[int]]:
-    """
-    trashType
-    0 = empty
-    1-3 = not empty
-    """
-
-    map = [[random.randint(0, 4) for _ in range(size[0])] for _ in range(size[1])]
+def makeMap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[TrashType]]:
+    map = [[TrashType(random.choice(list(TrashType))) for _ in range(size[0])] for _ in range(size[1])]
     return map
 
 

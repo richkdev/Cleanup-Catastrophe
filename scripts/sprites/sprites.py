@@ -6,6 +6,7 @@ from scripts import common, utils
 from scripts.sprites.basesprite import *
 from scripts.sprites.sheet import *
 from scripts.sprites.gui import *
+from scripts.filehandling import *
 
 
 class WorldObject(RSprite):
@@ -22,9 +23,9 @@ class WorldObject(RSprite):
 class Player(RSprite):
     def __init__(
         self,
-        image_path: pygame.typing._PathLike | None = None,
+        static_image_path: pygame.typing._PathLike | None = common.TEMPLATE_IMAGE_PATH,
         sheet_path: pygame.typing._PathLike | None = None,
-        size: pygame.typing.IntPoint = (1,1),
+        size: pygame.typing.IntPoint = (24, 44),
         pos: pygame.typing.Point = (0, 0),
         *groups
     ):
@@ -32,17 +33,17 @@ class Player(RSprite):
 
         self.jump_strength = common.GRAVITY*30
         self.acceleration.x, self.acceleration.y = 2.5, common.GRAVITY
-        self.max_velocity.x = 100
+        self.max_velocity.x = 300
 
         self.is_colliding: bool = False
-        self.grounded: bool = False
+        self.is_grounded: bool = False
 
     def set_collidables(self, collideables: RGroup[WorldObject]):
         self.collideables = collideables
 
     def animate(self):
         self.image = self.sheet.draw(flip_x=bool(self.velocity.x < 0), flip_y=False)
-        self.sheet.update(self.dt*5 if self.grounded else self.velocity.length()/5000)
+        self.sheet.update(self.dt*5 if self.is_grounded else self.velocity.x/1000)
 
         if self.velocity.x != 0:
             self.sheet.set_animation("run")
@@ -50,11 +51,11 @@ class Player(RSprite):
             self.sheet.set_animation("idle")
 
     def jump(self):
-        if self.grounded:
-            self.grounded = False
+        if self.is_grounded:
+            self.is_grounded = False
             self.velocity.y = -self.jump_strength
 
-    def collision(self, tiles: RGroup[WorldObject]):
+    def collision(self, tiles: RGroup[WorldObject]) -> bool:
         # slightly modded ver of https://github.com/sloukit/pydew-valley-uzh/blob/main/src/sprites/entities/entity.py#L170
 
         colliding_rect = None
@@ -62,8 +63,6 @@ class Player(RSprite):
         for tile in tiles:
             if isinstance(tile, WorldObject) and tile.collidable and tile.rect.colliderect(self.rect):
                 colliding_rect = tile.rect
-                distances_rect = colliding_rect
-
                 distances_rect = tile.rect
 
                 distances = (
@@ -89,26 +88,27 @@ class Player(RSprite):
                 if shortest_distance == distances[3]:
                     self.rect.top = colliding_rect.bottom
 
+                self.is_grounded = shortest_distance == distances[2]
+
+                self.pos.x, self.pos.y = self.rect.x, self.rect.y
+
         return bool(colliding_rect)
 
     def move(self):
-        if self.grounded:
-            self.velocity.y = 0
-        else:
-            self.velocity.y += self.acceleration.y
-
         self.is_colliding = self.collision(self.collideables)
+        self.velocity.y += self.acceleration.y if not self.is_grounded else -self.velocity.y
+
 
 class Rod(RSprite):
     def __init__(
         self,
-        image_path: pygame.typing._PathLike | None = None,
+        static_image_path: pygame.typing._PathLike | None = common.TEMPLATE_IMAGE_PATH,
         sheet_path: pygame.typing._PathLike | None = None,
-        size: pygame.typing.IntPoint = (1,1),
+        size: pygame.typing.IntPoint = (1, 1),
         pos: pygame.typing.Point = (0, 0),
         *groups
     ):
-        super().__init__(utils.newPath("assets/img/sprites/fishrod.png"), None, (9, 16), pos, *groups)
+        super().__init__(None, utils.newPath("assets/img/sprites/fishrod.json"), (11, 14), pos, *groups)
 
         self.is_fishing: bool = False
         self.durability: int = 20
@@ -119,38 +119,42 @@ class Trash(RSprite):
         self,
         image_path: pygame.typing._PathLike | None = None,
         sheet_path: pygame.typing._PathLike | None = None,
-        size: pygame.typing.IntPoint = (1,1),
+        size: pygame.typing.IntPoint = (1, 1),
         pos: pygame.typing.Point = (0, 0),
         *groups
     ):
-        super().__init__(None, utils.newPath("assets/img/sprites/trash.json"), (12, 13), pos, *groups)
+        super().__init__(None, utils.newPath("assets/img/sprites/trash.json"), (1, 1), pos, *groups)
 
         self.set_trash()
 
-    def set_trash(self, trash_type: int = 1, trash_id: pygame.typing.IntPoint = (0, 0), offset: int = 5) -> None:
+    def set_trash(self, trash_type: TrashType = TrashType.TRASH_BAG, trash_id: pygame.typing.IntPoint = (0, 0), offset: int = 5) -> None:
         self.trash_id = trash_id
         self.trash_type = trash_type
-        self.is_explosive = self.trash_type == 4
+        self.is_explosive = self.trash_type == TrashType.BOMB
+        self.animated = False
 
-        self.image = self.sheet.states["idle"][trash_type-1]
+        if not self.is_explosive:
+            self.image = self.sheet.states["trash"][int(self.trash_type)-1]
+        else:
+            self.image = self.sheet.states["bomb"][random.randint(0, 1)]
+
+        self.rect = self.image.get_frect()
+        self.size = self.image.size
+
+        self.callibrate()
 
         self.move_ip((
             random.uniform(-offset, offset),
             random.uniform(-offset, offset)
         ))
 
-        self.callibrate()
-
-    def animate(self):
-        pass
-
 
 class MenuLogo(RSprite):
     def __init__(
         self,
-        image_path: pygame.typing._PathLike | None = None,
+        static_image_path: pygame.typing._PathLike | None = common.TEMPLATE_IMAGE_PATH,
         sheet_path: pygame.typing._PathLike | None = None,
-        size: pygame.typing.IntPoint = (1,1),
+        size: pygame.typing.IntPoint = (234, 73),
         pos: pygame.typing.Point = (0, 0),
         *groups
     ):
@@ -166,17 +170,23 @@ class MenuLogo(RSprite):
         self.velocity.y = numpy.cos(pygame.time.get_ticks() / 100) * 25
 
 
-class Background(RSprite):
+class BackgroundLayer(RSprite):
     def __init__(
         self,
-        image_path: pygame.typing._PathLike | None = None,
+        static_image_path: pygame.typing._PathLike | None = utils.newPath("assets/img/bg/sky.png"),
         sheet_path: pygame.typing._PathLike | None = None,
-        size: pygame.typing.IntPoint = (1,1),
+        size: pygame.typing.IntPoint = (1, 1),
         pos: pygame.typing.Point = (0, 0),
         *groups
     ):
-        super().__init__(utils.newPath("assets/img/bg/sky.png"), None, (common.SCREEN_WIDTH, common.SCREEN_HEIGHT), pos, *groups)
+        super().__init__(static_image_path, None, (common.SCREEN_WIDTH*3, common.SCREEN_HEIGHT), pos, *groups)
 
-        self.set_image_surf(utils.multiply_image(self.old_image, (2, 224), self.size))
+        self.set_image_surf(utils.multiply_image(self.old_image, self.old_image.size, self.size))
 
         self.callibrate()
+
+
+class ParallaxBackground(RGroup[BackgroundLayer]):
+    def move_parallax(self, pos: pygame.typing.Point, offset: float):
+        for obj in self.sprites():
+            obj.move_ip((pos[0]/-(obj.layer+1+offset), pos[1]/-(obj.layer+1+offset)))

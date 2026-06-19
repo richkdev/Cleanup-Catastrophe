@@ -1,6 +1,4 @@
 import pygame
-import pathlib
-import warnings
 import random
 
 from scripts import common, utils
@@ -15,18 +13,19 @@ class BaseSprite(pygame.sprite.DirtySprite):
     def __init__(self, *groups):
         super().__init__(*groups)
 
-        self.key: pygame.key.ScancodeWrapper
         self.dt: float = 0.0
 
-        self.dirty = 1
+        self.dirty = 2
         self.blendmode = pygame.BLENDMODE_NONE # check https://pyga.me/docs/ref/special_flags_list.html
         self.visible = 1
+        self.layer = 0
 
         self.image: pygame.Surface
         self.old_image: pygame.Surface
 
         self.sheet: Sheet
         self.has_sheet: bool
+        self.animated: bool
 
         self.rect: pygame.FRect
         self.source_rect: pygame.Rect
@@ -41,14 +40,19 @@ class BaseSprite(pygame.sprite.DirtySprite):
         self.max_velocity: pygame.Vector2 = pygame.Vector2()
 
     def update(self, dt: float):
-        super().update(self)
+        super().update()
 
         self.dt = dt
 
         self.move()
 
+        self.velocity.x = pygame.math.clamp(self.velocity.x, -self.max_velocity.x, self.max_velocity.x) if self.max_velocity.y != 0 else self.velocity.x
+        self.velocity.y = pygame.math.clamp(self.velocity.y, -self.max_velocity.x, self.max_velocity.y) if self.max_velocity.y != 0 else self.velocity.y
+
         self.rect.x += self.velocity.x * self.dt
         self.rect.y += self.velocity.y * self.dt
+
+        self.pos.x, self.pos.y = self.rect.x, self.rect.y
 
         if self.visible:
             self.animate()
@@ -56,7 +60,7 @@ class BaseSprite(pygame.sprite.DirtySprite):
     def animate(self):
         """modifiable"""
 
-        if self.has_sheet:
+        if self.has_sheet and self.animated:
             self.image = self.sheet.draw(flip_x=False, flip_y=False)
             self.sheet.update()
 
@@ -66,16 +70,18 @@ class BaseSprite(pygame.sprite.DirtySprite):
         self.velocity += self.acceleration
 
     def move_to(self, pos: pygame.typing.Point):
-        self.pos.x, self.pos.y = pos[0], pos[1]
-        self.rect.x, self.rect.y = self.pos
+        if pos != (self.pos.x, self.pos.y):
+            self.pos.x, self.pos.y = pos[0], pos[1]
+            self.rect.x, self.rect.y = self.pos
 
-        print(f"Moved {type(self).__name__} to {pos}")
+            print(f"Moved {type(self).__name__} to {pos}")
 
     def move_ip(self, pos: pygame.typing.Point):
-        self.pos += pos
-        self.rect.x, self.rect.y = self.pos
+        if pos != (0, 0):
+            self.pos += pos
+            self.rect.x, self.rect.y = self.pos
 
-        print(f"Moved {type(self).__name__} in place by {pos}")
+            print(f"Moved {type(self).__name__} in place by {pos}")
 
     def shake(self, seed: pygame.typing.Point):
         self.rect.x, self.rect.y = self.old_pos.x + random.uniform(0, seed[0]), self.old_pos.y + random.uniform(0, seed[1])
@@ -100,6 +106,7 @@ class RSprite(BaseSprite):
         self.old_pos = self.pos.copy()
         self.size = size
         self.has_sheet = sheet_path != None
+        self.animated = False
 
         if self.has_sheet:
             self.set_spritesheet(utils.newPath(str(sheet_path)))
@@ -135,7 +142,6 @@ class RSprite(BaseSprite):
         set the image to a static surface.
         """
 
-        self.image_path = None
         self.image = image.copy()
 
     def set_image_path(self, image_path: pygame.typing._PathLike):
@@ -155,7 +161,7 @@ class RSprite(BaseSprite):
         self.set_image_surf(self.sheet.states[self.sheet.current_state][0])
 
 
-class RGroup[_RSprite: RSprite](pygame.sprite.Group[_RSprite]):
+class RGroup[_RSprite: (RSprite | RGroup)](pygame.sprite.LayeredDirty[_RSprite]):
     """
     Custom sprite group with added utilities.
     """
@@ -164,6 +170,12 @@ class RGroup[_RSprite: RSprite](pygame.sprite.Group[_RSprite]):
         super().__init__(*sprites)
 
         self.pos = pygame.Vector2(pos if pos != None else (0, 0))
+
+        for spr in self.sprites():
+            if self.pos.x > spr.pos.x:
+                self.pos.x = spr.pos.x
+            if self.pos.y > spr.pos.y:
+                self.pos.y = spr.pos.y
 
         if pos != None:
             self.move_to(self.pos)
