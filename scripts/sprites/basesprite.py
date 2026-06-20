@@ -74,14 +74,14 @@ class BaseSprite(pygame.sprite.DirtySprite):
             self.pos.x, self.pos.y = pos[0], pos[1]
             self.rect.x, self.rect.y = self.pos
 
-            print(f"Moved {type(self).__name__} to {pos}")
+            # print(f"Moved {type(self).__name__} to {pos}")
 
     def move_ip(self, pos: pygame.typing.Point):
         if pos != (0, 0):
             self.pos += pos
             self.rect.x, self.rect.y = self.pos
 
-            print(f"Moved {type(self).__name__} in place by {pos}")
+            # print(f"Moved {type(self).__name__} in place by {pos}")
 
     def shake(self, seed: pygame.typing.Point):
         self.rect.x, self.rect.y = self.old_pos.x + random.uniform(0, seed[0]), self.old_pos.y + random.uniform(0, seed[1])
@@ -176,9 +176,6 @@ class RGroup[_RSprite: (RSprite | RGroup)](pygame.sprite.LayeredDirty[_RSprite])
                 self.pos.x = spr.pos.x
             if self.pos.y > spr.pos.y:
                 self.pos.y = spr.pos.y
-
-        if pos != None:
-            self.move_to(self.pos)
 
         print(f"Loaded {type(self).__name__} sprite group, at {self.pos}, with {len(self.sprites())} starting sprites")
 

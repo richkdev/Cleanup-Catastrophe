@@ -1,13 +1,13 @@
 import pygame
 import asyncio
+import typing
 import os
 import platform
 
-from scripts import common, utils
-from scripts.sprites.basesprite import RGroup
-from scripts.states.states import *
-from scripts.managers.sound import SoundManager
-from scripts.managers.asset import AssetManager
+from scripts import common, utils, color
+from scripts.sprites import RGroup
+from scripts.states import *
+from scripts.managers import *
 
 if common.IS_DISCORD_ALLOWED:
     from scripts.managers.discord import DiscordRPCManager
