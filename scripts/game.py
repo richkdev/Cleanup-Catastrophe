@@ -5,9 +5,10 @@ import os
 import platform
 
 from scripts import common, utils, color
-from scripts.sprites import RGroup
+from scripts.sprites.basesprite import RGroup
 from scripts.states import *
-from scripts.managers import *
+from scripts.managers.asset import AssetManager
+from scripts.managers.sound import SoundManager
 
 if common.IS_DISCORD_ALLOWED:
     from scripts.managers.discord import DiscordRPCManager

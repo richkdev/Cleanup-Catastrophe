@@ -3,7 +3,7 @@
     "opengl": true,
     "maxFPS": 60,
     "volume": 50,
-    "retroMode": false,
+    "retroMode": true,
     "savefiles": "savefiles/local.json",
     "logs": "logs/"
 }
