@@ -171,6 +171,9 @@ class RGroup[_RSprite: (RSprite | RGroup)](pygame.sprite.LayeredDirty[_RSprite])
 
         self.pos = pygame.Vector2(pos if pos != None else (0, 0))
 
+        if pos != None:
+            self.move_to(pos)
+
         for spr in self.sprites():
             if self.pos.x > spr.pos.x:
                 self.pos.x = spr.pos.x

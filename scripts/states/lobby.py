@@ -72,7 +72,7 @@ class Lobby(State):
             collidable=True
         )
         self.temp_platform.image = utils.multiply_image(
-            input_image=self.temp_platform.image,
+            image=self.temp_platform.image,
             tile_size=(6, 20),
             target_size=self.temp_platform.size
         )

@@ -28,13 +28,18 @@ class Catastrophe(State):
     def prepare_sprites(self):
         self.score = 0
 
-        self.background = BackgroundLayer()
+        self.background = BackgroundLayer(static_image_path=utils.newPath("assets/img/bg/waters.png"))
 
         self.rod = Rod(pos=(common.SCREEN_WIDTH/2, common.Y_BORDER))
 
         self.textDisplay = Statistic(pos=(5, 10))
         self.textDisplay.set_icon(image_path=utils.newPath("assets/img/ui/clock.png"), pos_ip=(0, 0))
         self.textDisplay.set_text(text="0", pos_ip=(20, 0))
+
+        self.progress = ProgressBar(
+            pos=(0, common.SCREEN_HEIGHT-8),
+            size=(common.SCREEN_WIDTH, 8)
+        )
 
         self.trashSprites: RGroup[Trash] = RGroup()
 
@@ -44,6 +49,9 @@ class Catastrophe(State):
             common.SCREEN_WIDTH / 10,
             common.SCREEN_HEIGHT / 10
         )
+
+        min_score = self.shared_state_data.get('min_score', None)
+        self.minimum_score = min_score if min_score != None else 10
 
         for row in range(len(trash_id_map)):
             for col in range(len(trash_id_map[0])):
@@ -69,6 +77,7 @@ class Catastrophe(State):
             self.trashSprites,
             # self.collidables, # only show for debug purposes i guess
             self.textDisplay,
+            self.progress,
             self.rod
         )
 
@@ -83,6 +92,10 @@ class Catastrophe(State):
         common.SOUND_MANAGER.bgm.play("waiting", -1)
 
     def logic(self):
+        self.progress.set_progress(
+            progress=(self.score / self.minimum_score * 100)
+        )
+
         self.textDisplay.set_text(f"{round((pygame.time.get_ticks() - self.game_start_time)/1000)}, {self.score}")
 
         if not any(not t.is_explosive for t in self.trashSprites) or self.score < 0:
@@ -122,6 +135,8 @@ class Catastrophe(State):
                     self.sprites.remove(self.rod)
 
             case True:
+                self.rod.velocity.x = 0
+
                 for collided in pygame.sprite.spritecollide(self.rod, self.trashSprites, True, pygame.sprite.collide_rect):
                     if isinstance(collided, Trash):
                         self.rod.durability -= 1

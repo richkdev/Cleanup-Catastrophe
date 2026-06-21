@@ -106,6 +106,7 @@ class ProgressBar(GUISprite):
         self,
         progress: float = 50,
         max_progress: float = 100,
+        horizontal: bool = True,
         color: pygame.typing.ColorLike = color.GREEN,
         bg_color: pygame.typing.ColorLike = color.WHITE
     ):
@@ -115,14 +116,22 @@ class ProgressBar(GUISprite):
 
         self.progress = progress
         self.max_progress = max_progress
+        self.horizontal = horizontal
         self.color = color
         self.bg_color = bg_color
 
         self.image.fill(bg_color)
-        self.image.fill(
-            self.color,
-            (0, 0, (self.progress / self.max_progress) * self.size[0], self.size[1]),
-        )
+
+        if self.horizontal:
+            self.image.fill(
+                self.color,
+                (0, 0, (self.progress / self.max_progress) * self.size[0], self.size[1]),
+            )
+        else:
+            self.image.fill(
+                self.color,
+                (0, ((self.max_progress - self.progress) / self.max_progress) * self.size[1], self.size[0], (self.progress / self.max_progress) * self.size[1]),
+            )
 
 
 class Statistic(GUIGroup[Text | GUISprite]):

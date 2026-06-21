@@ -179,11 +179,14 @@ class BackgroundLayer(RSprite):
         pos: pygame.typing.Point = (0, 0),
         *groups
     ):
-        super().__init__(static_image_path, None, (common.SCREEN_WIDTH*3, common.SCREEN_HEIGHT), pos, *groups)
+        super().__init__(static_image_path, None, (common.SCREEN_WIDTH, common.SCREEN_HEIGHT), pos, *groups)
 
-        self.set_image_surf(utils.multiply_image(self.old_image, self.old_image.size, self.size))
+        self.old_image = utils.multiply_image(self.old_image, self.old_image.size, self.size)
+        self.set_image_surf(self.old_image)
 
         self.callibrate()
+
+        self.size = self.image.size
 
 
 class ParallaxBackground(RGroup[BackgroundLayer]):

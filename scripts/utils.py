@@ -160,7 +160,7 @@ def aspectScale(image_x: int, image_y: int, target_x: int, target_y: int) -> tup
 
 @functools.lru_cache
 def multiply_image(
-    input_image: pygame.Surface,
+    image: pygame.Surface,
     tile_size: pygame.typing.IntPoint,
     target_size: pygame.typing.IntPoint
 ) -> pygame.Surface:
@@ -172,13 +172,13 @@ def multiply_image(
 
     for y in range(0, int(target_size[1]), int(tile_size[1])):
         for x in range(0, int(target_size[0]), int(tile_size[0])):
-            output_image.blit(input_image, (x, y))
+            output_image.blit(image, (x, y))
 
     return output_image
 
 
 @functools.lru_cache
-def mode7(
+def mode7_effect(
     image: pygame.Surface,
     target_size: pygame.typing.IntPoint,
     cam: pygame.typing.Point = (0, 0, 10),
