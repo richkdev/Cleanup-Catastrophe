@@ -21,8 +21,9 @@ class Catastrophe(State):
         self.sounds_raw = {
             "waiting": "assets/music/waiting.wav",
             "explode": "assets/sfx/explode.wav",
-            "getTrash": "assets/sfx/getTrash.wav",
+            "ding": "assets/sfx/ding.wav",
             "noTrash": "assets/sfx/noTrash.wav",
+            "reelin": "assets/sfx/reelin.wav",
         }
 
     def prepare_sprites(self):
@@ -90,6 +91,7 @@ class Catastrophe(State):
 
     def load_assets(self):
         common.SOUND_MANAGER.bgm.play("waiting", -1)
+        self._persistent_sfx_id = 0
 
     def logic(self):
         self.progress.set_progress(
@@ -131,6 +133,8 @@ class Catastrophe(State):
                     self.rod.is_fishing = True
                     self.rod.velocity.y = 50
                     self.sprites.add(self.rod)
+                    self._persistent_sfx_id = common.SOUND_MANAGER.sfx.play("reelin", loop=-1, max_time=4000)
+
                 elif self.sprites.has(self.rod):
                     self.sprites.remove(self.rod)
 
@@ -140,13 +144,14 @@ class Catastrophe(State):
                 for collided in pygame.sprite.spritecollide(self.rod, self.trashSprites, True, pygame.sprite.collide_rect):
                     if isinstance(collided, Trash):
                         self.rod.durability -= 1
+                        common.SOUND_MANAGER.sfx.stop_sfx(self._persistent_sfx_id)
                         match collided.is_explosive:
                             case True:
                                 self.score -= int(self.score*0.05)
                                 common.SOUND_MANAGER.sfx.play("explode")
                             case False:
                                 self.score += 1
-                                common.SOUND_MANAGER.sfx.play("getTrash")
+                                common.SOUND_MANAGER.sfx.play("ding")
                         print(f"Session score: {self.score}, durability: {self.rod.durability}")
                         collided.kill()
                         del collided

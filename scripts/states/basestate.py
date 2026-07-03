@@ -68,21 +68,9 @@ class State:
 
             for asset_raw in self.assets_raw:
                 asset = utils.newPath(asset_raw)
+                self.prepare_asset(asset)
 
-                if asset.is_dir():
-                    files = asset.iterdir()
-                    for file in files:
-                        filepath = asset.joinpath(file)
-                        self.assets.append(filepath)
-                        common.ASSET_MANAGER.add_asset(filepath)
-                        common.ASSET_MANAGER.update()
-
-                if asset.is_file():
-                    self.assets.append(asset)
-                    common.ASSET_MANAGER.add_asset(asset)
-                    common.ASSET_MANAGER.update()
-
-            for name, path in self.sounds_raw.items():
+            for path in self.sounds_raw.values():
                 asset = utils.newPath(path)
 
                 if "sfx" in path:
@@ -100,6 +88,16 @@ class State:
             self.is_prepared = True
 
             print(f"Prepared {type(self).__name__} state")
+
+    def prepare_asset(self, path: pathlib.Path):
+        if path.is_file():
+            common.ASSET_MANAGER.add_asset(path)
+            common.ASSET_MANAGER.update()
+        else:
+            files = path.iterdir()
+            for file in files:
+                self.assets.append(file)
+                self.prepare_asset(file)
 
     def prepare_assets(self) -> None:
         raise NotImplementedError
