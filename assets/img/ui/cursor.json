@@ -1,0 +1,62 @@
+[
+    {
+        "action": "default",
+        "file": "cursor.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 11,
+                    "h": 17
+                }
+            }
+        ]
+    },
+    {
+        "action": "click",
+        "file": "cursor.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 11,
+                    "y": 0,
+                    "w": 12,
+                    "h": 17
+                }
+            }
+        ]
+    },
+    {
+        "action": "grab",
+        "file": "cursor.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 23,
+                    "y": 0,
+                    "w": 12,
+                    "h": 17
+                }
+            }
+        ]
+    },
+    {
+        "action": "grabbing",
+        "file": "cursor.png",
+        "frames": [
+            {
+                "frame": 0,
+                "bounds": {
+                    "x": 36,
+                    "y": 0,
+                    "w": 11,
+                    "h": 17
+                }
+            }
+        ]
+    }
+]

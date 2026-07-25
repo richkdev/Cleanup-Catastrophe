@@ -15,7 +15,9 @@ if common.IS_DISCORD_ALLOWED:
 
 class Game:
     def __init__(self) -> None:
-        # TODO: add other things used in runtime here
+        if os.getenv('XDG_SESSION_TYPE') == 'wayland':
+            os.environ['SDL_VIDEODRIVER'] = 'wayland'
+
         pygame.init()
 
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
@@ -34,9 +36,6 @@ class Game:
         if common.IS_PYGBAG:
             pygame.mixer.SoundPatch()  # type: ignore -> for web
             platform.window.canvas.style.imageRendering = "pixelated" # type: ignore -> no more blurriness yay
-
-        if os.getenv('XDG_SESSION_TYPE') == 'wayland':
-            os.environ['SDL_VIDEODRIVER'] = 'wayland'
 
         try:
             self.loop = asyncio.get_event_loop()
@@ -69,8 +68,8 @@ class Game:
         pygame.display.set_caption(f"Cleanup Catastrophe! ({common.VERSION})")
         pygame.display.set_icon(common.TEMPLATE_IMAGE_SURF)
 
-        pygame.mouse.set_relative_mode(True) # fixes mouse scaling issue but it makes the mouse invisible
-        pygame.mouse.set_visible(True) # so we set the mouse to visible using this func
+        pygame.mouse.set_pos((0, 0))
+        pygame.mouse.set_relative_mode(True)
 
         self.sprites = RGroup()
 
@@ -80,6 +79,7 @@ class Game:
             StateID.CATASTROPHE: Catastrophe(),
             StateID.SHOP: Shop(),
             StateID.SCOREBOARD: Scoreboard(),
+            StateID.OCEANMAP: OceanMap(),
         }
         self.current_state: State
         self.states_accessed: list[StateID] = []

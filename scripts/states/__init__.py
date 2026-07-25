@@ -4,3 +4,4 @@ from scripts.states.lobby import Lobby
 from scripts.states.scoreboard import Scoreboard
 from scripts.states.shop import Shop
 from scripts.states.catastrophe import Catastrophe
+from scripts.states.oceanmap import OceanMap

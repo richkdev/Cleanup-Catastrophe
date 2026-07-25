@@ -18,6 +18,21 @@ class GUIGroup[_GUISprite: GUISprite](RGroup[_GUISprite]):
     """
 
 
+class RCursor(GUISprite):
+    def set_cursor(
+        self,
+        sheet_path: pygame.typing._PathLike = utils.newPath("assets/img/ui/cursor.json"),
+        command: typing.Callable[[], None] = lambda: print("click!")
+    ):
+        self.set_spritesheet(sheet_path)
+        self.callibrate()
+        self.command = command
+
+    def click(self, anim: str = "click"):
+        self.sheet.set_animation(anim)
+        self.command()
+
+
 class Text(GUISprite):
     """
     Sprite class for displaying text.

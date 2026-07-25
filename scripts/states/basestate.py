@@ -19,6 +19,7 @@ class StateID(enum.IntEnum):
     SHOP = enum.auto()
     SCOREBOARD = enum.auto()
     RADIO = enum.auto()
+    OCEANMAP = enum.auto()
 
 
 class StateSwitch(BaseException):
@@ -32,10 +33,12 @@ class State:
     """
     Base class for game states to use.
     """
+
     event: list[pygame.Event]
     key: pygame.key.ScancodeWrapper
     key_jp: pygame.key.ScancodeWrapper
     mouse: pygame.Vector2 = pygame.Vector2()
+    mouse_rel: pygame.Vector2 = pygame.Vector2()
     dt: float = 0.0
 
     is_gamemode: bool = False
@@ -157,6 +160,8 @@ class State:
         common.SOUND_MANAGER.sfx.update()
 
     def update_stuff(self) -> None:
+        self.mouse.x, self.mouse.y = pygame.mouse.get_pos(False)
+        self.mouse_rel.x, self.mouse_rel.y = pygame.mouse.get_rel()
         self.event = pygame.event.get()
         self.key = pygame.key.get_pressed()
         self.key_jp = pygame.key.get_just_pressed()

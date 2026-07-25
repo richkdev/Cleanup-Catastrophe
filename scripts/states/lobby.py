@@ -1,6 +1,5 @@
 import pygame
 import random
-import numpy
 
 from pygame.locals import *  # type: ignore
 
@@ -29,7 +28,7 @@ class Lobby(State):
         self.is_reloadable = False
         self.next_states = [
             StateID.SHOP,
-            StateID.CATASTROPHE,
+            StateID.OCEANMAP,
             StateID.SCOREBOARD,
         ]
 
@@ -91,7 +90,7 @@ class Lobby(State):
         self.interactables_map: dict[str, list] = {
             "Shop": [20, StateID.SHOP, (55, 58), "explode"],
             "Score": [120, StateID.SCOREBOARD, (47, 43), "noTrash"],
-            "Play": [220, StateID.CATASTROPHE, (35, 33), "getTrash"]
+            "Play": [220, StateID.OCEANMAP, (35, 33), "getTrash"]
         }
         self.interactables: RGroup[WorldObject] = RGroup()
         for name, stuff in self.interactables_map.items():
@@ -182,7 +181,7 @@ class Lobby(State):
 
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
 
-        if isinstance(collided_sprite, WorldObject) and collided_sprite.interactable and self.key[K_RETURN]:
+        if isinstance(collided_sprite, WorldObject) and collided_sprite.interactable and self.key_jp[K_RETURN]:
             print("interacted with an interactable worldobject")
 
             # in each of these checks we could do something special like play a sound effect.

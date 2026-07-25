@@ -46,8 +46,8 @@ class BaseSprite(pygame.sprite.DirtySprite):
 
         self.move()
 
-        self.velocity.x = pygame.math.clamp(self.velocity.x, -self.max_velocity.x, self.max_velocity.x) if self.max_velocity.y != 0 else self.velocity.x
-        self.velocity.y = pygame.math.clamp(self.velocity.y, -self.max_velocity.x, self.max_velocity.y) if self.max_velocity.y != 0 else self.velocity.y
+        self.velocity.x = pygame.math.clamp(self.velocity.x, -self.max_velocity.x, self.max_velocity.x) if self.max_velocity.x != 0 else self.velocity.x
+        self.velocity.y = pygame.math.clamp(self.velocity.y, -self.max_velocity.y, self.max_velocity.y) if self.max_velocity.y != 0 else self.velocity.y
 
         self.rect.x += self.velocity.x * self.dt
         self.rect.y += self.velocity.y * self.dt

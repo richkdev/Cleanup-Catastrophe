@@ -12,6 +12,8 @@ GREEN = pygame.Color(0, 255, 0, 255)
 
 BLUE = pygame.Color(0, 0, 255, 255)
 
+CYAN = pygame.Color(165, 220, 252, 255)
+
 WHITE = pygame.Color(255, 255, 255, 255)
 
 BLACK = pygame.Color(0, 0, 0, 255)
