@@ -1,13 +1,10 @@
 import pygame
-import random
-import numpy
 
 from pygame.locals import *  # type: ignore
 
 from scripts import common, utils, filehandling, color
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
-
 
 class Shop(State):
     is_gamemode = False
@@ -21,15 +18,6 @@ class Shop(State):
         }
 
     def prepare_sprites(self):
-        text = "SHOP"
-        text_sprite = Text()
-        text_sprite.set_text(
-            text=text,
-            color=color.WHITE,
-            font=common.BIG_FONT
-        )
-        text_sprite.velocity.x = 5
-
         self.buttons = ButtonGroup()
         for y in range(3):
             for x in range(5):
@@ -43,8 +31,6 @@ class Shop(State):
                 self.buttons.add(b)
 
         self.sprites.add(self.buttons)
-
-        self.sprites.add(text_sprite)
 
     def load_assets(self):
         common.SOUND_MANAGER.bgm.play("straight-fundamentals", loop=-1)

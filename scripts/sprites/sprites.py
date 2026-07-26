@@ -1,6 +1,5 @@
 import pygame
 import numpy
-import random
 
 from scripts import common, utils
 from scripts.sprites.basesprite import *
@@ -136,7 +135,7 @@ class Trash(RSprite):
         if not self.is_explosive:
             self.image = self.sheet.states["trash"][int(self.trash_type)-1]
         else:
-            self.image = self.sheet.states["bomb"][random.randint(0, 1)]
+            self.image = self.sheet.states["bomb"][common.RNG.integers(0, 1, dtype=int)]
 
         self.rect = self.image.get_frect()
         self.size = self.image.size
@@ -144,8 +143,8 @@ class Trash(RSprite):
         self.callibrate()
 
         self.move_ip((
-            random.uniform(-offset, offset),
-            random.uniform(-offset, offset)
+            common.RNG.uniform(-offset, offset),
+            common.RNG.uniform(-offset, offset)
         ))
 
 

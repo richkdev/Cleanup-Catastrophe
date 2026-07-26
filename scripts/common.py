@@ -2,6 +2,8 @@ import pygame
 import os
 import sys
 import pathlib
+import numpy
+
 from json import loads
 from datetime import datetime
 from scripts.utils import newPath
@@ -64,10 +66,14 @@ CLOUD_HEIGHT: float = SCREEN_HEIGHT*0.1
 GROUND_HEIGHT: float = SCREEN_HEIGHT*0.65
 WATER_HEIGHT: float = SCREEN_HEIGHT*0.35
 
+##########################
+
 TEMPLATE_IMAGE_PATH = newPath("icon.ico")
 TEMPLATE_IMAGE_SURF = pygame.image.load(TEMPLATE_IMAGE_PATH)
 
 TEMPLATE_JSON_PATH = newPath("assets/img/sprites/template.json")
+
+##########################
 
 ASSET_MANAGER: AssetManager
 
@@ -84,3 +90,5 @@ SOUND_MANAGER: SoundManager
 if IS_DISCORD_ALLOWED:
     from scripts.managers.discord import DiscordRPCManager
     DISCORD_MANAGER: DiscordRPCManager
+
+RNG: numpy.random.Generator = numpy.random.default_rng()

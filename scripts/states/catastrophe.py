@@ -44,7 +44,7 @@ class Catastrophe(State):
 
         self.trashSprites: RGroup[Trash] = RGroup()
 
-        trash_id_map = filehandling.makeMap((4, 8))
+        trash_id_map = filehandling.make_trashmap((4, 8))
         self.start_pos = (common.SCREEN_WIDTH + common.X_BORDER, common.WATER_HEIGHT)
         self.distance_between_trash = (
             common.SCREEN_WIDTH / 10,
@@ -110,7 +110,7 @@ class Catastrophe(State):
             if t.is_explosive:
                 t.velocity.x = -3
             else:
-                t.velocity.x = -numpy.random.uniform(4, 12)
+                t.velocity.x = -common.RNG.uniform(4, 12)
 
             t.velocity.y = numpy.cos(pygame.time.get_ticks() / 100) * 5
 

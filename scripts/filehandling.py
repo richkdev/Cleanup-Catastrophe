@@ -1,11 +1,10 @@
 import pygame
-import random
 import os
 
 from enum import IntEnum, auto
 from json import loads, dump
 
-from scripts.common import saveFiles_path
+from scripts.common import RNG, saveFiles_path
 
 
 class TrashType(IntEnum):
@@ -25,12 +24,12 @@ if not saveFiles_path.exists():
         pass
 
 
-def makeMap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[TrashType]]:
-    map = [[TrashType(random.choice(list(TrashType))) for _ in range(size[0])] for _ in range(size[1])]
+def make_trashmap(size: pygame.typing.IntPoint = (4, 4)) -> list[list[TrashType]]:
+    map = [[TrashType(RNG.choice(list(TrashType))) for _ in range(size[0])] for _ in range(size[1])]
     return map
 
 
-def getLocal() -> list[dict[str, str|int]]:
+def get_local_scores() -> list[dict[str, str|int]]:
     try:
         highscores: list[dict[str, str|int]] = loads(open(saveFiles_path).read())
     except FileNotFoundError:
@@ -38,8 +37,8 @@ def getLocal() -> list[dict[str, str|int]]:
     return highscores
 
 
-def saveLocal(name: str, score: int) -> None:
-    highscores = getLocal()
+def set_local_score(name: str, score: int) -> None:
+    highscores = get_local_scores()
 
     player_exists = False
     for i in highscores:

@@ -1,6 +1,4 @@
 import pygame
-import random
-import numpy
 
 from pygame.locals import *  # type: ignore
 
@@ -22,7 +20,7 @@ class OceanMap(State):
         }
 
     def prepare_sprites(self):
-        self.arr = numpy.random.uniform(0.5, 1, (common.SCREEN_WIDTH//2, common.SCREEN_HEIGHT//2))
+        self.arr = common.RNG.uniform(0.5, 1, (common.SCREEN_WIDTH//2, common.SCREEN_HEIGHT//2))
         self.surf = pygame.surfarray.make_surface(self.arr[..., None] * color.CYAN[:3])
         self.surf.fill(color.BLUE, special_flags=pygame.BLEND_ADD)
         self.surf = pygame.transform.smoothscale_by(pygame.transform.smoothscale_by(self.surf, 0.4), 2.5)

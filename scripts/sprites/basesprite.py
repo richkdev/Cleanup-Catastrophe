@@ -1,5 +1,4 @@
 import pygame
-import random
 
 from scripts import common, utils
 from scripts.sprites.sheet import Sheet
@@ -84,7 +83,7 @@ class BaseSprite(pygame.sprite.DirtySprite):
             # print(f"Moved {type(self).__name__} in place by {pos}")
 
     def shake(self, seed: pygame.typing.Point):
-        self.rect.x, self.rect.y = self.old_pos.x + random.uniform(0, seed[0]), self.old_pos.y + random.uniform(0, seed[1])
+        self.rect.x, self.rect.y = self.old_pos.x + common.RNG.uniform(0, seed[0]), self.old_pos.y + common.RNG.uniform(0, seed[1])
 
 
 class RSprite(BaseSprite):

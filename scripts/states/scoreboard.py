@@ -12,8 +12,8 @@ class Scoreboard(State):
     desc = "Lookin\' at the scoreboard."
 
     def prepare_sprites(self):
-        filehandling.saveLocal("guy", int(self.shared_state_data.get('score', 0)))
-        highscores = filehandling.getLocal()
+        filehandling.set_local_score("guy", int(self.shared_state_data.get('score', 0)))
+        highscores = filehandling.get_local_scores()
         text = ""
 
         for i in highscores:

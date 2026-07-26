@@ -88,12 +88,12 @@ class Button(Text):
                 self.image = self.old_image.copy()
 
 
-class ButtonGroup(GUIGroup[Button]):
+class ButtonGroup[_Button: Button](GUIGroup[_Button]):
     """
     Sprite group for `Button` sprites.
     """
 
-    def __init__(self, *sprites: Button | RGroup[Button], pos: pygame.typing.Point | None = None):
+    def __init__(self, *sprites: _Button | RGroup[_Button], pos: pygame.typing.Point | None = None):
         super().__init__(*sprites, pos=pos)
 
         self.cursor: int = 0
@@ -104,7 +104,7 @@ class ButtonGroup(GUIGroup[Button]):
     def move_cursor_ip(self, val: int):
         self.move_cursor(self.cursor + val)
 
-    def get_button_at_cursor(self) -> Button:
+    def get_button_at_cursor(self) -> _Button:
         return self.sprites()[self.cursor]
 
     def click_button_at_cursor(self):

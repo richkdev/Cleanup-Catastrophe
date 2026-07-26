@@ -1,11 +1,11 @@
 import pygame
-import random
 
 from pygame.locals import *  # type: ignore
 
-from scripts import common, utils, filehandling, color
+from scripts import common, utils
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
+
 
 class Lobby(State):
     is_gamemode = False
@@ -109,7 +109,7 @@ class Lobby(State):
         self.clouds_group = RGroup()
         self.trees_group = RGroup()
 
-        self.clouds_map = [(random.uniform(-0.5, 0.5)*self.temp_ground.size[0], random.uniform(-10, 10) + common.CLOUD_HEIGHT) for _ in range(25)]
+        self.clouds_map = [(common.RNG.uniform(-0.5, 0.5)*self.temp_ground.size[0], common.RNG.uniform(-10, 10) + common.CLOUD_HEIGHT) for _ in range(25)]
         for pos in self.clouds_map:
             d = WorldObject(
                 sheet_path=utils.newPath(f"assets/img/bg/clouds.json"),
@@ -121,11 +121,11 @@ class Lobby(State):
                 interactable=False,
                 collidable=False
             )
-            d.image = d.sheet.states[d.sheet.current_state][random.randint(0, 2)]
-            d.image.set_alpha(random.randint(200, 225))
+            d.image = d.sheet.states[d.sheet.current_state][common.RNG.integers(0, 2, dtype=int)]
+            d.image.set_alpha(common.RNG.integers(200, 225, dtype=int))
             self.clouds_group.add(d)
 
-        self.trees_map = [(random.uniform(0, 1)*self.temp_ground.size[0], (common.GROUND_HEIGHT-random.uniform(51, 61))) for _ in range(15)]
+        self.trees_map = [(common.RNG.uniform(0, 1)*self.temp_ground.size[0], (common.GROUND_HEIGHT-common.RNG.uniform(51, 61))) for _ in range(15)]
         for pos in self.trees_map:
             d = WorldObject(
                 static_image_path=utils.newPath(f"assets/img/bg/tree.png"),
@@ -159,7 +159,7 @@ class Lobby(State):
         for cloud in self.clouds_group:
             if cloud.pos.x >= self.temp_ground.rect.right:
                 cloud.move_to((self.temp_ground.rect.left, cloud.pos.y))
-            cloud.velocity.x = random.uniform(0, 10)
+            cloud.velocity.x = common.RNG.uniform(0, 10)
 
         if (self.key[K_LEFT] or self.key[K_a]):
             self.map_vel.x -= self.player.acceleration.x if abs(self.map_vel.x) < self.player.max_velocity.x else 0
