@@ -88,12 +88,12 @@ class Button(Text):
                 self.image = self.old_image.copy()
 
 
-class ButtonGroup[_Button: Button](GUIGroup[_Button]):
+class ButtonGroup(GUIGroup[Button]):
     """
     Sprite group for `Button` sprites.
     """
 
-    def __init__(self, *sprites: _Button | RGroup[_Button], pos: pygame.typing.Point | None = None):
+    def __init__(self, *sprites: Button | RGroup[Button], pos: pygame.typing.Point | None = None):
         super().__init__(*sprites, pos=pos)
 
         self.cursor: int = 0
@@ -104,7 +104,7 @@ class ButtonGroup[_Button: Button](GUIGroup[_Button]):
     def move_cursor_ip(self, val: int):
         self.move_cursor(self.cursor + val)
 
-    def get_button_at_cursor(self) -> _Button:
+    def get_button_at_cursor(self) -> Button:
         return self.sprites()[self.cursor]
 
     def click_button_at_cursor(self):
@@ -175,9 +175,30 @@ class Statistic(GUIGroup[Text | GUISprite]):
     def set_text(
         self,
         text: str = "lipsum",
+        font: pygame.Font = common.SMALL_FONT,
+        color: pygame.typing.ColorLike = color.BLACK,
+        bg_color: pygame.typing.ColorLike | None = None,
+        antialiased: bool = False,
+        wrap_length: int = 0,
+        align: int = pygame.FONT_LEFT,
         pos_ip: pygame.typing.Point = (0, 0)
     ):
-        if self.text_sprite.text != text:
-            self.text_sprite.set_text(text)
+        if (self.text_sprite.text != text) or (self.text_sprite.font != font) or (self.text_sprite.color != color) or (self.text_sprite.bg_color != bg_color) or (self.text_sprite.antialiased != antialiased) or (self.text_sprite.wrap_length != wrap_length) or (self.text_sprite.font.align != align):
+            self.text_sprite.set_text(text, font, color, bg_color, antialiased, wrap_length, align)
         if pos_ip != (0, 0):
             self.text_sprite.move_ip(pos_ip)
+
+
+class TextModal(GUIGroup[Text]):
+    """
+    Sprite group for `Text` sprites with a heading and description sprite. To modify the text, you have to access the sprites directly.
+    """
+
+    def __init__(self, *sprites, pos: pygame.typing.Point | None = None):
+        self.heading_text = Text()
+        self.heading_text.set_text()
+
+        self.desc_text = Text()
+        self.desc_text.set_text()
+
+        super().__init__(self.heading_text, self.desc_text, pos=pos)

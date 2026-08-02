@@ -6,6 +6,7 @@ from pygame.locals import *  # type: ignore
 from scripts import common, utils, filehandling, color
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
+from scripts.sprites.gui import *
 
 
 class Catastrophe(State):

@@ -5,6 +5,8 @@ from pygame.locals import *  # type: ignore
 from scripts import common, color
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
+from scripts.sprites.gui import *
+
 
 class Splash(State):
     is_gamemode = False
@@ -33,6 +35,7 @@ class Splash(State):
         self.logo = MenuLogo()
         self.logo.move_to(((common.SCREEN_WIDTH-self.logo.size[0])/2, (common.SCREEN_HEIGHT-self.logo.size[1])/2))
 
+    def load_sprites(self):
         self.sprites.add(
             self.logo,
             self.introText

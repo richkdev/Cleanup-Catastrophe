@@ -159,8 +159,16 @@ class RSprite(BaseSprite):
         self.sheet = utils.cut_sheet(path)
         self.set_image_surf(self.sheet.states[self.sheet.current_state][0])
 
+    def set_bgd_color(self, color: pygame.typing.ColorLike):
+        """
+        only works if the image is transparent
+        """
 
-class RGroup[_RSprite: (RSprite | RGroup)](pygame.sprite.LayeredDirty[_RSprite]):
+        self.image.fill(color)
+        self.image.blit(self.old_image)
+
+
+class RGroup[_RSprite: (RSprite | RGroup[RSprite])](pygame.sprite.LayeredDirty[_RSprite]):
     """
     Custom sprite group with added utilities.
     """

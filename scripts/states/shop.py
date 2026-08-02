@@ -5,6 +5,8 @@ from pygame.locals import *  # type: ignore
 from scripts import common, utils, filehandling, color
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
+from scripts.sprites.gui import *
+
 
 class Shop(State):
     is_gamemode = False
@@ -18,19 +20,41 @@ class Shop(State):
         }
 
     def prepare_sprites(self):
-        self.buttons = ButtonGroup()
-        for y in range(3):
-            for x in range(5):
-                b = Button(pos=(20 + x*50, 50 + y*50))
-                b.set_text(
-                    text=f"btn",
-                    font=common.SMALL_FONT,
-                    bg_color=color.YELLOW,
-                )
-                b.set_button()
-                self.buttons.add(b)
+        self.buttons_data = [
+            {
+                "pos": (20, 20),
+                "image": common.TEMPLATE_IMAGE_PATH,
+                "name": "Plastic fishing rod",
+                "desc": "Has 16 durability. Made by yours truly."
+            },
+            {
+                "pos": (50, 20),
+                "image": common.TEMPLATE_IMAGE_PATH,
+                "name": "Wooden fishing rod",
+                "desc": "Has 32 durability. Made by yours truly too."
+            },
+        ]
 
-        self.sprites.add(self.buttons)
+        self.buttons = ButtonGroup()
+        for data in self.buttons_data:
+            b = Button(
+                static_image_path=data["image"],
+                pos=data["pos"]
+            )
+            b.set_button(lambda: self.show_shop_item_desc(data["name"], data["desc"]))
+            b.callibrate()
+            self.buttons.add(b)
+
+        self.modal = TextModal(pos=(0, 0))
+
+    def show_shop_item_desc(self, name: str, desc: str):
+        self.modal.move_to((common.SCREEN_WIDTH/2, 8))
+        self.modal.heading_text.set_text(name, bg_color=color.WHITE)
+        self.modal.desc_text.move_ip((0, 16))
+        self.modal.desc_text.set_text(desc, bg_color=color.WHITE)
+
+    def load_sprites(self):
+        self.sprites.add(self.buttons, self.modal)
 
     def load_assets(self):
         common.SOUND_MANAGER.bgm.play("straight-fundamentals", loop=-1)

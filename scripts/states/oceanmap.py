@@ -5,7 +5,6 @@ from pygame.locals import *  # type: ignore
 from scripts import common, utils, filehandling, color
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.gui import *
-from scripts.sprites.dialogue import *
 
 
 class OceanMap(State):
@@ -28,13 +27,15 @@ class OceanMap(State):
 
         self.cursor = RCursor()
         self.cursor.set_cursor()
+
+    def load_sprites(self):
         self.sprites.add(self.cursor)
 
     def load_assets(self):
         common.SOUND_MANAGER.bgm.play("bliss", loop=-1)
 
     def prepare_next_states(self):
-        self.is_reloadable = True
+        self.is_reloadable = False
         self.next_states = [
             StateID.LOBBY
         ]

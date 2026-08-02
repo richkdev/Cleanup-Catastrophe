@@ -5,6 +5,7 @@ from pygame.locals import *  # type: ignore
 from scripts import common, utils
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
+from scripts.sprites.gui import *
 
 
 class Lobby(State):
@@ -40,8 +41,9 @@ class Lobby(State):
         self.background = ParallaxBackground(lay3, lay2, lay1)
 
         self.stat_score = Statistic(pos=(5, 10))
-        self.stat_score.set_icon(utils.newPath("assets/img/ui/coin.png"), (0, 0))
-        self.stat_score.set_text(str(self.shared_state_data.get('score', 0)), (20, 0))
+        self.stat_score.set_icon(utils.newPath("assets/img/ui/coin.png"))
+        self.stat_score.text_sprite.move_ip((20, 0))
+        self.stat_score.set_text(str(self.shared_state_data.get('score', 0)))
 
         self.temp_ground = WorldObject(
             static_image_path=utils.newPath(f"assets/img/bg/sand.png"),
@@ -53,11 +55,11 @@ class Lobby(State):
             interactable=False,
             collidable=True
         )
-        self.temp_ground.image = utils.multiply_image(
+        self.temp_ground.set_image_surf(utils.multiply_image(
             common.ASSET_DICT.get(utils.newPath("assets/img/bg/sand.png")),
             self.temp_ground.image.size,
             self.temp_ground.size
-        )
+        ))
         self.temp_ground.callibrate()
 
         self.temp_platform = WorldObject(

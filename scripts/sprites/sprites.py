@@ -4,7 +4,6 @@ import numpy
 from scripts import common, utils
 from scripts.sprites.basesprite import *
 from scripts.sprites.sheet import *
-from scripts.sprites.gui import *
 from scripts.filehandling import *
 
 
