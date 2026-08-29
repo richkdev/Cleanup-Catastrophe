@@ -188,6 +188,6 @@ class BackgroundLayer(RSprite):
 
 
 class ParallaxBackground(RGroup[BackgroundLayer]):
-    def move_parallax(self, pos: pygame.typing.Point, offset: float):
+    def move_parallax(self, pos_ip: pygame.typing.Point, offset: float):
         for obj in self.sprites():
-            obj.move_ip((pos[0]/-(obj.layer+1+offset), pos[1]/-(obj.layer+1+offset)))
+            obj.move_ip((pos_ip[0]/-(obj.layer+1+offset), pos_ip[1]/-(obj.layer+1+offset)))

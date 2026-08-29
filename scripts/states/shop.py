@@ -23,25 +23,31 @@ class Shop(State):
         self.buttons_data = [
             {
                 "pos": (20, 20),
-                "image": common.TEMPLATE_IMAGE_PATH,
+                "image": common.TEMPLATE_JSON_PATH,
                 "name": "Plastic fishing rod",
-                "desc": "Has 16 durability. Made by yours truly."
+                "desc": "Has 16 durability. Made by yours truly.",
+                "item": ("rod.durability", 16)
             },
             {
                 "pos": (50, 20),
-                "image": common.TEMPLATE_IMAGE_PATH,
+                "image": common.TEMPLATE_JSON_PATH,
                 "name": "Wooden fishing rod",
-                "desc": "Has 32 durability. Made by yours truly too."
+                "desc": "Has 32 durability. Made by yours truly too.",
+                "item": ("rod.durability", 32)
             },
         ]
 
         self.buttons = ButtonGroup()
         for data in self.buttons_data:
             b = Button(
-                static_image_path=data["image"],
+                sheet_path=data["image"],
                 pos=data["pos"]
             )
-            b.set_button(lambda: self.show_shop_item_desc(data["name"], data["desc"]))
+            b.set_button(
+                lambda x=b, name=data["name"], desc=data["desc"], item=data["item"], d=self.shared_state_data, func=self.show_shop_item_desc:
+                    func(name, desc) if x.total_clicks % 2 == 0
+                    else d.update({item[0]: item[1]}) # TODO: make it so that it doesnt replace the current item's stats n stuff
+            )
             b.callibrate()
             self.buttons.add(b)
 
@@ -71,6 +77,9 @@ class Shop(State):
 
         for sprite in self.buttons:
             sprite.is_hovered = self.buttons.get_button_at_cursor() == sprite
+
+            if not sprite.is_hovered and sprite.total_clicks != 0:
+                sprite.set_clicks(0)
 
         if self.key_jp[K_RETURN]:
             self.buttons.click_button_at_cursor()

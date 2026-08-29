@@ -72,17 +72,27 @@ class Button(Text):
 
     def set_button(
         self,
-        command: typing.Callable[[], None] = lambda: print("click!")
+        command: typing.Callable[[], None] = lambda: print("click!"),
+        fill_color: pygame.typing.ColorLike = color.BLUE,
+        special_flags: int = pygame.BLEND_ADD
     ):
         self.command = command
         self.is_hovered: bool = False
+        self.fill_color = fill_color
+        self.special_flags = special_flags
+
+        self.total_clicks: int = 0
 
     def click(self):
         self.command()
+        self.total_clicks += 1
+
+    def set_clicks(self, val: int):
+        self.total_clicks = val
 
     def animate(self):
         if self.is_hovered:
-            self.image.fill(color.BLUE, special_flags=pygame.BLEND_ADD)
+            self.image.fill(self.fill_color, special_flags=self.special_flags)
         else:
             if self.image._pixels_address != self.old_image._pixels_address:
                 self.image = self.old_image.copy()

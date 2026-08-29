@@ -72,6 +72,7 @@ class Catastrophe(State):
                     self.trashSprites.add(t)
 
     def load_sprites(self):
+        self.seed: float = float(self.shared_state_data.get('seed', common.RNG.uniform()) % 1)
         self.game_start_time = pygame.time.get_ticks()
 
         self.sprites.add(
@@ -111,7 +112,7 @@ class Catastrophe(State):
             if t.is_explosive:
                 t.velocity.x = -3
             else:
-                t.velocity.x = -common.RNG.uniform(4, 12)
+                t.velocity.x = -abs(common.RNG.uniform(4, 12) + self.seed)
 
             t.velocity.y = numpy.cos(pygame.time.get_ticks() / 100) * 5
 
@@ -175,4 +176,4 @@ class Catastrophe(State):
 
         if self.key[K_ESCAPE]:
             self.rod.kill()
-            raise StateSwitch(StateID.LOBBY)
+            raise StateSwitch(StateID.LOBBY, self.shared_state_data)

@@ -2,22 +2,21 @@
 
 ## code
 
-- [ ] use requests module to check latest game version on gh repo via githack _<https://raw.githack.com/richkdev/Cleanup-Catastrophe/main/VERSION>_
 - [x] custom sizes for the spritesheet splitter, but same hitbox rect & diff image rects, with subsurface frame pos & size stored in json
-- [ ] seperate state manager from discord presence manager, for cleaner codebase
+- [x] seperate state manager from discord presence manager, for cleaner codebase
 - [ ] make dialogue engine, with dialogue stored in json
 - [ ] turn lobby state data into json
 - [x] refactor so that each sprite takes the same params and make a custom group for supporting drawing sprites with an offset **(WIP)**
 - [x] fix default frag & vert shader
 - [x] port crt shader for `moderngl` to `zengl` with pygbag compat in mind
 - [x] overhaul state management so that it doesnt inherit `Game` since it'll cause memory issues later and set all states as enums & as items on a dictionary
-- [ ] make loading screen and loading functions (loads state, assets, etc), [reference](https://www.youtube.com/watch?v=KWGDgPldPVo)
 - [ ] detect cmdline args when run thru cmd line, using `argparse` (e.g. `--debug` to log everything into the file), when using pygbag: _<https://discord.com/channels/772505616680878080/971360806287577098/1292327416957636671>_
 - [x] turn discord presence into async
 - [x] make loading screen and async loading functions (loads state, assets, etc) **(WIP)**
-- [ ] use gh ci cd for building the game
+- [x] use gh ci cd for building the game
 - [x] make `BGMManager` (for background music, use pygame.mixer.music) and `SFXManager` (for realtime sound playback, use pygame.mixer.Sound) since they handle songs n stuff differently and use less memory [reference](https://discord.com/channels/772505616680878080/971360806287577098/1488538747094958261)
 - [x] make `AssetManager` for handling loading of all assets (sounds, surfaces, etc.)
+- [ ] make it so that we have an inventory system, so that we can manage fishing rod and upgrade stuff
 
 ## art
 
@@ -27,6 +26,7 @@
 
 ## gameplay
 
+- [ ] remake story **(WIP)**
 - [x] add bombs which you cant pick up, decreases your fishing rod durability **(WIP)**
 - [x] make a hub world for menu select
 - [ ] make levels to teach new players how to play

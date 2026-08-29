@@ -55,7 +55,7 @@ class OceanMap(State):
 
         if self.key_jp[K_RETURN]:
             self.shared_state_data.update(
-                {"seed": self.surf.subsurface((*self.cursor.pos, 1, 1))}
+                {"seed": hash(self.surf.get_at(self.cursor.pos).hex)}
             )
             raise StateSwitch(StateID.CATASTROPHE, self.shared_state_data)
 
