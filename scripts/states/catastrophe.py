@@ -3,7 +3,7 @@ import numpy
 
 from pygame.locals import *  # type: ignore
 
-from scripts import common, utils, filehandling, color
+from scripts import common, colors, utils, filehandling
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 from scripts.sprites.gui import *
@@ -106,7 +106,8 @@ class Catastrophe(State):
             for i in self.trashSprites:
                 i.kill()
                 del i
-            raise StateSwitch(StateID.SCOREBOARD, {'score': self.score})
+            self.shared_state_data.update({'score': self.score})
+            raise StateSwitch(StateID.SCOREBOARD, self.shared_state_data)
 
         for t in self.trashSprites:
             if t.is_explosive:
@@ -168,7 +169,7 @@ class Catastrophe(State):
                     common.SOUND_MANAGER.sfx.play("noTrash")
 
         pygame.draw.line(
-            self.draw_screen, color.DARKRED,
+            self.draw_screen, colors.DARKRED,
             (self.rod.rect.centerx, 0),
             (self.rod.rect.centerx, self.rod.pos.y),
             1

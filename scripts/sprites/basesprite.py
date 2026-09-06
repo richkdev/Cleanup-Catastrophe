@@ -130,7 +130,7 @@ class RSprite(BaseSprite):
         """
         callibrate the sprite for every time the `image` is modified.
         changes `old_image` &`source_rect`.
-        does not change `pos`.
+        does not change `pos` & `size`.
         """
 
         self.old_image = self.image.copy()

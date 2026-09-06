@@ -1,7 +1,7 @@
 import pygame
 import typing
 
-from scripts import common, color
+from scripts import common, colors
 from scripts.sprites.basesprite import *
 from scripts.sprites.basesprite import RGroup, RSprite
 
@@ -38,15 +38,24 @@ class Text(GUISprite):
     Sprite class for displaying text.
     """
 
+    text: str = "lipsum"
+    font: pygame.Font = common.SMALL_FONT
+    color: pygame.typing.ColorLike = colors.BLACK
+    bg_color: pygame.typing.ColorLike | None = None
+    antialiased: bool = False
+    wrap_length: int = 0
+    linesize: int = 18
+    align: int = pygame.FONT_LEFT
+
     def set_text(
         self,
         text: str = "lipsum",
         font: pygame.Font = common.SMALL_FONT,
-        color: pygame.typing.ColorLike = color.BLACK,
+        color: pygame.typing.ColorLike = colors.BLACK,
         bg_color: pygame.typing.ColorLike | None = None,
         antialiased: bool = False,
         wrap_length: int = 0,
-        # linesize: int = 18,
+        linesize: int = 18,
         align: int = pygame.FONT_LEFT
     ):
         self.font = font
@@ -59,7 +68,9 @@ class Text(GUISprite):
         # self.font.set_linesize(linesize)
         self.font.align = align
 
-        self.image = self.font.render(self.text, self.antialiased, self.color, self.bg_color, self.wrap_length).convert_alpha()
+        image = self.font.render(self.text, self.antialiased, self.color, self.bg_color, self.wrap_length).convert_alpha()
+
+        self.set_image_surf(image)
 
         self.callibrate()
         self.size = self.image.size
@@ -73,7 +84,7 @@ class Button(Text):
     def set_button(
         self,
         command: typing.Callable[[], None] = lambda: print("click!"),
-        fill_color: pygame.typing.ColorLike = color.BLUE,
+        fill_color: pygame.typing.ColorLike = colors.BLUE,
         special_flags: int = pygame.BLEND_ADD
     ):
         self.command = command
@@ -132,8 +143,8 @@ class ProgressBar(GUISprite):
         progress: float = 50,
         max_progress: float = 100,
         horizontal: bool = True,
-        color: pygame.typing.ColorLike = color.GREEN,
-        bg_color: pygame.typing.ColorLike = color.WHITE
+        color: pygame.typing.ColorLike = colors.GREEN,
+        bg_color: pygame.typing.ColorLike = colors.WHITE
     ):
         self.image = pygame.Surface(self.size)
 
@@ -186,17 +197,15 @@ class Statistic(GUIGroup[Text | GUISprite]):
         self,
         text: str = "lipsum",
         font: pygame.Font = common.SMALL_FONT,
-        color: pygame.typing.ColorLike = color.BLACK,
+        color: pygame.typing.ColorLike = colors.BLACK,
         bg_color: pygame.typing.ColorLike | None = None,
         antialiased: bool = False,
         wrap_length: int = 0,
         align: int = pygame.FONT_LEFT,
         pos_ip: pygame.typing.Point = (0, 0)
     ):
-        if (self.text_sprite.text != text) or (self.text_sprite.font != font) or (self.text_sprite.color != color) or (self.text_sprite.bg_color != bg_color) or (self.text_sprite.antialiased != antialiased) or (self.text_sprite.wrap_length != wrap_length) or (self.text_sprite.font.align != align):
-            self.text_sprite.set_text(text, font, color, bg_color, antialiased, wrap_length, align)
-        if pos_ip != (0, 0):
-            self.text_sprite.move_ip(pos_ip)
+        self.text_sprite.set_text(text, font, color, bg_color, antialiased, wrap_length, align)
+        self.text_sprite.move_ip(pos_ip)
 
 
 class TextModal(GUIGroup[Text]):
@@ -212,3 +221,33 @@ class TextModal(GUIGroup[Text]):
         self.desc_text.set_text()
 
         super().__init__(self.heading_text, self.desc_text, pos=pos)
+
+
+class TextInput(Text):
+    """
+    Sprite class for editing text.
+    """
+
+    focused_text: TextInput | None = None
+    can_input: bool = False
+    confirmed: bool = False
+
+    def set_input_mode(self, val: bool):
+        self.can_input = val and not self.confirmed and self.focused_text == None
+
+        if self.can_input:
+            pygame.key.start_text_input()
+            self.set_focused(self)
+        else:
+            pygame.key.stop_text_input()
+
+            if self.focused_text == self:
+                self.set_focused(None)
+
+    def confirm(self):
+        self.confirmed = True
+        self.set_input_mode(False) # any will do
+
+    @classmethod
+    def set_focused(cls, obj: TextInput | None):
+        cls.focused_text = obj

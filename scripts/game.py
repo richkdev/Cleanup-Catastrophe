@@ -4,7 +4,7 @@ import typing
 import os
 import platform
 
-from scripts import common, utils, color
+from scripts import common, colors, utils
 from scripts.sprites.basesprite import RGroup
 from scripts.states import *
 from scripts.managers.asset import AssetManager
@@ -171,5 +171,5 @@ class Game:
         else:
             pygame.display.update()
 
-        self.screen.fill(color.BLACK)
-        self.draw_screen.fill(color.TRANSPARENT)
+        self.screen.fill(colors.BLACK)
+        self.draw_screen.fill(colors.TRANSPARENT)

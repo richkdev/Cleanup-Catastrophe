@@ -2,7 +2,7 @@ import pygame
 
 from pygame.locals import *  # type: ignore
 
-from scripts import common, utils, filehandling, color
+from scripts import common, colors, utils, filehandling
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 from scripts.sprites.gui import *
@@ -55,9 +55,9 @@ class Shop(State):
 
     def show_shop_item_desc(self, name: str, desc: str):
         self.modal.move_to((common.SCREEN_WIDTH/2, 8))
-        self.modal.heading_text.set_text(name, bg_color=color.WHITE)
+        self.modal.heading_text.set_text(name, bg_color=colors.WHITE)
         self.modal.desc_text.move_ip((0, 16))
-        self.modal.desc_text.set_text(desc, bg_color=color.WHITE)
+        self.modal.desc_text.set_text(desc, bg_color=colors.WHITE)
 
     def load_sprites(self):
         self.sprites.add(self.buttons, self.modal)

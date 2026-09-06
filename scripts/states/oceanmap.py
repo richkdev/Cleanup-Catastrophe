@@ -2,7 +2,7 @@ import pygame
 
 from pygame.locals import *  # type: ignore
 
-from scripts import common, utils, filehandling, color
+from scripts import common, colors, utils, filehandling
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.gui import *
 
@@ -20,8 +20,8 @@ class OceanMap(State):
 
     def prepare_sprites(self):
         self.arr = common.RNG.uniform(0.5, 1, (common.SCREEN_WIDTH//2, common.SCREEN_HEIGHT//2))
-        self.surf = pygame.surfarray.make_surface(self.arr[..., None] * color.CYAN[:3])
-        self.surf.fill(color.BLUE, special_flags=pygame.BLEND_ADD)
+        self.surf = pygame.surfarray.make_surface(self.arr[..., None] * colors.CYAN[:3])
+        self.surf.fill(colors.BLUE, special_flags=pygame.BLEND_ADD)
         self.surf = pygame.transform.smoothscale_by(pygame.transform.smoothscale_by(self.surf, 0.4), 2.5)
         self.surf = pygame.transform.scale_by(self.surf, 2)
 

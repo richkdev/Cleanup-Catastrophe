@@ -2,7 +2,7 @@ import pygame
 
 from pygame.locals import *  # type: ignore
 
-from scripts import common, color
+from scripts import common, colors
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 from scripts.sprites.gui import *
@@ -25,7 +25,7 @@ class Splash(State):
         self.introText = Text()
         self.introText.set_text(
             text=f"press [ENTER] to begin",
-            color=color.WHITE,
+            color=colors.WHITE,
             font=common.BIG_FONT,
             antialiased=False,
             align=pygame.FONT_CENTER
