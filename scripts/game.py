@@ -9,6 +9,7 @@ from scripts.sprites.basesprite import RGroup
 from scripts.states import *
 from scripts.managers.asset import AssetManager
 from scripts.managers.sound import SoundManager
+from scripts.managers.sprite import SpriteManager
 
 if common.IS_DISCORD_ALLOWED:
     from scripts.managers.discord import DiscordRPCManager
@@ -45,6 +46,7 @@ class Game:
 
         common.ASSET_MANAGER = AssetManager(self.loop)
         common.SOUND_MANAGER = SoundManager()
+        common.SPRITE_MANAGER = SpriteManager()
 
     def run(self) -> None:
         self.window_flags = pygame.SCALED | pygame.RESIZABLE
@@ -84,19 +86,25 @@ class Game:
         self.current_state: State
         self.states_accessed: list[StateID] = []
 
-        if common.IS_DISCORD_ALLOWED:
-            try:
-                self.loop.run_until_complete(
-                    asyncio.wait(
-                        [self.loop.create_task(x) for x in [self.game(), self.discord_stuff()]],
-                        return_when=asyncio.ALL_COMPLETED,
+        try:
+            if common.IS_DISCORD_ALLOWED:
+                    self.loop.run_until_complete(
+                        asyncio.wait(
+                            [self.loop.create_task(x) for x in [self.game(), self.discord_stuff()]],
+                            return_when=asyncio.ALL_COMPLETED,
+                        )
                     )
-                )
-            finally:
-                self.loop.stop()
-                self.loop.close()
-        else:
-            asyncio.run(self.game())
+            else:
+                asyncio.run(self.game())
+        finally:
+            common.ASSET_MANAGER.quit()
+            common.SOUND_MANAGER.quit()
+            common.SPRITE_MANAGER.quit()
+
+            self.loop.stop()
+            self.loop.close()
+
+        raise SystemExit
 
     async def switch_state(self, state_id: StateID, shared_state_data: dict[str, typing.Any]) -> None:
         if len(self.states_accessed) != 0:

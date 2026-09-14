@@ -65,7 +65,7 @@ class Text(GUISprite):
         self.bg_color = bg_color
         self.wrap_length = wrap_length
 
-        # self.font.set_linesize(linesize)
+        self.font.set_linesize(linesize)
         self.font.align = align
 
         image = self.font.render(self.text, self.antialiased, self.color, self.bg_color, self.wrap_length).convert_alpha()
@@ -215,10 +215,10 @@ class TextModal(GUIGroup[Text]):
 
     def __init__(self, *sprites, pos: pygame.typing.Point | None = None):
         self.heading_text = Text()
-        self.heading_text.set_text()
+        self.heading_text.set_text("heading")
 
         self.desc_text = Text()
-        self.desc_text.set_text()
+        self.desc_text.set_text("description")
 
         super().__init__(self.heading_text, self.desc_text, pos=pos)
 

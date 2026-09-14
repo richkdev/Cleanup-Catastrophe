@@ -20,36 +20,8 @@ class Shop(State):
         }
 
     def prepare_sprites(self):
-        self.buttons_data = [
-            {
-                "pos": (20, 20),
-                "image": common.TEMPLATE_JSON_PATH,
-                "name": "Plastic fishing rod",
-                "desc": "Has 16 durability. Made by yours truly.",
-                "item": ("rod.durability", 16)
-            },
-            {
-                "pos": (50, 20),
-                "image": common.TEMPLATE_JSON_PATH,
-                "name": "Wooden fishing rod",
-                "desc": "Has 32 durability. Made by yours truly too.",
-                "item": ("rod.durability", 32)
-            },
-        ]
-
-        self.buttons = ButtonGroup()
-        for data in self.buttons_data:
-            b = Button(
-                sheet_path=data["image"],
-                pos=data["pos"]
-            )
-            b.set_button(
-                lambda x=b, name=data["name"], desc=data["desc"], item=data["item"], d=self.shared_state_data, func=self.show_shop_item_desc:
-                    func(name, desc) if x.total_clicks % 2 == 0
-                    else d.update({item[0]: item[1]}) # TODO: make it so that it doesnt replace the current item's stats n stuff
-            )
-            b.callibrate()
-            self.buttons.add(b)
+        common.SPRITE_MANAGER.add_sprites(StateID.SHOP, "assets/layouts/shop.json")
+        self.buttons: ButtonGroup
 
         self.modal = TextModal(pos=(0, 0))
 
@@ -60,6 +32,22 @@ class Shop(State):
         self.modal.desc_text.set_text(desc, bg_color=colors.WHITE)
 
     def load_sprites(self):
+        self.buttons = common.SPRITE_MANAGER.get_sprites(StateID.SHOP)
+        for b in self.buttons:
+            b.set_clicks(0)
+            b.set_button(
+                lambda
+                    clicks=b.total_clicks,
+                    name=b.data["item_name"],
+                    desc=b.data["item_desc"],
+                    data=b.data["item_data"],
+                    shared_data=self.shared_state_data,
+                    func=self.show_shop_item_desc:
+                        func(name, desc) if clicks % 2 == 0
+                        else shared_data.update({data[0]: data[1]})
+                        # TODO: make it so that it doesnt replace the current item's stats n stuff
+            )
+
         self.sprites.add(self.buttons, self.modal)
 
     def load_assets(self):

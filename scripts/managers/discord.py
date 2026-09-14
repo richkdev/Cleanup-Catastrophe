@@ -3,12 +3,19 @@ import pypresence as dc
 import asyncio
 
 from time import time
+
+from scripts.managers.basemanager import LoopManager
 from scripts.common import VERSION
 
 
-class DiscordRPCManager:
+class DiscordRPCManager(LoopManager):
+    """
+    manager for discord rich presence & stuff
+    """
+
     def __init__(self, loop: asyncio.AbstractEventLoop) -> None:
-        self.loop = loop
+        super().__init__(loop)
+
         self.client_id: str = "1125682987552481311"
         self.connected: bool = False
         self.startTime = int(time())

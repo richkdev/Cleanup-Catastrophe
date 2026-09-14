@@ -8,7 +8,7 @@ import pathlib
 from scripts import common, utils
 from scripts.sprites.basesprite import RGroup
 
-
+@enum.unique
 class StateID(enum.IntEnum):
     """
     State identifier.

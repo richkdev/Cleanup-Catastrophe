@@ -1,7 +1,10 @@
-import asyncio
 import pygame
+import asyncio
+import typing
 import pathlib
 import json
+
+from scripts.managers.basemanager import LoopManager
 
 
 async def lazyload_image(path: pathlib.Path) -> pygame.Surface:
@@ -31,28 +34,43 @@ class LazyAsset:
     def __init__(self, loop: asyncio.AbstractEventLoop, path: pathlib.Path) -> None:
         self.loop = loop
         self.path = path
+        self.task: asyncio.Task[Asset]
         self.data: Asset
 
-    async def get_data(self) -> Asset:
+        func: typing.Callable[[pathlib.Path], typing.Awaitable[Asset]]
         if self.path.exists() and self.path.is_file():
             if any(ex in self.path.suffix for ex in self.IMAGE_EXTENSIONS):
-                self.data = await self.loop.create_task(lazyload_image(self.path))
+                func = lazyload_image
             elif any(ex in self.path.suffix for ex in self.SOUND_EXTENSIONS):
-                self.data = await self.loop.create_task(lazyload_sfx(self.path))
+                func = lazyload_sfx
             elif any(ex in self.path.suffix for ex in self.FONT_EXTENSIONS):
-                self.data = await self.loop.create_task(lazyload_font(self.path))
+                func = lazyload_font
             elif any(ex in self.path.suffix for ex in self.JSON_EXTENSIONS):
-                self.data = await self.loop.create_task(lazyload_json(self.path))
+                func = lazyload_json
             else:
-                self.data = await self.loop.create_task(lazyload_text(self.path))
-            return self.data
+                func = lazyload_text
+
+            self.task = self.loop.create_task(coro=func(self.path), eager_start=True)
         else:
             raise FileNotFoundError(self.path)
 
+    async def get_data(self) -> Asset:
+        try:
+            self.data
+        except AttributeError:
+            self.data = await self.task
 
-class AssetManager:
+        return self.data
+
+
+class AssetManager(LoopManager):
+    """
+    manager for lazily loading assets (images, sfx, fonts, json, txt) on the event loop
+    """
+
     def __init__(self, loop: asyncio.AbstractEventLoop):
-        self.loop = loop
+        super().__init__(loop)
+
         self.asset_queue: list[pathlib.Path] = []
         self.asset_results: dict[pathlib.Path, LazyAsset] = {}
 

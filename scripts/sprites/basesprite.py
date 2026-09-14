@@ -1,4 +1,5 @@
 import pygame
+import typing
 
 from scripts import common, utils
 from scripts.sprites.sheet import Sheet
@@ -107,6 +108,8 @@ class RSprite(BaseSprite):
         self.has_sheet = sheet_path != None
         self.animated = False
 
+        self.data: dict[str, typing.Any] = {}
+
         if self.has_sheet:
             self.set_spritesheet(utils.newPath(str(sheet_path)))
         else:
@@ -125,6 +128,9 @@ class RSprite(BaseSprite):
         self.move_to(self.pos)
 
         print(f"Loaded {type(self).__name__} sprite, at {self.pos}, with size {self.size}")
+
+    def set_data(self, name: str, val: typing.Any):
+        self.data.update({name: val})
 
     def callibrate(self):
         """
@@ -206,3 +212,7 @@ class RGroup[_RSprite: (RSprite | RGroup[RSprite])](pygame.sprite.LayeredDirty[_
     def shake(self, seed: pygame.typing.Point):
         for sprite in self.sprites():
             sprite.shake(seed)
+
+    def kill(self):
+        for sprite in self.sprites():
+            sprite.remove(self)

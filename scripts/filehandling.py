@@ -1,18 +1,10 @@
 import pygame
 import os
 
-from enum import IntEnum, auto
 from json import loads, dump
 
+from scripts.sprites.trash import TrashType
 from scripts.common import RNG, saveFiles_path
-
-
-class TrashType(IntEnum):
-    EMPTY = 0
-    TRASH_BAG = 1
-    SNACK_BAG = 2
-    PLASTIC_BAG = 3
-    BOMB = auto()
 
 
 if not saveFiles_path.exists():
@@ -36,6 +28,7 @@ def get_local_scores_json() -> list[dict[str, str|int]]:
         highscores = []
     return highscores
 
+
 def get_local_scores() -> str:
     highscores = get_local_scores_json()
     text = ""
@@ -45,6 +38,7 @@ def get_local_scores() -> str:
 
     text += "end."
     return text
+
 
 def set_local_score(name: str, score: int) -> None:
     highscores = get_local_scores_json()

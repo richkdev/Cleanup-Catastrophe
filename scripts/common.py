@@ -6,8 +6,8 @@ import numpy
 
 from json import loads
 from datetime import datetime
+
 from scripts.utils import newPath
-from scripts.managers.asset import AssetManager, Asset
 
 IS_RUNNING: bool = True
 
@@ -75,8 +75,10 @@ TEMPLATE_JSON_PATH = newPath("assets/img/sprites/template.json")
 
 ##########################
 
-ASSET_MANAGER: AssetManager
+RNG: numpy.random.Generator = numpy.random.default_rng()
 
+from scripts.managers.asset import AssetManager, Asset
+ASSET_MANAGER: AssetManager
 ASSET_DICT: dict[str | pathlib.Path, Asset] = {
     TEMPLATE_IMAGE_PATH: TEMPLATE_IMAGE_SURF,
     BIG_FONT_PATH: BIG_FONT,
@@ -84,11 +86,11 @@ ASSET_DICT: dict[str | pathlib.Path, Asset] = {
 }
 
 from scripts.managers.sound import SoundManager
-
 SOUND_MANAGER: SoundManager
+
+from scripts.managers.sprite import SpriteManager
+SPRITE_MANAGER: SpriteManager
 
 if IS_DISCORD_ALLOWED:
     from scripts.managers.discord import DiscordRPCManager
     DISCORD_MANAGER: DiscordRPCManager
-
-RNG: numpy.random.Generator = numpy.random.default_rng()

@@ -1,0 +1,41 @@
+{
+    "type": "ButtonGroup",
+    "sprites": [
+        {
+            "type": "Button",
+            "static_image_path": null,
+            "sheet_path": "assets/img/sprites/template.json",
+            "size": [
+                1,
+                1
+            ],
+            "pos": [
+                20,
+                20
+            ],
+            "item_name": "Plastic fishing rod",
+            "item_desc": "Has 16 durability. Made by yours truly.",
+            "item_data": {
+                "rod.durability": 16
+            }
+        },
+        {
+            "type": "Button",
+            "static_image_path": null,
+            "sheet_path": "assets/img/sprites/template.json",
+            "size": [
+                1,
+                1
+            ],
+            "pos": [
+                50,
+                20
+            ],
+            "item_name": "Wooden fishing rod",
+            "item_desc": "Has 32 durability. Made by yours truly too.",
+            "item_data": {
+                "rod.durability": 32
+            }
+        }
+    ]
+}

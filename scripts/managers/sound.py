@@ -1,13 +1,14 @@
-from scripts.common import VOLUME, IS_PYGBAG, ASSET_DICT
 import pygame
 import pathlib
+
+from scripts import common
 
 if not pygame.mixer.get_init():
     pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=512)
     pygame.mixer.init()
     pygame.mixer.set_num_channels(64)
 
-if IS_PYGBAG:
+if common.IS_PYGBAG:
     pygame.mixer.SoundPatch()  # type: ignore -> for web
 
 
@@ -20,7 +21,7 @@ class BGMManager:
         self._bgm_cache: dict[str, pathlib.Path] = {}
         self._currently_playing: str | None = None
         self.volume: float = 0
-        self.set_volume(VOLUME)
+        self.set_volume(common.VOLUME)
 
         print("Initialized BGM manager")
 
@@ -69,6 +70,11 @@ class BGMManager:
         pygame.mixer.music.pause()
         print("Paused BGM")
 
+    def quit(self):
+        if pygame.mixer.get_init():
+            self.stop()
+            self.unload()
+
 
 class SFXManager:
     """
@@ -80,7 +86,7 @@ class SFXManager:
         self._currently_playing: dict[int, tuple[pygame.mixer.Channel, pygame.mixer.Sound]] = {}
 
         self.volume: float = 0
-        self.set_volume(VOLUME)
+        self.set_volume(common.VOLUME)
 
         print("Initialized SFX manager")
 
@@ -88,7 +94,8 @@ class SFXManager:
         self.volume = max(0, min(1, val))
 
     def stop_all(self) -> None:
-        pygame.mixer.stop()
+        if pygame.mixer.get_init():
+            pygame.mixer.stop()
         print("Stopped all SFX")
 
     def pause_all(self) -> None:
@@ -104,7 +111,7 @@ class SFXManager:
             print(f"SFX {name} already exists")
         else:
             if path != None:
-                self._sfx_cache[name] = ASSET_DICT.get(path, pygame.mixer.Sound(path))
+                self._sfx_cache[name] = common.ASSET_DICT.get(path, pygame.mixer.Sound(path))
                 print(f"Added SFX {name} at {path}")
             else:
                 raise FileNotFoundError(path)
@@ -152,8 +159,19 @@ class SFXManager:
         for id in to_delete:
             del self._currently_playing[id]
 
+    def quit(self):
+        self.stop_all()
+
 
 class SoundManager:
-    def __init__(self) -> None:
+    """
+    manager for playback of background music (bgm) & sound effects (sfx)
+    """
+
+    def __init__(self):
         self.bgm = BGMManager()
         self.sfx = SFXManager()
+
+    def quit(self):
+        self.bgm.quit()
+        self.sfx.quit()
