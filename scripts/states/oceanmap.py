@@ -3,6 +3,8 @@ import pygame
 from pygame.locals import *  # type: ignore
 
 from scripts import common, colors, utils, filehandling
+from scripts.managers.input import InputStuff
+
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.gui import *
 
@@ -43,21 +45,22 @@ class OceanMap(State):
     def logic(self):
         self.screen.blit(self.surf)
 
-        if not self.mouse_rel:
+        rel = common.INPUT_MANAGER.get_mouse_rel()
+        if not rel:
             self.cursor.move_ip((
-                (self.key[K_RIGHT] - self.key[K_LEFT]) * 1,
-                (self.key[K_DOWN] - self.key[K_UP]) * 1,
+                (common.INPUT_MANAGER.get_key(InputStuff.ACTION_RIGHT) - common.INPUT_MANAGER.get_key(InputStuff.ACTION_LEFT)) * 1,
+                (common.INPUT_MANAGER.get_key(InputStuff.ACTION_DOWN) - common.INPUT_MANAGER.get_key(InputStuff.ACTION_UP)) * 1,
             ))
         else:
-            self.cursor.move_ip(self.mouse_rel/2)
+            self.cursor.move_ip(rel/2)
 
         pygame.mouse.set_pos(self.cursor.pos)
 
-        if self.key_jp[K_RETURN]:
+        if common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_CONFIRM):
             self.shared_state_data.update(
                 {"seed": hash(self.surf.get_at(self.cursor.pos).hex)}
             )
             raise StateSwitch(StateID.CATASTROPHE, self.shared_state_data)
 
-        if self.key[K_ESCAPE]:
+        if common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_CANCEL):
             raise StateSwitch(StateID.LOBBY, self.shared_state_data)

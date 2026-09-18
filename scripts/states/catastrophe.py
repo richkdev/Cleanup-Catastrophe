@@ -4,6 +4,8 @@ import numpy
 from pygame.locals import *  # type: ignore
 
 from scripts import common, colors, utils, filehandling
+from scripts.managers.input import InputStuff
+
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 from scripts.sprites.gui import *
@@ -123,14 +125,14 @@ class Catastrophe(State):
 
         match self.rod.is_fishing:
             case False:
-                if self.key[K_LEFT] and self.rod.rect.left >= common.X_BORDER:
+                if common.INPUT_MANAGER.get_key(InputStuff.ACTION_LEFT) and self.rod.rect.left >= common.X_BORDER:
                     self.rod.velocity.x = -50
-                elif self.key[K_RIGHT] and self.rod.rect.right <= common.SCREEN_WIDTH:
+                elif common.INPUT_MANAGER.get_key(InputStuff.ACTION_RIGHT) and self.rod.rect.right <= common.SCREEN_WIDTH:
                     self.rod.velocity.x = +50
                 else:
                     self.rod.velocity.x = 0
 
-                if self.key[K_DOWN]:
+                if common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_DOWN):
                     self.rod.move_to((self.rod.pos.x, self.rod.old_pos.y))
                     print("fishing!")
                     self.rod.is_fishing = True
@@ -175,6 +177,6 @@ class Catastrophe(State):
             1
         )
 
-        if self.key[K_ESCAPE]:
+        if common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_CANCEL):
             self.rod.kill()
             raise StateSwitch(StateID.LOBBY, self.shared_state_data)

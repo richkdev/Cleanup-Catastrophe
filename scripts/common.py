@@ -44,6 +44,7 @@ fragShader_path  = newPath(f"assets/shaders/fragment_shaders/{'crt' if retroMode
 vertShader_path = newPath(f"assets/shaders/vertex_shaders/{'crt' if retroMode else 'normal'}.glsl")
 
 saveFiles_path = newPath(SETTINGS['savefiles'])
+INPUT_MAP_PATH = newPath(SETTINGS['input_map'])
 
 startGame_time = str(datetime.now().replace(microsecond=0)).replace(":", "-")
 logDirectory = newPath(SETTINGS['logs'])
@@ -90,6 +91,9 @@ SOUND_MANAGER: SoundManager
 
 from scripts.managers.sprite import SpriteManager
 SPRITE_MANAGER: SpriteManager
+
+from scripts.managers.input import InputManager
+INPUT_MANAGER: InputManager
 
 if IS_DISCORD_ALLOWED:
     from scripts.managers.discord import DiscordRPCManager

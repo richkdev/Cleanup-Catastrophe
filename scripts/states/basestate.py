@@ -34,11 +34,6 @@ class State:
     Base class for game states to use.
     """
 
-    event: list[pygame.Event]
-    key: pygame.key.ScancodeWrapper
-    key_jp: pygame.key.ScancodeWrapper
-    mouse: pygame.Vector2 = pygame.Vector2()
-    mouse_rel: pygame.Vector2 = pygame.Vector2()
     dt: float = 0.0
 
     is_gamemode: bool = False
@@ -144,11 +139,11 @@ class State:
         ...
 
     def update(self) -> None:
-        self.update_stuff()
-
-        for event in self.event:
+        for event in common.INPUT_MANAGER.get_event():
             if event.type == pygame.QUIT:
                 common.IS_RUNNING = False
+
+        self.dt = max(common.MIN_DT, min(common.CLOCK.tick(common.FPS if not common.IS_WEB else 0)/1000, common.MAX_DT))
 
         self.logic()
 
@@ -158,14 +153,6 @@ class State:
         self.screen.blit(self.draw_screen)
 
         common.SOUND_MANAGER.sfx.update()
-
-    def update_stuff(self) -> None:
-        self.mouse.x, self.mouse.y = pygame.mouse.get_pos(False)
-        self.mouse_rel.x, self.mouse_rel.y = pygame.mouse.get_rel()
-        self.event = pygame.event.get()
-        self.key = pygame.key.get_pressed()
-        self.key_jp = pygame.key.get_just_pressed()
-        self.dt = max(common.MIN_DT, min(common.CLOCK.tick(common.FPS if not common.IS_WEB else 0)/1000, common.MAX_DT))
 
     def logic(self) -> None:
         ...

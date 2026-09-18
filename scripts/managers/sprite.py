@@ -76,14 +76,17 @@ class SpriteManager(BaseManager):
     def get_sprites(self, state_id: StateID) -> _Group:
         return self.sprites[state_id]
 
-    def remove_sprite(self, state_id: StateID, sprite: _Sprite):
-        self.sprites[state_id].remove(sprite)
+    def add_sprites(self, state_id: StateID, data: dict):
+        self.sprites[state_id] = parse_data(data)
 
-    def add_sprites(self, state_id: StateID, json_path: pygame.typing._PathLike) -> None:
-        path = utils.newPath(json_path)
+    def add_sprites_path(self, state_id: StateID, json_path: pygame.typing._PathLike):
+        path = utils.newPath(str(json_path))
         data: dict = common.ASSET_DICT.get(path, json.loads(open(path).read())) # type: ignore
 
-        self.sprites[state_id] = parse_data(data) # TODO
+        self.add_sprites(state_id, data)
+
+    def remove_sprite(self, state_id: StateID, sprite: _Sprite):
+        self.sprites[state_id].remove(sprite)
 
     def remove_sprites(self, state_id: StateID):
         self.sprites[state_id].kill()

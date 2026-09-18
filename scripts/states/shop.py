@@ -3,6 +3,8 @@ import pygame
 from pygame.locals import *  # type: ignore
 
 from scripts import common, colors, utils, filehandling
+from scripts.managers.input import InputStuff
+
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 from scripts.sprites.gui import *
@@ -60,8 +62,8 @@ class Shop(State):
         ]
 
     def logic(self):
-        self.buttons.move_cursor_ip(self.key_jp[K_RIGHT] - self.key_jp[K_LEFT])
-        self.buttons.move_cursor_ip(5 * (self.key_jp[K_DOWN] - self.key_jp[K_UP]))
+        self.buttons.move_cursor_ip(common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_RIGHT) - common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_LEFT))
+        self.buttons.move_cursor_ip(5 * (common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_DOWN)))
 
         for sprite in self.buttons:
             sprite.is_hovered = self.buttons.get_button_at_cursor() == sprite
@@ -69,8 +71,8 @@ class Shop(State):
             if not sprite.is_hovered and sprite.total_clicks != 0:
                 sprite.set_clicks(0)
 
-        if self.key_jp[K_RETURN]:
+        if common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_CONFIRM):
             self.buttons.click_button_at_cursor()
 
-        if self.key[K_ESCAPE]:
+        if common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_CANCEL):
             raise StateSwitch(StateID.LOBBY, self.shared_state_data)

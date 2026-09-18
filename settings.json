@@ -5,5 +5,6 @@
     "volume": 50,
     "retroMode": true,
     "savefiles": "savefiles/local.json",
+    "input_map": "input_map.json",
     "logs": "logs/"
 }

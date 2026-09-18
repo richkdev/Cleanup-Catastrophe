@@ -3,6 +3,8 @@ import pygame
 from pygame.locals import *  # type: ignore
 
 from scripts import common, utils
+from scripts.managers.input import InputStuff
+
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 from scripts.sprites.gui import *
@@ -163,14 +165,14 @@ class Lobby(State):
                 cloud.move_to((self.temp_ground.rect.left, cloud.pos.y))
             cloud.velocity.x = common.RNG.uniform(0, 10)
 
-        if (self.key[K_LEFT] or self.key[K_a]):
+        if common.INPUT_MANAGER.get_key(InputStuff.ACTION_LEFT):
             self.map_vel.x -= self.player.acceleration.x if abs(self.map_vel.x) < self.player.max_velocity.x else 0
-        elif (self.key[K_RIGHT] or self.key[K_d]):
+        elif common.INPUT_MANAGER.get_key(InputStuff.ACTION_RIGHT):
             self.map_vel.x += self.player.acceleration.x if abs(self.map_vel.x) < self.player.max_velocity.x else 0
         else:
             self.map_vel.x = 0
 
-        if (self.key[K_UP] or self.key[K_w]):
+        if common.INPUT_MANAGER.get_key(InputStuff.ACTION_UP):
             self.player.jump()
 
         # crude cam implementation, will change later
@@ -180,10 +182,12 @@ class Lobby(State):
             self.player.move_to((self.player.old_pos.x, self.player.pos.y))
             self.map_group.move_ip(-self.map_vel*self.dt)
             self.background.move_parallax(self.map_vel*self.dt, 10)
+        else:
+            self.map_vel.x, self.map_vel.y = 0, 0
 
         collided_sprite = pygame.sprite.spritecollideany(self.player, self.interactables, None)
 
-        if isinstance(collided_sprite, WorldObject) and collided_sprite.interactable and self.key_jp[K_RETURN]:
+        if isinstance(collided_sprite, WorldObject) and collided_sprite.interactable and common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_CONFIRM):
             print("interacted with an interactable worldobject")
 
             # in each of these checks we could do something special like play a sound effect.

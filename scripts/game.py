@@ -10,6 +10,7 @@ from scripts.states import *
 from scripts.managers.asset import AssetManager
 from scripts.managers.sound import SoundManager
 from scripts.managers.sprite import SpriteManager
+from scripts.managers.input import InputManager
 
 if common.IS_DISCORD_ALLOWED:
     from scripts.managers.discord import DiscordRPCManager
@@ -34,6 +35,9 @@ class Game:
             pygame.mixer.init()
             pygame.mixer.set_num_channels(64)
 
+        if not pygame.joystick.get_init():
+            pygame.joystick.init()
+
         if common.IS_PYGBAG:
             pygame.mixer.SoundPatch()  # type: ignore -> for web
             platform.window.canvas.style.imageRendering = "pixelated" # type: ignore -> no more blurriness yay
@@ -45,6 +49,7 @@ class Game:
         asyncio.set_event_loop(self.loop)
 
         common.ASSET_MANAGER = AssetManager(self.loop)
+        common.INPUT_MANAGER = InputManager()
         common.SOUND_MANAGER = SoundManager()
         common.SPRITE_MANAGER = SpriteManager()
 
@@ -73,6 +78,8 @@ class Game:
         pygame.mouse.set_pos((0, 0))
         pygame.mouse.set_relative_mode(True)
 
+        common.INPUT_MANAGER.load_input_map(common.INPUT_MAP_PATH)
+
         self.sprites = RGroup()
 
         self.states: dict[StateID, State] = {
@@ -98,6 +105,7 @@ class Game:
                 asyncio.run(self.game())
         finally:
             common.ASSET_MANAGER.quit()
+            common.INPUT_MANAGER.quit()
             common.SOUND_MANAGER.quit()
             common.SPRITE_MANAGER.quit()
 
@@ -130,6 +138,7 @@ class Game:
         while common.IS_RUNNING:
             try:
                 common.ASSET_MANAGER.update()
+                common.INPUT_MANAGER.update()
                 self.current_state.update()
                 self.render()
             except StateSwitch as e:

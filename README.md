@@ -25,7 +25,8 @@ WIP
 ## INSTALLATION
 
 1. **Clone the repository**. See this [article](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for more information.
-2. **Install all the dependencies**, listed in `requirements.txt`.
+2. **Create a virtual environment**.
+3. **Install all the dependencies**, as listed in `requirements.txt`.
 
 ## USAGE
 

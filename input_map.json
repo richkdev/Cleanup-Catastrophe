@@ -1,0 +1,26 @@
+{
+    "action_confirm": [
+        "K_RETURN",
+        "K_SPACE"
+    ],
+    "action_cancel": [
+        "K_ESCAPE",
+        "K_BACKSPACE"
+    ],
+    "action_left": [
+        "K_LEFT",
+        "K_a"
+    ],
+    "action_right": [
+        "K_RIGHT",
+        "K_d"
+    ],
+    "action_up": [
+        "K_UP",
+        "K_w"
+    ],
+    "action_down": [
+        "K_DOWN",
+        "K_s"
+    ]
+}

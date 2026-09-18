@@ -3,6 +3,8 @@ import pygame
 from pygame.locals import *  # type: ignore
 
 from scripts import common, colors
+from scripts.managers.input import InputStuff
+
 from scripts.states.basestate import State, StateID, StateSwitch
 from scripts.sprites.sprites import *
 from scripts.sprites.gui import *
@@ -51,5 +53,5 @@ class Splash(State):
         common.SOUND_MANAGER.bgm.play("cleanup-time", -1)
 
     def logic(self):
-        if self.key[K_RETURN] or self.key[K_SPACE]:
+        if common.INPUT_MANAGER.get_key_jp(InputStuff.ACTION_CONFIRM):
             raise StateSwitch(StateID.LOBBY)
